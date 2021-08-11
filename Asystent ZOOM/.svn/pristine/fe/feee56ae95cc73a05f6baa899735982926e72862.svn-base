@@ -1,0 +1,41 @@
+﻿<UserControl x:Class="AsystentZOOM.GUI.Controls.ProgressInfoControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:AsystentZOOM.GUI.Controls" 
+             xmlns:conv="clr-namespace:AsystentZOOM.GUI.Converters"
+             HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+             mc:Ignorable="d" d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    </UserControl.Resources>
+    
+    <Grid>
+        <Grid Grid.Row="0" Grid.RowSpan="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Opacity=".2" Background="Black"/>
+
+        <Border Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Width="350"
+                BorderBrush="Gray" BorderThickness="2" Background="LightGray" Padding="10">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Text="{Binding Path=OperationName}" HorizontalAlignment="Center" FontWeight="Bold" />
+
+                <ProgressBar Grid.Row="1" Margin="0,10,0,10" Height="30" Foreground="SlateGray" 
+                             HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                             IsIndeterminate="{Binding Path=IsIndeterminate}" Value="{Binding Path=PercentCompletted}" />
+
+                <TextBlock Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{Binding Path=IsIndeterminate, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='INVERT'}">
+                    <Run Text="{Binding Path=PercentCompletted}"/>
+                    <Run Text=" %"/>
+                </TextBlock>
+
+                <TextBlock Grid.Row="2" Text="{Binding Path=TaskName}" HorizontalAlignment="Left" />
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

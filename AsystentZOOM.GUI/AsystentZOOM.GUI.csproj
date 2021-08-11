@@ -1,0 +1,297 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>AsystentZOOM.GUI</AssemblyName>
+    <ApplicationIcon>Blackvariant-Button-Ui-System-Folders-Alt-Group.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="BuildVersion.xml" />
+    <None Remove="Images\Blackvariant-Button-Ui-System-Folders-Alt-Group.ico" />
+    <None Remove="Images\icons8-add-property-32.png" />
+    <None Remove="Images\icons8-alarm-clock-32.png" />
+    <None Remove="Images\icons8-all-out-32.png" />
+    <None Remove="Images\icons8-apps-tab-32.png" />
+    <None Remove="Images\icons8-below-32.png" />
+    <None Remove="Images\icons8-clock-32.png" />
+    <None Remove="Images\icons8-cloud-sync-32.png" />
+    <None Remove="Images\icons8-color-wheel-32.png" />
+    <None Remove="Images\icons8-delete-32.png" />
+    <None Remove="Images\icons8-display-32.png" />
+    <None Remove="Images\icons8-down-button-32.png" />
+    <None Remove="Images\icons8-download-from-cloud-32.png" />
+    <None Remove="Images\icons8-drag-reorder-32.png" />
+    <None Remove="Images\icons8-expand-32.png" />
+    <None Remove="Images\icons8-fast-forward-32.png" />
+    <None Remove="Images\icons8-form-32.png" />
+    <None Remove="Images\icons8-full-stop-32.png" />
+    <None Remove="Images\icons8-hand-32.png" />
+    <None Remove="Images\icons8-height-32.png" />
+    <None Remove="Images\icons8-hourglass-32.png" />
+    <None Remove="Images\icons8-indent-32.png" />
+    <None Remove="Images\icons8-info-32.png" />
+    <None Remove="Images\icons8-last-6-hours-32.png" />
+    <None Remove="Images\icons8-menu-rounded-32.png" />
+    <None Remove="Images\icons8-mute-32.png" />
+    <None Remove="Images\icons8-open-box-32.png" />
+    <None Remove="Images\icons8-outdent-32.png" />
+    <None Remove="Images\icons8-pause-32.png" />
+    <None Remove="Images\icons8-pin-32.png" />
+    <None Remove="Images\icons8-pin-in-circle-32.png" />
+    <None Remove="Images\icons8-play-32.png" />
+    <None Remove="Images\icons8-play-black-32.png" />
+    <None Remove="Images\icons8-push-pin-32.png" />
+    <None Remove="Images\icons8-record-32.png" />
+    <None Remove="Images\icons8-restart-32.png" />
+    <None Remove="Images\icons8-rewind-32.png" />
+    <None Remove="Images\icons8-save-close-32.png" />
+    <None Remove="Images\icons8-slide-up-32.png" />
+    <None Remove="Images\icons8-space-after-paragraph-32.png" />
+    <None Remove="Images\icons8-space-before-paragraph-32.png" />
+    <None Remove="Images\icons8-spellcheck-32.png" />
+    <None Remove="Images\icons8-stop-32.png" />
+    <None Remove="Images\icons8-take-screenshot-32.png" />
+    <None Remove="Images\icons8-text-color-32.png" />
+    <None Remove="Images\icons8-unpin-32.png" />
+    <None Remove="Images\icons8-upload-to-cloud-32.png" />
+    <None Remove="Images\icons8-upward-arrow-32.png" />
+    <None Remove="Images\icons8-video-conference-100.png" />
+    <None Remove="Images\icons8-voice-32.png" />
+    <None Remove="Images\icons8-volume-level-32.png" />
+    <None Remove="Images\icons8-warning-32.png" />
+    <None Remove="Images\icons8-website-32.png" />
+    <None Remove="Images\icons8-width-32.png" />
+    <None Remove="Images\icons8-x-coordinate-32.png" />
+    <None Remove="Images\icons8-y-coordinate-32.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NAudio" Version="2.0.1" />
+    <PackageReference Include="NAudio.Lame" Version="2.0.0" />
+    <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
+    <PackageReference Include="WindowsAPICodePack-Shell" Version="1.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AsystentZOOM.VM\AsystentZOOM.VM.csproj" />
+    <ProjectReference Include="..\BinaryHelper\BinaryHelper.csproj" />
+    <ProjectReference Include="..\FileService\FileService.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="BuildInfo\BuildVersion.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\Blackvariant-Button-Ui-System-Folders-Alt-Group.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-add-property-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-alarm-clock-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-all-out-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-apps-tab-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-below-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-clock-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-cloud-sync-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-color-wheel-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-delete-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-display-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-down-button-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-download-from-cloud-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-drag-reorder-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-expand-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-fast-forward-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-form-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-full-stop-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-hand-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-height-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-hourglass-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-indent-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-info-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-last-6-hours-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-menu-rounded-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-mute-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-open-box-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-outdent-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-pause-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-pin-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-pin-in-circle-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-play-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-play-black-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-push-pin-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-record-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-restart-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-rewind-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-save-close-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-slide-up-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-space-after-paragraph-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-space-before-paragraph-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-spellcheck-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-stop-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-take-screenshot-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-text-color-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-unpin-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-upload-to-cloud-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-upward-arrow-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-voice-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-volume-level-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-warning-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-website-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-width-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-x-coordinate-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-y-coordinate-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="View\ImageOutputView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\ImagePanelView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\AudioPanelView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\AudioOutputView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="View\ImageOutputView.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\ImagePanelView.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\AudioPanelView.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\AudioOutputView.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="..\BinaryBackupper\bin\Debug\net5.0\BinaryBackupper.exe -increment&#xD;&#xA;" />
+  </Target>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="copy ..\Plugins\JW\bin\Debug\net5.0-windows\ref bin\Debug\net5.0-windows\ref&#xD;&#xA;copy ..\Plugins\JW\bin\Debug\net5.0-windows\HtmlAgilityPack.dll bin\Debug\net5.0-windows&#xD;&#xA;copy ..\Plugins\JW\bin\Debug\net5.0-windows\AsystentZOOM.Plugins.JW*.* bin\Debug\net5.0-windows" />
+  </Target>
+
+</Project>

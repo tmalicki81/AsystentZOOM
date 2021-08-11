@@ -1,0 +1,148 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ShowAllFiles>false</ShowAllFiles>
+    <_LastSelectedProfileId>C:\Users\tmali\source\repos\AsystentZOOM\AsystentZOOM.GUI\Properties\PublishProfiles\ClickOnceProfile.pubxml</_LastSelectedProfileId>
+  </PropertyGroup>
+  <ItemGroup>
+    <ApplicationDefinition Update="App.xaml">
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Controls\PlayerPanelControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Controls\ColorComboBox.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Controls\MediaFileInfoControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Controls\MeetingPointControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Controls\ParametersControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Controls\ProgressInfoControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Controls\SliderWithPopup.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Controls\SortableItemsContextMenu.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Controls\TimePiecePicker.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\BackgroundOutputView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\BackgroundPanelView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\MainOutputWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\MainPanelView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\TimePieceOutputView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\TimePiecePanelView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\MeetingPanelView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\MeetingOutputView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\VideoOutputView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\VideoPanelView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Controls\PlayerPanelControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Controls\ColorComboBox.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Controls\MediaFileInfoControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Controls\MeetingPointControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Controls\ParametersControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Controls\ProgressInfoControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Controls\SliderWithPopup.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Controls\SortableItemsContextMenu.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Controls\TimePiecePicker.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="PanelWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Resources\ResourcesDictionary.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\BackgroundOutputView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\BackgroundPanelView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\MainOutputWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\MainPanelView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\TimePieceOutputView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\TimePiecePanelView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\MeetingPanelView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\MeetingOutputView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\ImageOutputView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\AudioOutputView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\VideoOutputView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\ImagePanelView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\AudioPanelView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\VideoPanelView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+</Project>

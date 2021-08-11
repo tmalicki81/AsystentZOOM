@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>AsystentZOOM.GUI</id>
+    <version>1.0.0</version>
+    <authors>AsystentZOOM.GUI</authors>
+    <description>Package Description</description>
+    <dependencies>
+      <group targetFramework="net5.0-windows7.0">
+        <dependency id="AsystentZOOM.VM" version="1.0.0" exclude="Build,Analyzers" />
+        <dependency id="BinaryHelper" version="1.0.0" exclude="Build,Analyzers" />
+        <dependency id="FileService" version="1.0.0" exclude="Build,Analyzers" />
+        <dependency id="NAudio" version="2.0.0" exclude="Build,Analyzers" />
+        <dependency id="NAudio.Lame" version="2.0.0" exclude="Build,Analyzers" />
+        <dependency id="System.Drawing.Common" version="5.0.0" exclude="Build,Analyzers" />
+        <dependency id="WindowsAPICodePack-Shell" version="1.1.1" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+    <frameworkReferences>
+      <group targetFramework="net5.0-windows7.0">
+        <frameworkReference name="Microsoft.WindowsDesktop.App.WPF" />
+      </group>
+    </frameworkReferences>
+  </metadata>
+  <files>
+    <file src="C:\Users\tmali\source\repos\AsystentZOOM\AsystentZOOM.GUI\bin\Debug\net5.0-windows\AsystentZOOM.GUI.runtimeconfig.json" target="lib\net5.0-windows7.0\AsystentZOOM.GUI.runtimeconfig.json" />
+    <file src="C:\Users\tmali\source\repos\AsystentZOOM\AsystentZOOM.GUI\bin\Debug\net5.0-windows\AsystentZOOM.GUI.dll" target="lib\net5.0-windows7.0\AsystentZOOM.GUI.dll" />
+  </files>
+</package>

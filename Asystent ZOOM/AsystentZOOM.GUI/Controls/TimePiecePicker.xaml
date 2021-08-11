@@ -1,0 +1,76 @@
+﻿<UserControl x:Class="AsystentZOOM.GUI.Controls.TimePiecePicker"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:AsystentZOOM.GUI.Controls" 
+             xmlns:conv="clr-namespace:AsystentZOOM.GUI.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <conv:SolidColorBrushConverter x:Key="SolidColorBrushConverter"/>
+        <conv:ShortFileNameConverter x:Key="ShortFileNameConverter"/>
+        <conv:ShortTitleConverter x:Key="ShortTitleConverter"/>
+        <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <conv:IsNullOrEmptyToVisibilityConverter x:Key="IsNullOrEmptyToVisibilityConverter"/>
+        <conv:StringFormatConverter x:Key="StringFormatConverter"/>
+
+        <DataTemplate x:Key="ComboBoxItemTemplate">
+            <Label Content="{Binding Path=., Converter={StaticResource StringFormatConverter}, ConverterParameter='D2'}" Padding="0" />
+        </DataTemplate>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="45"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="45"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="45"/>
+        </Grid.ColumnDefinitions>
+
+        <ComboBox Grid.Column="0" VerticalAlignment="Center" x:Name="cmbHours" 
+                  SelectionChanged="cmb_SelectionChanged"
+                  Visibility="{Binding Path=HoursVisibility, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Converter={StaticResource BoolToVisibilityConverter}}"
+                  ItemTemplate="{StaticResource ResourceKey=ComboBoxItemTemplate}"/>
+
+        <Label Grid.Column="1" VerticalAlignment="Center" Content=":">
+            <Label.Style>
+                <Style TargetType="Label">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Path=HoursVisibility, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" Value="False">
+                            <Setter Property="Visibility" Value="Hidden"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Path=MinutesVisibility, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" Value="False">
+                            <Setter Property="Visibility" Value="Hidden"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Label.Style>
+        </Label>
+        
+        <ComboBox Grid.Column="2" VerticalAlignment="Center" x:Name="cmbMinutes" 
+                  SelectionChanged="cmb_SelectionChanged"
+                  Visibility="{Binding Path=MinutesVisibility, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Converter={StaticResource BoolToVisibilityConverter}}"
+                  ItemTemplate="{StaticResource ResourceKey=ComboBoxItemTemplate}"/>
+
+        <Label Grid.Column="3" VerticalAlignment="Center" Content=":">
+            <Label.Style>
+                <Style TargetType="Label">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Path=MinutesVisibility, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" Value="False">
+                            <Setter Property="Visibility" Value="Hidden"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Path=SecondsVisibility, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" Value="False">
+                            <Setter Property="Visibility" Value="Hidden"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Label.Style>
+        </Label>
+        
+        <ComboBox Grid.Column="4" VerticalAlignment="Center" x:Name="cmbSeconds" 
+                  SelectionChanged="cmb_SelectionChanged"
+                  Visibility="{Binding Path=SecondsVisibility, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Converter={StaticResource BoolToVisibilityConverter}}"
+                  ItemTemplate="{StaticResource ResourceKey=ComboBoxItemTemplate}"/>
+    </Grid>
+</UserControl>

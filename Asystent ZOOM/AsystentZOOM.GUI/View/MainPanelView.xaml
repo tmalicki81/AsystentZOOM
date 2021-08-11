@@ -1,0 +1,230 @@
+﻿<UserControl x:Class="AsystentZOOM.GUI.View.MainPanelView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:AsystentZOOM.GUI.View" 
+             xmlns:viewmodel="clr-namespace:AsystentZOOM.VM.ViewModel;assembly=AsystentZOOM.VM"
+             xmlns:factory="clr-namespace:AsystentZOOM.VM.Common;assembly=AsystentZOOM.VM" 
+             xmlns:controls="clr-namespace:AsystentZOOM.GUI.Controls" 
+             xmlns:conv="clr-namespace:AsystentZOOM.GUI.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800"
+             DataContext="{x:Static factory:SingletonVMFactory.Main}">
+    <UserControl.InputBindings>
+        <KeyBinding Modifiers="Ctrl" Key="S" Command="{Binding Path=Meeting.SaveToLocalCommand}"/>
+    </UserControl.InputBindings>
+    <Grid>
+        <Grid.Resources>
+            <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        </Grid.Resources>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Menu Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            
+            <MenuItem Header="Plik">
+                <MenuItem Header="Nowe spotkanie"/>
+                <MenuItem Header="Spotkanie z szablonu..."/>
+                <MenuItem Header="Otwórz..."/>
+                <MenuItem Header="Zapisz"/>
+                <MenuItem Header="Zapisz jako..."/>
+                <Separator/>
+                <MenuItem Header="Wyjdź"/>
+            </MenuItem>
+
+            <MenuItem Header="Chmura">
+                <MenuItem Header="Zaloguj"/>
+                <MenuItem Header="Wyloguj"/>
+                <Separator/>
+                <MenuItem Header="Synchronizuj pliki spotkań"/>
+                <MenuItem Header="Synchronizuj nagrania"/>
+            </MenuItem>
+
+            <MenuItem Header="Edycja">
+                <MenuItem Header="Dodaj parametr spotkania"/>
+                <MenuItem Header="Dodaj punkt spotkania"/>
+                <MenuItem Header="Wyczyść ustawienia widoków"/>
+            </MenuItem>
+
+            <MenuItem Header="Nagrywanie">
+                <MenuItem Header="Mikrofon włączony"/>
+                <MenuItem Header="Nagrywanie na komputerze..."/>
+                <MenuItem Header="Nagraj spotkanie"/>
+                <MenuItem Header="Otwórz folder z nagraniami"/>
+                <MenuItem Header="Synchronizuj nagrania"/>
+            </MenuItem>
+
+            <MenuItem Header="Dodatki" x:Name="miAddins"/>
+
+            <MenuItem Header="Pomoc">
+                <MenuItem Header="Instrukcja obsługi"/>
+            </MenuItem>
+        </Menu>
+
+        <TabControl Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" x:Name="tabControl" >
+            <TabItem Header="Okno udostępniania">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <WrapPanel>
+                        <GroupBox Header="Tryb udostępniania zawartości" Foreground="Blue" Margin="10" Padding="3" Width="400">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Label Grid.Row="0" Grid.Column="0" Content="Wybrany tryb:" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="3"/>
+                                <ComboBox Grid.Row="0" Grid.Column="1" x:Name="cmbWindowMode" SelectedValue="{Binding Path=WindowMode}" SelectedValuePath="Key"
+                                      HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0" >
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal" >
+                                                <Image Height="16" Width="16" Margin="0,1,0,0">
+                                                    <Image.Style>
+                                                        <Style TargetType="Image">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding Path=Key}" Value="NoBorder">
+                                                                    <Setter Property="Source" Value="..\Images\icons8-take-screenshot-32.png"/>
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding Path=Key}" Value="Normal">
+                                                                    <Setter Property="Source" Value="..\Images\icons8-form-32.png"/>
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding Path=Key}" Value="FullScreen">
+                                                                    <Setter Property="Source" Value="..\Images\icons8-all-out-32.png"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Image.Style>
+                                                </Image>
+                                                <Label Content="{Binding Path=Value}" Padding="0" Margin="3,0,0,0"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                                <CheckBox Grid.Row="1" Grid.Column="1" Margin="0,3,0,4"
+                                          IsChecked="{Binding Path=WarnBeforeStoppingSharing}" 
+                                          ToolTip="Ze względu na fakt, że zmiana trybu wyświetlania okna wymaga jego zamknięcia i ponownego otworzenia, ZOOM wyłączy udostępnianie zawartości tego okna.">
+                                    <CheckBox.Content>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Image Source="..\Images\icons8-warning-32.png" Height="16" Width="16" Margin="0,1,2,0"/>
+                                            <Label Content="Ostrzegaj przed zatrzymaniem udostępniania" Padding="0"/>
+                                        </StackPanel>
+                                    </CheckBox.Content>
+                                </CheckBox>
+                                <Label Grid.Row="2" Grid.Column="0" Content="Opis:" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0"/>
+                                <TextBox Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="0"
+                                         IsReadOnly="True" TextWrapping="Wrap" Height="90" Padding="3" >
+                                    <TextBox.Style>
+                                        <Style TargetType="TextBox">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Path=WindowMode}" Value="NoBorder">
+                                                    <Setter Property="Text" Value="Okno gotowe do udostępniania. Nie zawiera górnej belki z tytułem i przyciskami. Jest zawsze na wierzchu, a zmiana rozmiaru może następować wyłącznie z tego panelu."/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Path=WindowMode}" Value="FullScreen">
+                                                    <Setter Property="Text" Value="Okno w trybie pełnoekranowym. W ten tryb można wejść z poziomu tego panelu lub przeciągając okno do górnej krawędzi wybranego ekranu. Wyjście z trybu pełnoekranowego odbywa się przez naciśnięcie przycisku ESC."/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Path=WindowMode}" Value="Normal">
+                                                    <Setter Property="Text" Value="Zwykłe okno posiadające górną belkę z tytułem i przyciskami. Okno można dowolnie rozszerzać i przemieszczać."/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBox.Style>
+                                </TextBox>
+                            </Grid>
+                        </GroupBox>
+
+                        <GroupBox Header="Widoczność warstw" Foreground="Blue" Margin="10" Padding="3" Width="200">
+                            <ItemsControl ItemsSource="{Binding Path=Layers}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <CheckBox IsChecked="{Binding Path=IsEnabled}" Margin="3">
+                                            <CheckBox.Content>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Image Height="16" Width="16" Source="..\Images\icons8-apps-tab-32.png" Margin="0,0,5,0" Opacity=".8"/>
+                                                    <Label Content="{Binding Path=LayerName}" Padding="0" />
+                                                </StackPanel>
+                                            </CheckBox.Content>
+                                        </CheckBox>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </GroupBox>
+                        
+                        <GroupBox Header="Rozmiar i położenie okna prezentacji" Foreground="Blue" Margin="10" Padding="3" Width="400">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="20"/>
+                                    <ColumnDefinition Width="300"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <Label Grid.Row="0" Grid.Column="0" Content="Szerokość okna:" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2"/>
+                                <Image Grid.Row="0" Grid.Column="1" Height="16" Width="16" Source="..\Images\icons8-width-32.png"/>
+                                <Slider Grid.Row="0" Grid.Column="2" Maximum="10000" VerticalAlignment="Center" Value="{Binding Path=Width, Mode=TwoWay}"/>
+
+                                <Label Grid.Row="1" Grid.Column="0" Content="Wysokość okna:" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2"/>
+                                <Image Grid.Row="1" Grid.Column="1" Height="16" Width="16" Source="..\Images\icons8-height-32.png"/>
+                                <Slider Grid.Row="1" Grid.Column="2" Maximum="10000" VerticalAlignment="Center" Value="{Binding Path=Height, Mode=TwoWay}"/>
+
+                                <Label Grid.Row="2" Grid.Column="0" Content="Współrzędna X:" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2"/>
+                                <Image Grid.Row="2" Grid.Column="1" Height="16" Width="16" Source="..\Images\icons8-x-coordinate-32.png"/>
+                                <Slider Grid.Row="2" Grid.Column="2" Minimum="-5000" Maximum="10000" VerticalAlignment="Center" Value="{Binding Path=Left, Mode=TwoWay}"/>
+
+                                <Label Grid.Row="3" Grid.Column="0" Content="Współrzędna Y:" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2"/>
+                                <Image Grid.Row="3" Grid.Column="1" Height="16" Width="16" Source="..\Images\icons8-y-coordinate-32.png"/>
+                                <Slider Grid.Row="3" Grid.Column="2" Minimum="-5000" Maximum="10000" VerticalAlignment="Center" Value="{Binding Path=Top, Mode=TwoWay}"/>
+                            </Grid>
+                        </GroupBox>
+                    </WrapPanel>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
+
+        <Label Grid.Row="2" Content="{Binding MessageBarText, Mode=OneWay, NotifyOnSourceUpdated=True}" HorizontalAlignment="Stretch">
+            <Label.Style>
+                <Style TargetType="Label">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding MessageBarIsNew}" Value="True">
+                            <DataTrigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation To="Black" FillBehavior="HoldEnd" Duration="0:0:0"
+                                                        Storyboard.TargetProperty="(Label.Foreground).(SolidColorBrush.Color)"/>
+                                        <ColorAnimation Duration="0:0:1" FillBehavior="Stop" To="Red" AutoReverse="True" RepeatBehavior="2x"
+                                                        Storyboard.TargetProperty="(Label.Background).(SolidColorBrush.Color)"/>
+                                        <ColorAnimation Duration="0:0:1" To="Gray" BeginTime="0:0:5" FillBehavior="HoldEnd"
+                                                        Storyboard.TargetProperty="(Label.Foreground).(SolidColorBrush.Color)"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </DataTrigger.EnterActions>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Label.Style>
+        </Label>
+
+        <Popup x:Name="DragDropPopup" Placement="Top" AllowsTransparency="True"
+               PlacementTarget="{Binding RelativeSource={RelativeSource AncestorType=UserControl}}"
+               AllowDrop="True" DragEnter="DragDropPopup_DragEnter">
+        </Popup>
+
+        <controls:ProgressInfoControl DataContext="{Binding Path=ProgressInfo}" Grid.Row="0" Grid.RowSpan="3" 
+                                      Visibility="{Binding Path=ProgressBarVisibility, Mode=TwoWay, Converter={StaticResource ResourceKey=BoolToVisibilityConverter}}" />
+    </Grid>
+</UserControl>

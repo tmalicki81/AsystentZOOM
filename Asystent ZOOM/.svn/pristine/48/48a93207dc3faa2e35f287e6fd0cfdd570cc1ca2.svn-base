@@ -1,0 +1,443 @@
+﻿<UserControl x:Class="AsystentZOOM.GUI.Controls.PlayerPanelControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:AsystentZOOM.GUI.Controls" 
+             xmlns:conv="clr-namespace:AsystentZOOM.GUI.Converters"
+             mc:Ignorable="d" x:Name="myUserControl"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <conv:SolidColorBrushConverter x:Key="SolidColorBrushConverter"/>
+        <conv:ShortFileNameConverter x:Key="ShortFileNameConverter"/>
+        <conv:ShortTitleConverter x:Key="ShortTitleConverter"/>
+        <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <conv:TimespanToSecondsConverter x:Key="TimespanToSecondsConverter"/>
+        <conv:BookmarksToDoubleCollectionConverter x:Key="BookmarksToDoubleCollectionConverter"/>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <WrapPanel x:Name="thisControl">
+            <StackPanel Margin="3,3,15,3">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <CheckBox Grid.Column="0" IsChecked="{Binding Path=IsEnabled, Mode=TwoWay}" Margin="3,3,3,10" HorizontalAlignment="Left">
+                        <Label VerticalAlignment="Center" Padding="0">
+                                <TextBlock>
+                                    <Run Text="Warstwa"/>
+                                    <Run Text="{Binding Path=MediaName, ElementName=myUserControl}"/>
+                                    <Run Text="włączona"/>
+                            </TextBlock>
+                        </Label>
+                    </CheckBox>
+                    <CheckBox Grid.Column="2" IsChecked="{Binding Path=ShowBookmarks, Mode=TwoWay}" Margin="3,3,3,10" HorizontalAlignment="Left">
+                        <Label Content="Pokaż zakładki" VerticalAlignment="Center" Padding="0" />
+                    </CheckBox>
+                </Grid>
+                <GroupBox Header="{Binding Path=LayerName}" Foreground="Blue" HorizontalAlignment="Left" VerticalAlignment="Top" Padding="3" Width="370">
+                    <GroupBox.Style>
+                        <Style TargetType="GroupBox">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=IsEnabled}" Value="False">
+                                    <Setter Property="IsEnabled" Value="False"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </GroupBox.Style>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!--Przyciski-->
+                        <StackPanel Grid.Row="0" HorizontalAlignment="Stretch" Margin="3" Orientation="Horizontal">
+
+                            <Button Command="{Binding Path=PlayCommand}" Padding="8" Margin="2" Cursor="Hand" Width="55" >
+                                <StackPanel>
+                                    <Image Source="..\Images\icons8-play-32.png" Height="32"/>
+                                    <Label Content="Start" Padding="0" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+
+                            <Button Command="{Binding Path=PauseCommand}" Padding="8" Margin="2" Cursor="Hand" Width="55" >
+                                <StackPanel>
+                                    <Image Source="..\Images\icons8-pause-32.png" Height="32"/>
+                                    <Label Content="Pauza" Padding="0" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                           
+                            <Button Command="{Binding Path=StopCommand}" Padding="8" Margin="2" Cursor="Hand" Width="55">
+                                <StackPanel>
+                                    <Image Source="..\Images\icons8-stop-32.png" Height="32"/>
+                                    <Label Content="Stop" Padding="0" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+
+                            <Button Command="{Binding Path=RestartCommand}" Padding="8" Margin="2" Cursor="Hand" Width="55">
+                                <StackPanel>
+                                    <Image Source="..\Images\icons8-restart-32.png" Height="32"/>
+                                    <Label Content="Restart" Padding="0" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+
+                            <ContentControl x:Name="icAdditionalButtons"/>
+
+                        </StackPanel>
+
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <!--Pozycja audio/video-->
+                            <Label Grid.Row="0" Grid.Column="0" FontWeight="Bold" Grid.ColumnSpan="3" Margin="0,5,0,0">
+                                <TextBlock>
+                                    <Run Text="Pozycja"/>
+                                    <Run Text="{Binding Path=MediaName, ElementName=myUserControl}"/>
+                                </TextBlock>
+                            </Label>
+                            <Label Grid.Row="1" Grid.Column="1" Content="Suwak:" HorizontalAlignment="Right" />
+                            <local:SliderWithPopup Grid.Row="1" Grid.Column="2" x:Name="positionSlider"
+                                                      Maximum="{Binding Path=Duration, Converter={StaticResource TimespanToSecondsConverter}}" 
+                                                      Value="{Binding Path=Position, Converter={StaticResource TimespanToSecondsConverter}, Mode=TwoWay}"
+                                                      LabelConverter="{Binding Path=SecondsToTimeSpanFormat, ElementName=myUserControl, Mode=OneWay}"
+                                                      ControlConverter="{Binding Path=PositionToImage, ElementName=myUserControl, Mode=OneWay}"
+                                                      PreviewMouseUp="SliderWithPopup_MouseUp" 
+                                                      SelectionStart="{Binding Path=SelectionStart, Mode=TwoWay}" 
+                                                      SelectionEnd="{Binding Path=SelectionEnd, Mode=TwoWay}" 
+                                                      IsSelectionRangeEnabled="{Binding Path=IsSelectionRangeEnabled, Mode=TwoWay}"
+                                                      Foreground="Green"
+                                                      Background="Transparent"
+                                                      Ticks="{Binding Path=FileInfo.Bookmarks, Converter={StaticResource BookmarksToDoubleCollectionConverter}, Mode=TwoWay}" >
+                                <local:SliderWithPopup.Style>
+                                    <Style TargetType="local:SliderWithPopup">
+                                        <Setter Property="TickPlacement" Value="TopLeft"/>
+                                        <Style.Triggers>
+                                            <Trigger Property="Ticks" Value="{x:Null}">
+                                                <Setter Property="TickPlacement" Value="None"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </local:SliderWithPopup.Style>
+                            </local:SliderWithPopup>
+
+                            <Label Grid.Row="2" Grid.Column="1" Content="Pozycja:" HorizontalAlignment="Right" />
+                            <local:TimePiecePicker Grid.Row="2" Grid.Column="2" x:Name="tppPosition" Offset="{Binding Path=Position, Mode=OneWay}" VerticalAlignment="Center" IsEnabled="False"/>
+
+                            <Label Grid.Row="3" Grid.Column="1" Content="Czas całkowity:" HorizontalAlignment="Right" />
+                            <local:TimePiecePicker Grid.Row="3" Grid.Column="2" x:Name="tppDuration" Offset="{Binding Path=Duration, Mode=OneWay}" VerticalAlignment="Center" IsEnabled="False"/>
+
+                            <Label Grid.Row="4" Grid.Column="1" Content="Czas pozostały:" HorizontalAlignment="Right" />
+                            <Grid Grid.Row="4" Grid.Column="2" >
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <local:TimePiecePicker x:Name="tppTimeToEnd" Offset="{Binding Path=TimeToEnd, Mode=OneWay}" VerticalAlignment="Center" IsEnabled="False" />
+                                <Label Content="skrócono" Grid.Column="1" Foreground="Red">
+                                    <Label.Style>
+                                        <Style TargetType="Label">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Path=FileInfo.FinishBefore}" Value="00:00:00">
+                                                    <Setter Property="Visibility" Value="Hidden"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Label.Style>
+                                </Label>
+                            </Grid>
+
+                            <!--Dźwięk-->
+                            <Label Grid.Row="5" Grid.Column="0" Content="Dźwięk" FontWeight="Bold" Grid.ColumnSpan="3" Margin="0,5,0,0"/>
+                            <Label Grid.Row="6" Grid.Column="1" Content="Głośność:" HorizontalAlignment="Right" />
+                            <local:SliderWithPopup Grid.Row="6" Grid.Column="2" 
+                                                   Minimum="0" Maximum="1" Value="{Binding Path=Volume, Mode=TwoWay}" VerticalAlignment="Center"
+                                                   LabelConverter="{x:Static local:PlayerPanelControl.PercentFromUnit}" />
+                            <Label Grid.Row="7" Grid.Column="1" Content="Wyciszenie:" HorizontalAlignment="Right" />
+                            <CheckBox Grid.Row="7" Grid.Column="2" IsChecked="{Binding Path=IsMuted, Mode=TwoWay}" VerticalAlignment="Center" />
+
+                            <!--Plik audio/video-->
+                            <Label Grid.Row="8" Grid.Column="0" FontWeight="Bold" Grid.ColumnSpan="3" Margin="0,5,0,0">
+                                <TextBlock>
+                                    <Run Text="Plik"/>
+                                    <Run Text="{Binding Path=MediaName, ElementName=myUserControl}"/>
+                                </TextBlock>
+                            </Label>
+                            <Label Grid.Row="9" Grid.Column="1" Content="Nazwa pliku:" HorizontalAlignment="Right" />
+                            <TextBox Grid.Row="9" Grid.Column="2" HorizontalAlignment="Stretch" TextWrapping="Wrap" Text="{Binding Path=Source}" IsReadOnly="True" Padding="3" Margin=".5"/>
+                            <Label Grid.Row="10" Grid.Column="1" Content="Tytuł:" HorizontalAlignment="Right" />
+                            <TextBox Grid.Row="10" Grid.Column="2" HorizontalAlignment="Stretch" TextWrapping="Wrap" Text="{Binding Path=FileInfo.Title, Mode=OneWay}" IsReadOnly="True" Padding="3" Margin=".5"/>
+                            <Label Grid.Row="11" Grid.Column="1" Content="Zakończ przed:" HorizontalAlignment="Right" />
+                            <local:TimePiecePicker Grid.Row="11" Grid.Column="2" 
+                                                   Offset="{Binding Path=FileInfo.FinishBefore, Mode=TwoWay}"
+                                                   MaxValue="{Binding Path=Duration}"/>
+                        </Grid>
+                    </Grid>
+                </GroupBox>
+            </StackPanel>
+
+            <GroupBox Header="Zakładki" Foreground="Blue" HorizontalAlignment="Left" 
+                      VerticalAlignment="Top" Padding="3" Width="370"
+                      Margin="0,32,0,0"
+                      Visibility="{Binding Path=ShowBookmarks, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=COLAPSE}">
+                <GroupBox.Style>
+                    <Style TargetType="GroupBox">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Path=IsEnabled}" Value="False">
+                                <Setter Property="IsEnabled" Value="False"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </GroupBox.Style>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!--Zakładki: Przyciski-->
+                    <StackPanel Grid.Row="0" HorizontalAlignment="Stretch" Margin="3" Orientation="Horizontal">
+
+                        <Button Command="{Binding Path=AddBookmarkCommand}" Padding="8" Margin="2" Cursor="Hand" Width="60" >
+                            <StackPanel>
+                                <Image Source="..\Images\icons8-pin-32.png" Height="32"/>
+                                <Label Content="Dodaj" Padding="0" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Button Command="{Binding Path=ReplaceBookmarkCommand}" Padding="8" Margin="2" Cursor="Hand" Width="60" >
+                            <StackPanel>
+                                <Image Source="..\Images\icons8-push-pin-32.png" Height="32"/>
+                                <Label Content="Zamień" Padding="0" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Button Command="{Binding Path=DeleteBookmarkCommand}" Padding="8" Margin="2" Cursor="Hand" Width="60" >
+                            <StackPanel>
+                                <Image Source="..\Images\icons8-unpin-32.png" Height="32"/>
+                                <Label Content="Usuń" Padding="0" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Button Command="{Binding Path=SetPositionFromBookmarkCommand}" Padding="8" Margin="60,2,2,2" Cursor="Hand" Width="94" >
+                            <StackPanel>
+                                <Image Source="..\Images\icons8-pin-in-circle-32.png" Height="32"/>
+                                <Label Content="Ustaw pozycję" Padding="0" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="20"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!--Zakładki-->
+                        <Label Grid.Row="0" Grid.Column="0" Content="Lista zakładek" FontWeight="Bold" Grid.ColumnSpan="3" Margin="0,5,0,0"/>
+                        <Grid Grid.Row="1" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" DataContext="{Binding Path=FileInfo}" >
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <DataGrid Grid.Row="1" ItemsSource="{Binding Path=Bookmarks}" Padding="0" Margin="0" Height="285" AutoGenerateColumns="False"
+                                      CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False"
+                                      SelectedItem="{Binding Path=SelectedBookmark}" SelectionMode="Single" SelectionUnit="FullRow">
+                                <DataGrid.CellStyle>
+                                    <Style TargetType="DataGridCell">
+                                        <Setter Property="Background" Value="Transparent"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Path=IsSelected, Mode=TwoWay}" Value="True">
+                                                <Setter Property="Background" Value="Green"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGrid.CellStyle>
+                                <DataGrid.Columns>
+                                    <DataGridTemplateColumn CanUserResize="False" IsReadOnly="True">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Image Source="..\Images\icons8-play-32.png" Height="14" 
+                                                       Visibility="{Binding Path=IsPlaying, Mode=TwoWay, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTemplateColumn Header="Pozycja" CanUserResize="False">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Label Content="{Binding Path=Position, Mode=TwoWay}" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                        <DataGridTemplateColumn.CellEditingTemplate>
+                                            <DataTemplate>
+                                                <Grid>
+                                                    <Label Content="{Binding Path=Position, Mode=TwoWay}" />
+                                                    <Popup IsOpen="True">
+                                                        <Border Background="DarkGray" BorderBrush="Black" BorderThickness="1">
+                                                            <local:TimePiecePicker Margin="3" Offset="{Binding Path=Position, Mode=TwoWay}" 
+                                                                                   LostFocus="TimePiecePicker_LostFocus" Background="Transparent"
+                                                                                   MaxValue="{Binding Path=FileInfo.Duration}"/>
+                                                        </Border>
+                                                    </Popup>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellEditingTemplate>
+                                    </DataGridTemplateColumn>
+
+                                    <DataGridTemplateColumn Header="Nazwa" Width="*" CanUserResize="False">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Label Content="{Binding Path=Name, Mode=TwoWay}" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                        <DataGridTemplateColumn.CellEditingTemplate>
+                                            <DataTemplate>
+                                                <TextBox VerticalContentAlignment="Center" FontWeight="Bold" Text="{Binding Path=Name, Mode=TwoWay}" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellEditingTemplate>
+                                    </DataGridTemplateColumn>
+
+                                    <DataGridTemplateColumn Header="Kolor" CanUserResize="False">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <local:ColorComboBox Margin="1" SelectedColor="{Binding Path=Color, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ShowColorNames="False"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Grid>
+
+                        <!--Opcje zakładek i przycinanie-->
+                        <Label Grid.Row="2" Grid.Column="0" Content="Opcje zakładek i przycinanie" FontWeight="Bold" Grid.ColumnSpan="3" Margin="0,5,0,0"/>
+                        <Label Grid.Row="3" Grid.Column="1" Content="Po zakonczeniu:" HorizontalAlignment="Right" />
+                        <ComboBox Grid.Row="3" Grid.Column="2" VerticalAlignment="Center" Height="25" VerticalContentAlignment="Center"
+                                  ItemsSource="{Binding Path=AfterEndBookmarkList}" SelectedItem="{Binding Path=AfterEndBookmark}" >
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Height="16" Width="16" Margin="0,0,5,0">
+                                            <Image.Style>
+                                                <Style TargetType="Image">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Path=.}" Value="Played">
+                                                            <Setter Property="Source" Value="..\Images\icons8-play-32.png"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Path=.}" Value="Paused">
+                                                            <Setter Property="Source" Value="..\Images\icons8-pause-32.png"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Path=.}" Value="Stopped">
+                                                            <Setter Property="Source" Value="..\Images\icons8-stop-32.png"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Image.Style>
+                                        </Image>
+                                        <Label VerticalContentAlignment="Center" Margin="0" Padding="0">
+                                            <Label.Style>
+                                                <Style TargetType="Label">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Path=.}" Value="Played">
+                                                            <Setter Property="Content" Value="Kontynuuj odtwarzanie"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Path=.}" Value="Paused">
+                                                            <Setter Property="Content" Value="Zrób pauzę"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Path=.}" Value="Stopped">
+                                                            <Setter Property="Content" Value="Zatrzymaj"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Label.Style>
+                                        </Label>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+
+                        <Grid Grid.Row="4" Grid.Column="1" Height="7"/>
+
+                        <Label Grid.Row="5" Grid.Column="1" Grid.RowSpan="2" HorizontalAlignment="Right">
+                            <Label.Content>
+                                <TextBlock>
+                                    <Run Text="Przycinanie"/>
+                                    <Run Text="{Binding Path=MediaName, ElementName=myUserControl}"/>
+                                    <LineBreak/>
+                                    <Run Text="(do nowego pliku)" Foreground="Gray"/>
+                                </TextBlock>
+                            </Label.Content>
+                        </Label>
+                        <Button Grid.Row="5" Grid.Column="2" Height="25" Margin="0,0,0,1" 
+                                HorizontalContentAlignment="Left" Cursor="Hand" IsEnabled="False">
+                            <Button.Content>
+                                <StackPanel Orientation="Horizontal">
+                                    <Grid Height="16" Width="25">
+                                        <Image Height="16" Source="..\Images\icons8-pin-32.png"/>
+                                    </Grid>
+                                    <Label Content="Przytnij wybraną zakładkę" Margin="0" Padding="0"/>
+                                </StackPanel>
+                            </Button.Content>
+                        </Button>
+                        <Button Grid.Row="6" Grid.Column="2" Height="25" 
+                                HorizontalContentAlignment="Left" Cursor="Hand" IsEnabled="False">
+                            <Button.Content>
+                                <StackPanel Orientation="Horizontal">
+                                    <Grid Height="16" Width="25">
+                                        <Image Height="16" Source="..\Images\icons8-pin-32.png"/>
+                                        <Image Height="16" Source="..\Images\icons8-pin-32.png" Margin="8,2,0,0"/>
+                                    </Grid>
+                                    <Label Content="Przytnij wszystkie zakłdaki" Margin="0" Padding="0"/>
+                                </StackPanel>
+                            </Button.Content>
+                        </Button>
+                    </Grid>
+                </Grid>
+            </GroupBox>
+
+        </WrapPanel>
+    </ScrollViewer>
+</UserControl>

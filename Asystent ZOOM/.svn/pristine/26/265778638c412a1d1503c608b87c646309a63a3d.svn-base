@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<TimePieceVM xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <IsEnabled>true</IsEnabled>
+  <UseBreak>false</UseBreak>
+  <TimerValue>PT8H30M39.1669103S</TimerValue>
+  <ReferencePoint>ToSpecificTime</ReferencePoint>
+  <StartingTimeSpan>PT30S</StartingTimeSpan>
+  <EndTime>PT18H15M</EndTime>
+  <BreakTime>PT0S</BreakTime>
+  <AlertMinTime>PT5S</AlertMinTime>
+  <TextAbove>Witamy państwa.
+Za</TextAbove>
+  <TextBelow>rozpocznie się spotkanie</TextBelow>
+  <TextFontSize>43</TextFontSize>
+  <ClockFontSize>177</ClockFontSize>
+  <TextColor>
+    <A>255</A>
+    <R>255</R>
+    <G>165</G>
+    <B>0</B>
+    <ScA>1</ScA>
+    <ScR>1</ScR>
+    <ScG>0.37626216</ScG>
+    <ScB>0</ScB>
+  </TextColor>
+  <ClockColor>
+    <A>255</A>
+    <R>255</R>
+    <G>255</G>
+    <B>0</B>
+    <ScA>1</ScA>
+    <ScR>1</ScR>
+    <ScG>1</ScG>
+    <ScB>0</ScB>
+  </ClockColor>
+  <ClockAlertColor>
+    <A>255</A>
+    <R>255</R>
+    <G>0</G>
+    <B>0</B>
+    <ScA>1</ScA>
+    <ScR>1</ScR>
+    <ScG>0</ScG>
+    <ScB>0</ScB>
+  </ClockAlertColor>
+  <Mode>Timer</Mode>
+  <Direction>Back</Direction>
+  <TimerFormat>mm\:ss</TimerFormat>
+  <Margins>0</Margins>
+</TimePieceVM>

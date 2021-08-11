@@ -1,0 +1,67 @@
+﻿<UserControl x:Class="AsystentZOOM.GUI.View.BackgroundOutputView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:AsystentZOOM.GUI.View"
+             xmlns:factory="clr-namespace:AsystentZOOM.VM.Common;assembly=AsystentZOOM.VM"
+             xmlns:viewmodel="clr-namespace:AsystentZOOM.VM.ViewModel;assembly=AsystentZOOM.VM" 
+             xmlns:conv="clr-namespace:AsystentZOOM.GUI.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800"
+             Background="Black"
+             DataContext="{x:Static factory:SingletonVMFactory.Background}">
+    
+    <UserControl.Resources>
+        <conv:SolidColorBrushConverter x:Key="SolidColorBrushConverter"/>
+        <conv:ShortFileNameConverter x:Key="ShortFileNameConverter"/>
+        <conv:ShortTitleConverter x:Key="ShortTitleConverter"/>
+        <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    </UserControl.Resources>
+
+    <Grid Opacity="{Binding Path=Opacity, Mode=TwoWay}">
+        <Grid.Style>
+            <Style TargetType="Grid">
+                <Style.Triggers>
+                    
+                    <DataTrigger Binding="{Binding Path=GradientDirection}" Value="None">
+                        <Setter Property="Background" Value="{Binding Path=BackgroundColor, Mode=TwoWay, Converter={StaticResource ResourceKey=SolidColorBrushConverter}}"/>
+                    </DataTrigger>
+
+                    <DataTrigger Binding="{Binding Path=GradientDirection}" Value="CenterToEdge">
+                        <Setter Property="Background">
+                            <Setter.Value>
+                                <RadialGradientBrush GradientOrigin="0.5,0.5" Center="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
+                                    <GradientStop Color="{Binding Path=BackgroundColor}" Offset="0"/>
+                                    <GradientStop Color="{Binding Path=GradientColor}" Offset="{Binding Path=GradientOffset}"/>
+                                </RadialGradientBrush>
+                            </Setter.Value>
+                        </Setter>
+                    </DataTrigger>
+
+                    <DataTrigger Binding="{Binding Path=GradientDirection}" Value="LeftToRight">
+                        <Setter Property="Background">
+                            <Setter.Value>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0" >
+                                    <GradientStop Color="{Binding Path=BackgroundColor}" Offset="0"/>
+                                    <GradientStop Color="{Binding Path=GradientColor}" Offset="{Binding Path=GradientOffset}"/>
+                                </LinearGradientBrush>
+                            </Setter.Value>
+                        </Setter>
+                    </DataTrigger>
+                    
+                    <DataTrigger Binding="{Binding Path=GradientDirection}" Value="TopToDown">
+                        <Setter Property="Background">
+                            <Setter.Value>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1" >
+                                    <GradientStop Color="{Binding Path=BackgroundColor}" Offset="0"/>
+                                    <GradientStop Color="{Binding Path=GradientColor}" Offset="{Binding Path=GradientOffset}"/>
+                                </LinearGradientBrush>
+                            </Setter.Value>
+                        </Setter>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </Grid.Style>
+    </Grid>
+</UserControl>
