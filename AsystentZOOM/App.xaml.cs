@@ -13,7 +13,6 @@ namespace AsystentZOOM
         protected override void OnStartup(StartupEventArgs e)
         {
             Args = e.Args;
-            //MessageBox.Show("AsystentZOOM: " + e.Args.FirstOrDefault());
             base.OnStartup(e);
         }
     }
