@@ -26,7 +26,12 @@
         </Grid.RowDefinitions>
 
         <Menu Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            
+            <Menu.Resources>
+                <Style TargetType="MenuItem">
+                    <Setter Property="IsEnabled" Value="False"/>
+                </Style>
+            </Menu.Resources>
+
             <MenuItem Header="Plik">
                 <MenuItem Header="Nowe spotkanie"/>
                 <MenuItem Header="Spotkanie z szablonu..."/>

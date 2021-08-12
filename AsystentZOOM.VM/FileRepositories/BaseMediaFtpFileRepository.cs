@@ -9,7 +9,7 @@ namespace AsystentZOOM.VM.FileRepositories
         {
             HostName = "av-labedy.pl",
             UserName = "tmalicki81-asystent-zoom-documents",
-            Password = "Test1234!",
+            Password = FileService.Common.CryptoHelper.DecryptString("992545eca56942ad", "BqdMmA9ox8m2XKGJNBXx0w=="),
             RemoteDirectory = RemoteDirectory
         };
 

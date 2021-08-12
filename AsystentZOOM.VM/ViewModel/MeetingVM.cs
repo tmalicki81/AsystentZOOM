@@ -74,7 +74,7 @@ namespace AsystentZOOM.VM.ViewModel
         {
             get
             {
-                var meetingBeginTimespan = new TimeSpan(DateTime.Now.Hour, 30, 0);
+                var meetingBeginTimespan = new TimeSpan(DateTime.Now.AddHours(1).Hour, 30, 0);
                 var meeting = new MeetingVM
                 {
                     MeetingTitle = "Nowe spotkanie",
