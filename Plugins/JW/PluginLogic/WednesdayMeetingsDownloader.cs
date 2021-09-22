@@ -46,7 +46,7 @@ namespace JW
             { 6, "czerwca"          },
             { 7, "lipca"            },
             { 8, "sierpnia"         },
-            { 9, "wrzesnia"         },
+            { 9, "września"         },
             { 10, "pazdziernika"    },
             { 11, "listopada"       },
             { 12, "grudnia"         },

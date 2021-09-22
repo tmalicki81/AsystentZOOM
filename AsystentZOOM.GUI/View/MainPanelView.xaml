@@ -26,11 +26,11 @@
         </Grid.RowDefinitions>
 
         <Menu Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <Menu.Resources>
+            <!--<Menu.Resources>
                 <Style TargetType="MenuItem">
                     <Setter Property="IsEnabled" Value="False"/>
                 </Style>
-            </Menu.Resources>
+            </Menu.Resources>-->
 
             <MenuItem Header="Plik">
                 <MenuItem Header="Nowe spotkanie"/>
@@ -181,19 +181,19 @@
 
                                 <Label Grid.Row="0" Grid.Column="0" Content="Szerokość okna:" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2"/>
                                 <Image Grid.Row="0" Grid.Column="1" Height="16" Width="16" Source="..\Images\icons8-width-32.png"/>
-                                <Slider Grid.Row="0" Grid.Column="2" Maximum="10000" VerticalAlignment="Center" Value="{Binding Path=Width, Mode=TwoWay}"/>
+                                <Slider Grid.Row="0" Grid.Column="2" Maximum="10000" VerticalAlignment="Center" Value="{Binding Path=OutputWindowWidth, Mode=TwoWay}"/>
 
                                 <Label Grid.Row="1" Grid.Column="0" Content="Wysokość okna:" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2"/>
                                 <Image Grid.Row="1" Grid.Column="1" Height="16" Width="16" Source="..\Images\icons8-height-32.png"/>
-                                <Slider Grid.Row="1" Grid.Column="2" Maximum="10000" VerticalAlignment="Center" Value="{Binding Path=Height, Mode=TwoWay}"/>
+                                <Slider Grid.Row="1" Grid.Column="2" Maximum="10000" VerticalAlignment="Center" Value="{Binding Path=OutputWindowHeight, Mode=TwoWay}"/>
 
                                 <Label Grid.Row="2" Grid.Column="0" Content="Współrzędna X:" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2"/>
                                 <Image Grid.Row="2" Grid.Column="1" Height="16" Width="16" Source="..\Images\icons8-x-coordinate-32.png"/>
-                                <Slider Grid.Row="2" Grid.Column="2" Minimum="-5000" Maximum="10000" VerticalAlignment="Center" Value="{Binding Path=Left, Mode=TwoWay}"/>
+                                <Slider Grid.Row="2" Grid.Column="2" Minimum="-5000" Maximum="10000" VerticalAlignment="Center" Value="{Binding Path=OutputWindowLeft, Mode=TwoWay}"/>
 
                                 <Label Grid.Row="3" Grid.Column="0" Content="Współrzędna Y:" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2"/>
                                 <Image Grid.Row="3" Grid.Column="1" Height="16" Width="16" Source="..\Images\icons8-y-coordinate-32.png"/>
-                                <Slider Grid.Row="3" Grid.Column="2" Minimum="-5000" Maximum="10000" VerticalAlignment="Center" Value="{Binding Path=Top, Mode=TwoWay}"/>
+                                <Slider Grid.Row="3" Grid.Column="2" Minimum="-5000" Maximum="10000" VerticalAlignment="Center" Value="{Binding Path=OutputWindowTop, Mode=TwoWay}"/>
                             </Grid>
                         </GroupBox>
                     </WrapPanel>

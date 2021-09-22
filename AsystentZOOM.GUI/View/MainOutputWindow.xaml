@@ -17,8 +17,8 @@
         WindowStyle="{Binding Path=WindowStyle, Mode=OneWay}"
         
         WindowState="{Binding Path=WindowState, Mode=TwoWay}"
-        Top="{Binding Path=Top, Mode=TwoWay}"
-        Left="{Binding Path=Left, Mode=TwoWay}"
+        Top="{Binding Path=OutputWindowTop, Mode=TwoWay}"
+        Left="{Binding Path=OutputWindowLeft, Mode=TwoWay}"
         SizeChanged="Window_SizeChanged">
     
     <Window.Resources>

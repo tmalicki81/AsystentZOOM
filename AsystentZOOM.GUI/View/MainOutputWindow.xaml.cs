@@ -23,15 +23,15 @@ namespace AsystentZOOM.GUI.View
         public MainOutputWindow()
         {
             InitializeComponent();
-            Height = ViewModel.Height;
-            Width = ViewModel.Width;
+            Height = ViewModel.OutputWindowHeight;
+            Width = ViewModel.OutputWindowWidth;
 
             if (Environment.UserDomainName.ToUpper().Contains("KAMSOFT"))
                 Title = "Entrypoint";//Process.GetCurrentProcess().MainModule.ModuleName;
             FillGrid();
 
-            EventAggregator.Subscribe<double>($"{nameof(MainVM)}_Change_{nameof(Width)}", (w) => Width = w, (p) => true);
-            EventAggregator.Subscribe<double>($"{nameof(MainVM)}_Change_{nameof(Height)}", (h) => Height = h, (p) => true);
+            EventAggregator.Subscribe<double>($"{nameof(MainVM)}_Change_{nameof(ViewModel.OutputWindowWidth)}", (w) => Width = w, (p) => true);
+            EventAggregator.Subscribe<double>($"{nameof(MainVM)}_Change_{nameof(ViewModel.OutputWindowHeight)}", (h) => Height = h, (p) => true);
             EventAggregator.Subscribe<Size>($"{typeof(ILayerVM)}_ChangeOutputSize", ChangeOutputSize, (s) => !ViewModel.ProgressInfo.ProgressBarVisibility);
         }
 
@@ -77,15 +77,15 @@ namespace AsystentZOOM.GUI.View
         {
             if (WindowState != WindowState.Maximized)
             {
-                ViewModel.Height = e.NewSize.Height;
-                ViewModel.Width = e.NewSize.Width;
+                ViewModel.OutputWindowHeight = e.NewSize.Height;
+                ViewModel.OutputWindowWidth = e.NewSize.Width;
             }
         }
 
         protected override void OnClosing(CancelEventArgs e)
         {
-            EventAggregator.UnSubscribe($"{nameof(MainVM)}_Change_{nameof(Width)}");
-            EventAggregator.UnSubscribe($"{nameof(MainVM)}_Change_{nameof(Height)}");
+            EventAggregator.UnSubscribe($"{nameof(MainVM)}_Change_{nameof(ViewModel.OutputWindowWidth)}");
+            EventAggregator.UnSubscribe($"{nameof(MainVM)}_Change_{nameof(ViewModel.OutputWindowHeight)}");
             EventAggregator.UnSubscribe($"{typeof(ILayerVM)}_ChangeOutputSize");
             base.OnClosing(e);
         }

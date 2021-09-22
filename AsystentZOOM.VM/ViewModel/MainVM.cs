@@ -126,39 +126,39 @@ namespace AsystentZOOM.VM.ViewModel
             set => SetValue(ref _topmost, value, nameof(Topmost));
         }
 
-        private double _top = 0;
-        public double Top
+        private double _outputWindowTop = 0;
+        public double OutputWindowTop
         {
-            get => _top;
-            set => SetValue(ref _top, value, nameof(Top));
+            get => _outputWindowTop;
+            set => SetValue(ref _outputWindowTop, value, nameof(OutputWindowTop));
         }
 
-        private double _left = 0;
-        public double Left
+        private double _outputWindowLeft = 0;
+        public double OutputWindowLeft
         {
-            get => _left;
-            set => SetValue(ref _left, value, nameof(Left));
+            get => _outputWindowLeft;
+            set => SetValue(ref _outputWindowLeft, value, nameof(OutputWindowLeft));
         }
 
-        private double _height = 600;
-        public double Height
+        private double _outputWindowHeight = 600;
+        public double OutputWindowHeight
         {
-            get => _height;
+            get => _outputWindowHeight;
             set
             {
-                if (SetValue(ref _height, value, nameof(Height)))
-                    EventAggregator.Publish($"{nameof(MainVM)}_Change_{nameof(Height)}", _height);
+                if (SetValue(ref _outputWindowHeight, value, nameof(OutputWindowHeight)))
+                    EventAggregator.Publish($"{nameof(MainVM)}_Change_{nameof(OutputWindowHeight)}", _outputWindowHeight);
             }
         }
 
-        private double _width = 824;
-        public double Width
+        private double _outputWindowWidth = 824;
+        public double OutputWindowWidth
         {
-            get => _width;
+            get => _outputWindowWidth;
             set
             {
-                if (SetValue(ref _width, value, nameof(Width)))
-                    EventAggregator.Publish($"{nameof(MainVM)}_Change_{nameof(Width)}", _width);
+                if (SetValue(ref _outputWindowWidth, value, nameof(OutputWindowWidth)))
+                    EventAggregator.Publish($"{nameof(MainVM)}_Change_{nameof(OutputWindowWidth)}", _outputWindowWidth);
             }
         }
 
