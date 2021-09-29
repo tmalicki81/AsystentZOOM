@@ -1,6 +1,7 @@
 ﻿using AsystentZOOM.GUI.View;
 using AsystentZOOM.VM.Common;
 using AsystentZOOM.VM.Common.Dialog;
+using AsystentZOOM.VM.Interfaces;
 using AsystentZOOM.VM.ViewModel;
 using Microsoft.Win32;
 using System;
@@ -16,9 +17,11 @@ namespace AsystentZOOM.GUI
     /// <summary>
     /// Interaction logic for PanelWindow.xaml
     /// </summary>
-    public partial class PanelWindow : Window
+    public partial class PanelWindow : Window, IViewModel<MainVM>
     {
         private MainOutputWindow _mainOutputWindow;
+
+        public MainVM ViewModel => (MainVM)DataContext;
 
         public PanelWindow()
         {
@@ -26,20 +29,33 @@ namespace AsystentZOOM.GUI
 
             MainVM.Dispatcher = Dispatcher;
 
+            Height = ViewModel.PanelWindowHeight;
+            Width = ViewModel.PanelWindowWidth;
+
             if (Environment.UserDomainName.ToUpper().Contains("KAMSOFT"))
                 Title = "Entrypoint";//Process.GetCurrentProcess().MainModule.ModuleName;
             Title = Title + $"   ( wersja: {App.Version} / {MainVM.Version})";
 
-           _mainOutputWindow = new MainOutputWindow();
-           _mainOutputWindow.Show();
+            _mainOutputWindow = new MainOutputWindow();
+            _mainOutputWindow.Show();
 
             EventAggregator.Subscribe<bool>(nameof(MainVM) + "_Close", CloseMainOutputWindow, (p) => true);
             EventAggregator.Subscribe(nameof(MainVM) + "_Open", OpenMainOutputWindow, () => true);
             EventAggregator.Subscribe(nameof(MainVM) + "_Reset", ResetMainOutputWindow, () => true);
             EventAggregator.Subscribe(nameof(MainVM) + "_ActivatePanel", () => Activate(), () => true);
-            EventAggregator.Subscribe<MessageBoxParameters>("MessageBox_Show", MessageBox_Show, (x)=> true );
+            EventAggregator.Subscribe<MessageBoxParameters>("MessageBox_Show", MessageBox_Show, (x) => true);
             EventAggregator.Subscribe<OpenFileDialogParameters>("OpenFile_Show", OpenFile_Show, (x) => true);
             EventAggregator.Subscribe<SaveFileDialogParameters>("SaveFile_Show", SaveFile_Show, (x) => true);
+
+            EventAggregator.Subscribe<double>($"{nameof(MainVM)}_Change_{nameof(ViewModel.PanelWindowWidth)}", (w) => Width = w, (p) => true);
+            EventAggregator.Subscribe<double>($"{nameof(MainVM)}_Change_{nameof(ViewModel.PanelWindowHeight)}", (h) => Height = h, (p) => true);
+            EventAggregator.Subscribe<Size>($"{typeof(ILayerVM)}_ChangePanelSize", ChangePanelSize, (s) => true);
+        }
+
+        private void ChangePanelSize(Size size)
+        {
+            double proportions = size.Height / size.Width;
+            Height = Width * proportions;
         }
 
         private void MessageBox_Show(MessageBoxParameters p)
@@ -117,6 +133,15 @@ namespace AsystentZOOM.GUI
             SingletonVMFactory.SaveAllSingletons();
             SingletonVMFactory.DisposeAllSingletons();
             Application.Current?.Shutdown();
+        }
+
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (WindowState != WindowState.Maximized)
+            {
+                ViewModel.PanelWindowHeight = e.NewSize.Height;
+                ViewModel.PanelWindowWidth = e.NewSize.Width;
+            }
         }
     }
 }

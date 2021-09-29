@@ -4,8 +4,15 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:view="clr-namespace:AsystentZOOM.GUI.View"
+        xmlns:factory="clr-namespace:AsystentZOOM.VM.Common;assembly=AsystentZOOM.VM"
         mc:Ignorable="d"
-        Title="Asystent ZOOM" Height="450" Width="800">
+        Title="Asystent ZOOM" Height="450" Width="800"
+        
+        Top="{Binding Path=PanelWindowTop, Mode=TwoWay}"
+        Left="{Binding Path=PanelWindowLeft, Mode=TwoWay}"
+        SizeChanged="Window_SizeChanged"
+        
+        DataContext="{x:Static factory:SingletonVMFactory.Main}">
     <Grid>
         <view:MainPanelView/>
     </Grid>

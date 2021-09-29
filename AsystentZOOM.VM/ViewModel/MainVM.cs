@@ -162,6 +162,46 @@ namespace AsystentZOOM.VM.ViewModel
             }
         }
 
+        #region Panel
+
+        private double _panelWindowTop = 0;
+        public double PanelWindowTop
+        {
+            get => _panelWindowTop;
+            set => SetValue(ref _panelWindowTop, value, nameof(PanelWindowTop));
+        }
+
+        private double _panelWindowLeft = 0;
+        public double PanelWindowLeft
+        {
+            get => _panelWindowLeft;
+            set => SetValue(ref _panelWindowLeft, value, nameof(PanelWindowLeft));
+        }
+
+        private double _panelWindowHeight = 600;
+        public double PanelWindowHeight
+        {
+            get => _panelWindowHeight;
+            set
+            {
+                if (SetValue(ref _panelWindowHeight, value, nameof(PanelWindowHeight)))
+                    EventAggregator.Publish($"{nameof(MainVM)}_Change_{nameof(PanelWindowHeight)}", _panelWindowHeight);
+            }
+        }
+
+        private double _panelWindowWidth = 824;
+        public double PanelWindowWidth
+        {
+            get => _panelWindowWidth;
+            set
+            {
+                if (SetValue(ref _panelWindowWidth, value, nameof(PanelWindowWidth)))
+                    EventAggregator.Publish($"{nameof(MainVM)}_Change_{nameof(PanelWindowWidth)}", _panelWindowWidth);
+            }
+        }
+
+        #endregion Panel
+
         [XmlIgnore]
         public string MessageBarText
         {
