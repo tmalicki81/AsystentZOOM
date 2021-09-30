@@ -97,12 +97,6 @@ namespace AsystentZOOM.GUI.View
             }
         }
 
-        //protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
-        //{
-        //    base.OnMouseLeftButtonDown(e);
-        //    DragMove();
-        //}
-
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (WindowState != WindowState.Maximized)
@@ -133,16 +127,67 @@ namespace AsystentZOOM.GUI.View
         private void ResizeButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             _resizeButtonEnum = (ResizeButtonEnum)((FrameworkElement)sender).Tag;
+
+            MouseHelper.SetHook();
+            MouseHelper.MouseEvent += MouseHelper_MouseEvent;
             _grabPoint = PointFromScreen(MouseHelper.GetMousePosition());
-            _timer.Enabled = true;
-            _timer.Start();
-        }        
+            Title = DateTime.Now.ToString();
+            //_timer.Enabled = true;
+            //_timer.Start();
+        }
+
+        private void MouseHelper_MouseEvent(object sender, Common.Mouse.MouseEventArgs e)
+        {
+            try
+            {
+                if (e.MouseEvent == MouseEventEnum.WM_MOUSEMOVE)
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        var currentPoint = PointFromScreen(e.Location);
+                        double deltaX = _grabPoint.X - currentPoint.X;
+                        double deltaY = _grabPoint.Y - currentPoint.Y;
+                        double width, left;
+                        Title = deltaX.ToString();
+                        switch (_resizeButtonEnum)
+                        {
+                            case ResizeButtonEnum.Left:
+                                left = Left - deltaX;
+                                width = Width + deltaX;
+                                
+                                Left = left; 
+                                if (width > 50)
+                                    Width = width;
+
+                                break;
+                            case ResizeButtonEnum.Right:
+                                //currentPoint = MouseHelper.GetMousePosition();
+                                //deltaX = _grabPoint.X - currentPoint.X;
+
+                                width = Width - deltaX;
+                                if (width > 0)
+                                    Width = width;
+                                break;
+                        }
+                    });
+                }
+                else if (e.MouseEvent == MouseEventEnum.WM_LBUTTONUP)
+                {
+                    MouseHelper.UnHook();
+                    MouseHelper.MouseEvent -= MouseHelper_MouseEvent;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+        }
 
         private void ResizeButton_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            _timer.Enabled = false;
-            _timer.Stop();
-            _resizeButtonEnum = ResizeButtonEnum.None;
+            //_timer.Enabled = false;
+            //_timer.Stop();
+            //_resizeButtonEnum = ResizeButtonEnum.None;
         }
     }
 }

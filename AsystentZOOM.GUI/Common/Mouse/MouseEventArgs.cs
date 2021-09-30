@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows;
 
 namespace AsystentZOOM.GUI.Common.Mouse
 {
@@ -21,7 +22,7 @@ namespace AsystentZOOM.GUI.Common.Mouse
         public MouseEventEnum MouseEvent { get; set; }
         public int X { get; set; }
         public int Y { get; set; }
-        public MousePoint Location => new(X, Y);
+        public Point Location => new(X, Y);
 
         public override string ToString()
             => $"Zdarzenie: {MouseEvent}, Pozycja: {X}, {Y}";

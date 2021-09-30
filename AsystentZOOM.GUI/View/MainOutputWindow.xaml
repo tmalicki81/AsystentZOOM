@@ -55,13 +55,11 @@
         <Grid Grid.Column="0" Grid.RowSpan="3" Background="Red" Panel.ZIndex="100"
               VerticalAlignment="Stretch" HorizontalAlignment="Stretch" 
               Cursor="SizeWE" MouseLeftButtonDown="ResizeButton_MouseLeftButtonDown" 
-              MouseLeftButtonUp="ResizeButton_MouseLeftButtonUp" 
               Tag="{x:Static enum:ResizeButtonEnum.Left}"/>
 
         <Grid Grid.Column="2" Grid.RowSpan="3" Background="Red" Panel.ZIndex="100"
               VerticalAlignment="Stretch" HorizontalAlignment="Stretch" 
               Cursor="SizeWE" MouseLeftButtonDown="ResizeButton_MouseLeftButtonDown" 
-              MouseLeftButtonUp="ResizeButton_MouseLeftButtonUp" 
               Tag="{x:Static enum:ResizeButtonEnum.Right}"/>
     </Grid>
 </Window>
