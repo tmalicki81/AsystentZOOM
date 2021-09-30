@@ -137,11 +137,7 @@ namespace AsystentZOOM.VM.ViewModel
         public double OutputWindowLeft
         {
             get => _outputWindowLeft;
-            set
-            {
-                if (value > 2000) value = 0;
-                SetValue(ref _outputWindowLeft, value, nameof(OutputWindowLeft));
-            }
+            set => SetValue(ref _outputWindowLeft, value, nameof(OutputWindowLeft));
         }
 
         private double _outputWindowHeight = 600;

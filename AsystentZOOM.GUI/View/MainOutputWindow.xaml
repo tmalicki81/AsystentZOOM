@@ -52,14 +52,28 @@
                HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
                MouseLeftButtonDown="Label_MouseLeftButtonDown"/>
 
+        <!--Lewo-->
         <Grid Grid.Column="0" Grid.RowSpan="3" Background="Red" Panel.ZIndex="100"
               VerticalAlignment="Stretch" HorizontalAlignment="Stretch" 
               Cursor="SizeWE" MouseLeftButtonDown="ResizeButton_MouseLeftButtonDown" 
               Tag="{x:Static enum:ResizeButtonEnum.Left}"/>
 
+        <!--Prawo-->
         <Grid Grid.Column="2" Grid.RowSpan="3" Background="Red" Panel.ZIndex="100"
               VerticalAlignment="Stretch" HorizontalAlignment="Stretch" 
               Cursor="SizeWE" MouseLeftButtonDown="ResizeButton_MouseLeftButtonDown" 
               Tag="{x:Static enum:ResizeButtonEnum.Right}"/>
+
+        <!--Góra-->
+        <Grid Grid.Row="0" Grid.ColumnSpan="3" Background="Red" Panel.ZIndex="100"
+              VerticalAlignment="Stretch" HorizontalAlignment="Stretch" 
+              Cursor="SizeNS" MouseLeftButtonDown="ResizeButton_MouseLeftButtonDown" 
+              Tag="{x:Static enum:ResizeButtonEnum.Top}"/>
+
+        <!--Dół-->
+        <Grid Grid.Row="2" Grid.ColumnSpan="3" Background="Red" Panel.ZIndex="100"
+              VerticalAlignment="Stretch" HorizontalAlignment="Stretch" 
+              Cursor="SizeNS" MouseLeftButtonDown="ResizeButton_MouseLeftButtonDown" 
+              Tag="{x:Static enum:ResizeButtonEnum.Bottom}"/>
     </Grid>
 </Window>
