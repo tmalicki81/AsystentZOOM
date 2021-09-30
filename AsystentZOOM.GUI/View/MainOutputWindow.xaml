@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:factory="clr-namespace:AsystentZOOM.VM.Common;assembly=AsystentZOOM.VM"
+        xmlns:enum="clr-namespace:AsystentZOOM.VM.Enums;assembly=AsystentZOOM.VM"
         xmlns:local="clr-namespace:AsystentZOOM.GUI.View" 
         xmlns:conv="clr-namespace:AsystentZOOM.GUI.Converters" 
         mc:Ignorable="d" DataContext="{x:Static factory:SingletonVMFactory.Main}"
@@ -34,6 +35,33 @@
     </Window.InputBindings>
 
     <Grid x:Name="grid">
-        <Label Content="Brak elementów do prezentacji" Foreground="Gray" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="20"/>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="20"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="20"/>
+        </Grid.RowDefinitions>
+        <Label Grid.Row="1" Grid.Column="1" 
+               Content="Brak elementów do prezentacji" 
+               Foreground="Gray" FontSize="20" 
+               HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+               MouseLeftButtonDown="Label_MouseLeftButtonDown"/>
+
+        <Grid Grid.Column="0" Grid.RowSpan="3" Background="Red" Panel.ZIndex="100"
+              VerticalAlignment="Stretch" HorizontalAlignment="Stretch" 
+              Cursor="SizeWE" MouseLeftButtonDown="ResizeButton_MouseLeftButtonDown" 
+              MouseLeftButtonUp="ResizeButton_MouseLeftButtonUp" 
+              Tag="{x:Static enum:ResizeButtonEnum.Left}"/>
+
+        <Grid Grid.Column="2" Grid.RowSpan="3" Background="Red" Panel.ZIndex="100"
+              VerticalAlignment="Stretch" HorizontalAlignment="Stretch" 
+              Cursor="SizeWE" MouseLeftButtonDown="ResizeButton_MouseLeftButtonDown" 
+              MouseLeftButtonUp="ResizeButton_MouseLeftButtonUp" 
+              Tag="{x:Static enum:ResizeButtonEnum.Right}"/>
     </Grid>
 </Window>
