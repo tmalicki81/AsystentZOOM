@@ -11,6 +11,7 @@
         
         Title="|||||||||||||_Asystent_ZOOM_|||||||||||||" Height="450" Width="800"
         ResizeMode="CanResize"
+        ShowInTaskbar="False"
         Background="Black"
         
         AllowsTransparency="{Binding Path=AllowsTransparency, Mode=OneTime}"
@@ -35,45 +36,9 @@
     </Window.InputBindings>
 
     <Grid x:Name="grid">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="20"/>
-            <ColumnDefinition Width="2*"/>
-            <ColumnDefinition Width="20"/>
-        </Grid.ColumnDefinitions>
-
-        <Grid.RowDefinitions>
-            <RowDefinition Height="20"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="20"/>
-        </Grid.RowDefinitions>
         <Label Grid.Row="1" Grid.Column="1" 
                Content="Brak elementów do prezentacji" 
                Foreground="Gray" FontSize="20" 
-               HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
-               MouseLeftButtonDown="Label_MouseLeftButtonDown"/>
-
-        <!--Lewo-->
-        <Grid Grid.Column="0" Grid.RowSpan="3" Background="Red" Panel.ZIndex="100"
-              VerticalAlignment="Stretch" HorizontalAlignment="Stretch" 
-              Cursor="SizeWE" MouseLeftButtonDown="ResizeButton_MouseLeftButtonDown" 
-              Tag="{x:Static enum:ResizeButtonEnum.Left}"/>
-
-        <!--Prawo-->
-        <Grid Grid.Column="2" Grid.RowSpan="3" Background="Red" Panel.ZIndex="100"
-              VerticalAlignment="Stretch" HorizontalAlignment="Stretch" 
-              Cursor="SizeWE" MouseLeftButtonDown="ResizeButton_MouseLeftButtonDown" 
-              Tag="{x:Static enum:ResizeButtonEnum.Right}"/>
-
-        <!--Góra-->
-        <Grid Grid.Row="0" Grid.ColumnSpan="3" Background="Red" Panel.ZIndex="100"
-              VerticalAlignment="Stretch" HorizontalAlignment="Stretch" 
-              Cursor="SizeNS" MouseLeftButtonDown="ResizeButton_MouseLeftButtonDown" 
-              Tag="{x:Static enum:ResizeButtonEnum.Top}"/>
-
-        <!--Dół-->
-        <Grid Grid.Row="2" Grid.ColumnSpan="3" Background="Red" Panel.ZIndex="100"
-              VerticalAlignment="Stretch" HorizontalAlignment="Stretch" 
-              Cursor="SizeNS" MouseLeftButtonDown="ResizeButton_MouseLeftButtonDown" 
-              Tag="{x:Static enum:ResizeButtonEnum.Bottom}"/>
+               HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
     </Grid>
 </Window>

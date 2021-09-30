@@ -37,30 +37,6 @@ namespace AsystentZOOM.GUI.View
             EventAggregator.Subscribe<double>($"{nameof(MainVM)}_Change_{nameof(ViewModel.OutputWindowWidth)}", (w) => Width = w, (p) => true);
             EventAggregator.Subscribe<double>($"{nameof(MainVM)}_Change_{nameof(ViewModel.OutputWindowHeight)}", (h) => Height = h, (p) => true);
             EventAggregator.Subscribe<Size>($"{typeof(ILayerVM)}_ChangeOutputSize", ChangeOutputSize, (s) => !ViewModel.ProgressInfo.ProgressBarVisibility);
-
-            _timer = new System.Timers.Timer(100);
-            _timer.Elapsed += _timer_Elapsed;
-        }
-
-        private void _timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-        {
-            Dispatcher.Invoke(() =>
-            {
-                var currentPoint = PointFromScreen(MouseHelper.GetMousePosition());
-                double deltaX = _grabPoint.X - currentPoint.X;
-                double deltaY = _grabPoint.Y - currentPoint.Y;
-
-                switch (_resizeButtonEnum)
-                {
-                    case ResizeButtonEnum.Left:
-                        Left = Left - deltaX;
-                        Width = Width + deltaX;
-                        break;
-                    case ResizeButtonEnum.Right:
-                        Width = Width - deltaX;
-                        break;
-                }
-            });
         }
 
         private void ChangeOutputSize(Size size)
@@ -91,8 +67,6 @@ namespace AsystentZOOM.GUI.View
                         Source =  layerControl.DataContext,
                         Converter = new BoolToVisibilityConverter()
                     });
-                Grid.SetColumnSpan(contentControl, 3);
-                Grid.SetRowSpan(contentControl, 3);
                 grid.Children.Add(contentControl);
             }
         }
@@ -112,86 +86,6 @@ namespace AsystentZOOM.GUI.View
             EventAggregator.UnSubscribe($"{nameof(MainVM)}_Change_{nameof(ViewModel.OutputWindowHeight)}");
             EventAggregator.UnSubscribe($"{typeof(ILayerVM)}_ChangeOutputSize");
             base.OnClosing(e);
-        }
-
-        private void Label_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            base.OnMouseLeftButtonDown(e);
-            DragMove();
-        }
-
-        private Point _grabPoint;
-        private Point _grabPoint2;
-        private System.Timers.Timer _timer;
-        private ResizeButtonEnum _resizeButtonEnum = ResizeButtonEnum.None;
-
-        private void ResizeButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            _resizeButtonEnum = (ResizeButtonEnum)((FrameworkElement)sender).Tag;
-
-            MouseHelper.SetHook();
-            MouseHelper.MouseEvent += MouseHelper_MouseEvent;
-            _grabPoint = PointFromScreen(MouseHelper.GetMousePosition());
-            _grabPoint2 = _grabPoint;
-            Title = DateTime.Now.ToString();
-            //_timer.Enabled = true;
-            //_timer.Start();
-        }
-
-        private double GetValue(double value, double minValue)
-            => value > minValue ? value : minValue;
-
-        private void MouseHelper_MouseEvent(object sender, Common.Mouse.MouseEventArgs e)
-        {
-            try
-            {
-                if (e.MouseEvent == MouseEventEnum.WM_MOUSEMOVE)
-                {
-                    Dispatcher.Invoke(() =>
-                    {
-                        var currentPoint = PointFromScreen(e.Location);
-                        double deltaX, deltaY;
-                        switch (_resizeButtonEnum)
-                        {
-                            case ResizeButtonEnum.Left:
-                                deltaX = _grabPoint.X - currentPoint.X;
-                                Left -= deltaX;
-                                Width = GetValue(Width + deltaX, 50);
-                                break;
-                            case ResizeButtonEnum.Right:
-                                deltaX = _grabPoint2.X - currentPoint.X;
-                                Width = GetValue(Width - deltaX, 50);
-                                break;
-                            case ResizeButtonEnum.Top:
-                                deltaY = _grabPoint.Y - currentPoint.Y;
-                                Top -= deltaY;
-                                Height = GetValue(Height + deltaY, 50);
-                                break;
-                            case ResizeButtonEnum.Bottom:
-                                deltaY = _grabPoint2.Y - currentPoint.Y;
-                                Height = GetValue(Height - deltaY, 50);
-                                break;
-                        }
-                        _grabPoint2 = currentPoint;
-                    });
-                }
-                else if (e.MouseEvent == MouseEventEnum.WM_LBUTTONUP)
-                {
-                    MouseHelper.UnHook();
-                    MouseHelper.MouseEvent -= MouseHelper_MouseEvent;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString());
-            }
-        }
-
-        private void ResizeButton_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            //_timer.Enabled = false;
-            //_timer.Stop();
-            //_resizeButtonEnum = ResizeButtonEnum.None;
         }
     }
 }

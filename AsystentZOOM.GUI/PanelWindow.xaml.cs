@@ -20,6 +20,7 @@ namespace AsystentZOOM.GUI
     public partial class PanelWindow : Window, IViewModel<MainVM>
     {
         private MainOutputWindow _mainOutputWindow;
+        private MainBorderWindow _mainBorderWindow;
 
         public MainVM ViewModel => (MainVM)DataContext;
 
@@ -37,7 +38,7 @@ namespace AsystentZOOM.GUI
             Title = Title + $"   ( wersja: {App.Version} / {MainVM.Version})";
 
             _mainOutputWindow = new MainOutputWindow();
-            _mainOutputWindow.Show();
+            _mainBorderWindow = new MainBorderWindow();
 
             EventAggregator.Subscribe<bool>(nameof(MainVM) + "_Close", CloseMainOutputWindow, (p) => true);
             EventAggregator.Subscribe(nameof(MainVM) + "_Open", OpenMainOutputWindow, () => true);
@@ -50,6 +51,14 @@ namespace AsystentZOOM.GUI
             EventAggregator.Subscribe<double>($"{nameof(MainVM)}_Change_{nameof(ViewModel.PanelWindowWidth)}", (w) => Width = w, (p) => true);
             EventAggregator.Subscribe<double>($"{nameof(MainVM)}_Change_{nameof(ViewModel.PanelWindowHeight)}", (h) => Height = h, (p) => true);
             EventAggregator.Subscribe<Size>($"{typeof(ILayerVM)}_ChangePanelSize", ChangePanelSize, (s) => true);
+
+            Loaded += PanelWindow_Loaded;
+        }
+
+        private void PanelWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            _mainOutputWindow.Show();
+            _mainBorderWindow.Show();
         }
 
         private void ChangePanelSize(Size size)

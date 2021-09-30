@@ -123,8 +123,8 @@ namespace AsystentZOOM.GUI.View
                 { WindowModeEnum.Normal,     "Zwykłe okno z krawędziami i tytułem" },
                 { WindowModeEnum.FullScreen, "Pełny ekran"                         }
             };
-            //ViewModel.WindowMode = WindowModeEnum.NoBorder;
-            ViewModel.WindowMode = WindowModeEnum.Normal;
+            ViewModel.WindowMode = WindowModeEnum.NoBorder;
+            //ViewModel.WindowMode = WindowModeEnum.Normal;
             Loaded += MainPanelView_Loaded;
         }
 
