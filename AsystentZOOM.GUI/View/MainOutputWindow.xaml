@@ -39,6 +39,7 @@
         <Label Grid.Row="1" Grid.Column="1" 
                Content="Brak elementów do prezentacji" 
                Foreground="Gray" FontSize="20" 
+               HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
                HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
     </Grid>
 </Window>

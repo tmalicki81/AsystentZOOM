@@ -1,6 +1,7 @@
 ﻿using AsystentZOOM.VM.Common;
 using AsystentZOOM.VM.ViewModel;
 using System;
+using System.ComponentModel;
 using System.Windows;
 
 namespace AsystentZOOM.GUI.View
@@ -13,6 +14,8 @@ namespace AsystentZOOM.GUI.View
         public MainBorderWindow()
         {
             InitializeComponent();
+            EventAggregator.Subscribe<double>($"{nameof(MainVM)}_Change_{nameof(ViewModel.OutputWindowWidth)}", (w) => Width = w + Offsets.Width, (p) => true);
+            EventAggregator.Subscribe<double>($"{nameof(MainVM)}_Change_{nameof(ViewModel.OutputWindowHeight)}", (h) => Height = h + Offsets.Height, (p) => true);
             Loaded += MainBorderWindow_Loaded;
         }
 
@@ -24,14 +27,14 @@ namespace AsystentZOOM.GUI.View
             internal const double Left = 10;
         }
 
-        private MainVM _main => SingletonVMFactory.Main;
+        private MainVM ViewModel => SingletonVMFactory.Main;
 
         private void MainBorderWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            Height = _main.OutputWindowHeight + Offsets.Height;
-            Width = _main.OutputWindowWidth + Offsets.Width;
-            Top = _main.OutputWindowTop - Offsets.Top;
-            Left = _main.OutputWindowLeft - Offsets.Left;
+            Height = ViewModel.OutputWindowHeight + Offsets.Height;
+            Width = ViewModel.OutputWindowWidth + Offsets.Width;
+            Top = ViewModel.OutputWindowTop - Offsets.Top;
+            Left = ViewModel.OutputWindowLeft - Offsets.Left;
 
             SizeChanged += MainBorderWindow_SizeChanged;
             LocationChanged += MainBorderWindow_LocationChanged;
@@ -39,14 +42,21 @@ namespace AsystentZOOM.GUI.View
 
         private void MainBorderWindow_LocationChanged(object sender, EventArgs e)
         {
-            _main.OutputWindowTop = Top + Offsets.Top;
-            _main.OutputWindowLeft = Left + Offsets.Left;
+            ViewModel.OutputWindowTop = Top + Offsets.Top;
+            ViewModel.OutputWindowLeft = Left + Offsets.Left;
         }
 
         private void MainBorderWindow_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            _main.OutputWindowWidth = e.NewSize.Width - Offsets.Width;
-            _main.OutputWindowHeight = e.NewSize.Height - Offsets.Height;
+            ViewModel.OutputWindowWidth = e.NewSize.Width - Offsets.Width;
+            ViewModel.OutputWindowHeight = e.NewSize.Height - Offsets.Height;
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            EventAggregator.UnSubscribe($"{nameof(MainVM)}_Change_{nameof(ViewModel.OutputWindowWidth)}");
+            EventAggregator.UnSubscribe($"{nameof(MainVM)}_Change_{nameof(ViewModel.OutputWindowHeight)}");
+            base.OnClosing(e);
         }
     }
 }
