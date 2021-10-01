@@ -95,7 +95,7 @@ namespace AsystentZOOM.VM.ViewModel
             MainVM.Dispatcher.Invoke(BBB);
         }
 
-        private bool _isEnabled = true;
+        private bool _isEnabled;
         public bool IsEnabled
         {
             get => _isEnabled;

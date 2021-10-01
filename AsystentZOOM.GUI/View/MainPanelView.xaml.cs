@@ -1,4 +1,5 @@
 ﻿using AsystentZOOM.VM.Common;
+using AsystentZOOM.VM.Common.Dialog;
 using AsystentZOOM.VM.Enums;
 using AsystentZOOM.VM.Interfaces;
 using AsystentZOOM.VM.ViewModel;
@@ -183,6 +184,11 @@ namespace AsystentZOOM.GUI.View
                 popup.HorizontalOffset = mousePosition.X - deltaX;
             else if (popup.Placement == PlacementMode.Right)
                 popup.HorizontalOffset = mousePosition.X + deltaX;
+        }
+
+        private void MenuItem_SubmenuOpened(object sender, RoutedEventArgs e)
+        {
+            DialogHelper.ShowMessageBar("MenuItem_SubmenuOpened");
         }
     }
 }

@@ -25,25 +25,20 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Menu Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <!--<Menu.Resources>
-                <Style TargetType="MenuItem">
-                    <Setter Property="IsEnabled" Value="False"/>
-                </Style>
-            </Menu.Resources>-->
-
-            <MenuItem Header="Plik">
-                <MenuItem Header="Nowe spotkanie"/>
-                <MenuItem Header="Spotkanie z szablonu..."/>
-                <MenuItem Header="Otwórz..."/>
-                <MenuItem Header="Zapisz"/>
-                <MenuItem Header="Zapisz jako..."/>
+        <Menu Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+            <MenuItem Header="_Plik" IsSubmenuOpen="{Binding Path=IsMenuOpened, Mode=OneWayToSource}" >
+                <MenuItem Header="Nowe spotkanie" InputGestureText="Ctrl+N"/>
+                <MenuItem Header="Otwórz..."      InputGestureText="Ctrl+O"/>
+                <MenuItem Header="Zapisz"         InputGestureText="Ctrl+S"/>
+                <MenuItem Header="Zapisz jako..." InputGestureText="Ctrl+Alt+S"/>
+                <Separator/>
+                <MenuItem Header="Wyczyść ustawienia widoków" Command="{Binding Path=ResetVisualSettingsCommand}"/>
                 <Separator/>
                 <MenuItem Header="Restart aplikacji" Command="{Binding Path=ResetApplicationCommand}"/>
-                <MenuItem Header="Wyjdź"/>
+                <MenuItem Header="Wyjdź"             InputGestureText="Alt+F4"/>
             </MenuItem>
 
-            <MenuItem Header="Chmura">
+            <MenuItem Header="_Chmura" IsSubmenuOpen="{Binding Path=IsMenuOpened, Mode=OneWayToSource}">
                 <MenuItem Header="Zaloguj"/>
                 <MenuItem Header="Wyloguj"/>
                 <Separator/>
@@ -51,13 +46,15 @@
                 <MenuItem Header="Synchronizuj nagrania"/>
             </MenuItem>
 
-            <MenuItem Header="Edycja">
+            <MenuItem Header="_Edycja" IsSubmenuOpen="{Binding Path=IsMenuOpened, Mode=OneWayToSource}">
                 <MenuItem Header="Dodaj parametr spotkania"/>
                 <MenuItem Header="Dodaj punkt spotkania"/>
-                <MenuItem Header="Wyczyść ustawienia widoków"/>
+                <Separator/>
+                <MenuItem Header="Cofnij" InputGestureText="Ctrl+Z"/>
+                <MenuItem Header="Ponów"  InputGestureText="Ctrl+Y"/>
             </MenuItem>
 
-            <MenuItem Header="Nagrywanie">
+            <MenuItem Header="_Nagrywanie" IsSubmenuOpen="{Binding Path=IsMenuOpened, Mode=OneWayToSource}">
                 <MenuItem Header="Mikrofon włączony"/>
                 <MenuItem Header="Nagrywanie na komputerze..."/>
                 <MenuItem Header="Nagraj spotkanie"/>
@@ -65,9 +62,9 @@
                 <MenuItem Header="Synchronizuj nagrania"/>
             </MenuItem>
 
-            <MenuItem Header="Dodatki" x:Name="miAddins"/>
+            <MenuItem Header="_Dodatki" x:Name="miAddins" IsSubmenuOpen="{Binding Path=IsMenuOpened, Mode=OneWayToSource}"/>
 
-            <MenuItem Header="Pomoc">
+            <MenuItem Header="_Pomoc" IsSubmenuOpen="{Binding Path=IsMenuOpened, Mode=OneWayToSource}">
                 <MenuItem Header="Instrukcja obsługi"/>
             </MenuItem>
         </Menu>
@@ -231,6 +228,9 @@
                AllowDrop="True" DragEnter="DragDropPopup_DragEnter">
         </Popup>
 
+        <Grid Grid.Row="1" Grid.RowSpan="2" Background="Black" Opacity=".5"
+              Visibility="{Binding Path=IsMenuOpened, Mode=OneWay, Converter={StaticResource ResourceKey=BoolToVisibilityConverter}}" />
+        
         <controls:ProgressInfoControl DataContext="{Binding Path=ProgressInfo}" Grid.Row="0" Grid.RowSpan="3" 
                                       Visibility="{Binding Path=ProgressBarVisibility, Mode=TwoWay, Converter={StaticResource ResourceKey=BoolToVisibilityConverter}}" />
     </Grid>

@@ -14,7 +14,7 @@ namespace AsystentZOOM.VM.ViewModel
         public bool IsVisibleInRelease => true;
         public string LayerName => "Tło";
 
-        private bool _IsEnabled = true;
+        private bool _IsEnabled;
         public bool IsEnabled 
         {
             get => _IsEnabled;

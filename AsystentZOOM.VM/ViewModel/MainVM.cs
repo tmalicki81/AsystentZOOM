@@ -10,6 +10,7 @@ using System.Xml.Serialization;
 using System.Diagnostics;
 using System.Reflection;
 using System.IO;
+using AsystentZOOM.VM.Common.Dialog;
 
 namespace AsystentZOOM.VM.ViewModel
 {
@@ -129,7 +130,7 @@ namespace AsystentZOOM.VM.ViewModel
             set => SetValue(ref _topmost, value, nameof(Topmost));
         }
 
-        private double _outputWindowTop = 0;
+        private double _outputWindowTop = 50;
         public double OutputWindowTop
         {
             get => _outputWindowTop;
@@ -221,6 +222,14 @@ namespace AsystentZOOM.VM.ViewModel
         }
         private bool _messageBarIsNew;
 
+        [XmlIgnore]
+        public bool IsMenuOpened
+        {
+            get => _IsMenuOpened;
+            set => SetValue(ref _IsMenuOpened, value, nameof(IsMenuOpened));
+        }
+        private bool _IsMenuOpened;
+
         private RelayCommand _exitFullScreenCommand;
         public RelayCommand ExitFullScreenCommand
             => _exitFullScreenCommand ?? (_exitFullScreenCommand = new RelayCommand(ExitFullScreenExecute));
@@ -244,6 +253,29 @@ namespace AsystentZOOM.VM.ViewModel
             Process.Start("AsystentZOOM.GUI.exe", $@"""{MeetingVM.LocalFileName}""");
             Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
             Application.Current.Shutdown();
+        }
+
+        private RelayCommand _resetVisualSettingsCommand;
+        public RelayCommand ResetVisualSettingsCommand
+            => _resetVisualSettingsCommand ??= new RelayCommand(ResetVisualSettingsExecute);
+
+        private void ResetVisualSettingsExecute()
+        {
+            //var dr = DialogHelper.ShowMessageBox(
+            //    "Czy zresetować ustawienia widoków?", 
+            //    "Reset ustawień widoków", 
+            //    MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
+            //if (dr == MessageBoxResult.No)
+            //    return;
+
+            foreach (var target in SingletonVMFactory.AllSingletons)
+            {
+                if (target == null)
+                    continue;
+                var source = Activator.CreateInstance(target.GetType());
+                SingletonVMFactory.SetSingletonValues(source);
+            }
+            SingletonVMFactory.SaveAllSingletons();
         }
     }
 }

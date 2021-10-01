@@ -83,5 +83,18 @@ namespace AsystentZOOM.VM.Common
                 }
             }
         }
+
+        public static void DeleteObject(Type objectType)
+        {
+            string path = GetFileName(objectType);
+            using (var file = IsolatedStorageFile.GetUserStoreForApplication())
+            {
+                lock (_locker)
+                {
+                    if (file.FileExists(path))
+                        file.DeleteFile(path);
+                }
+            }
+        }
     }    
 }
