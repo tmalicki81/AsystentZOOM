@@ -9,10 +9,10 @@
         xmlns:conv="clr-namespace:AsystentZOOM.GUI.Converters" 
         mc:Ignorable="d" DataContext="{x:Static factory:SingletonVMFactory.Main}"
         
-        Title="|||||||||||||_Asystent_ZOOM_|||||||||||||" Height="450" Width="800"
+        Title="@@@@_Asystent_ZOOM_@@@@" Height="450" Width="800"
         ResizeMode="CanResize"
-        ShowInTaskbar="False"
-        Background="Black"
+        Background="Black" 
+        ShowInTaskbar="True"
         
         AllowsTransparency="{Binding Path=AllowsTransparency, Mode=OneTime}"
         Topmost="{Binding Path=Topmost, Mode=OneTime}"

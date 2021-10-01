@@ -40,9 +40,12 @@ namespace AsystentZOOM.GUI
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
-            //string[] e_Args = new string[] { @"C:\Users\tmalicki.KAMSOFT\Documents\Asystent ZOOM\2021-07_28__Zebranie w tygodniu 26 lipca do 1 sierpnia.meeting" };
-            //MessageBox.Show("AsystentZOOM.GUI: " + e.Args.FirstOrDefault());
+            string[] eArgs = e.Args;
 
+            eArgs = new string[] { @"C:\Users\tmali\OneDrive\Dokumenty\Asystent ZOOM\2021-09-29.meeting" };
+            MessageBox.Show("AsystentZOOM.GUI: " + eArgs.FirstOrDefault());
+
+            /*
             var currentProcess = Process.GetCurrentProcess();
             Process[] processesToKill = Process.GetProcessesByName(currentProcess.ProcessName)
                 .Where(p => p.Id != currentProcess.Id)
@@ -62,9 +65,10 @@ namespace AsystentZOOM.GUI
                     }
                 }
             }
+            */
 
-            if (e.Args.Any())
-                MeetingVM.StartupFileName = e.Args.First();
+            if (eArgs.Any())
+                MeetingVM.StartupFileName = eArgs.First();
 
             base.OnStartup(e);
         }

@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Threading;
 using System.Xml.Serialization;
+using System.Diagnostics;
+using System.Reflection;
 
 namespace AsystentZOOM.VM.ViewModel
 {
@@ -226,6 +228,19 @@ namespace AsystentZOOM.VM.ViewModel
         {
             if (WindowState == WindowState.Maximized)
                 WindowMode = _windowModePrev;
+        }
+
+        private RelayCommand _resetApplicationCommand;
+        public RelayCommand ResetApplicationCommand
+            => _resetApplicationCommand ?? (_resetApplicationCommand = new RelayCommand(ResetApplicationExecute));
+
+        private void ResetApplicationExecute()
+        {
+            Meeting.SaveLocalFile();
+            string meetingFile = MeetingVM.LocalFileName;
+            Process.Start("AsystentZOOM.GUI.exe", meetingFile);
+            Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+            Application.Current.Shutdown();
         }
     }
 }

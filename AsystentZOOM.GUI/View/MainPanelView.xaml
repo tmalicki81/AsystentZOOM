@@ -39,6 +39,7 @@
                 <MenuItem Header="Zapisz"/>
                 <MenuItem Header="Zapisz jako..."/>
                 <Separator/>
+                <MenuItem Header="Restart aplikacji" Command="{Binding Path=ResetApplicationCommand}"/>
                 <MenuItem Header="Wyjdź"/>
             </MenuItem>
 
@@ -88,7 +89,8 @@
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
                                 <Label Grid.Row="0" Grid.Column="0" Content="Wybrany tryb:" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="3"/>
-                                <ComboBox Grid.Row="0" Grid.Column="1" x:Name="cmbWindowMode" SelectedValue="{Binding Path=WindowMode}" SelectedValuePath="Key"
+                                <ComboBox Grid.Row="0" Grid.Column="1" x:Name="cmbWindowMode" IsEnabled="False"
+                                          SelectedValue="{Binding Path=WindowMode}" SelectedValuePath="Key"
                                       HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0" >
                                     <ComboBox.ItemTemplate>
                                         <DataTemplate>
@@ -127,7 +129,7 @@
                                 </CheckBox>
                                 <Label Grid.Row="2" Grid.Column="0" Content="Opis:" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0"/>
                                 <TextBox Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="0"
-                                         IsReadOnly="True" TextWrapping="Wrap" Height="90" Padding="3" >
+                                         IsReadOnly="True" TextWrapping="Wrap" Height="90" Padding="3" IsEnabled="False" >
                                     <TextBox.Style>
                                         <Style TargetType="TextBox">
                                             <Style.Triggers>

@@ -37,8 +37,8 @@ namespace AsystentZOOM.GUI
                 Title = "Entrypoint";//Process.GetCurrentProcess().MainModule.ModuleName;
             Title = Title + $"   ( wersja: {App.Version} / {MainVM.Version})";
 
-            _mainOutputWindow = new MainOutputWindow();
             _mainBorderWindow = new MainBorderWindow();
+            _mainOutputWindow = new MainOutputWindow();
 
             EventAggregator.Subscribe<bool>(nameof(MainVM) + "_Close", CloseMainOutputWindow, (p) => true);
             EventAggregator.Subscribe(nameof(MainVM) + "_Open", OpenMainOutputWindow, () => true);
@@ -57,8 +57,9 @@ namespace AsystentZOOM.GUI
 
         private void PanelWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            _mainOutputWindow.Show();
             _mainBorderWindow.Show();
+            _mainOutputWindow.Show();
+            _mainOutputWindow.Owner = _mainBorderWindow;
         }
 
         private void ChangePanelSize(Size size)
@@ -129,9 +130,12 @@ namespace AsystentZOOM.GUI
 
         protected override void OnClosing(CancelEventArgs e)
         {
-            MessageBoxResult dr = MessageBox.Show("Czy na pewno zamknąć aplikację?", "Asystent ZOOM", 
-                MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
-            e.Cancel = dr == MessageBoxResult.No;
+            if (Application.Current.ShutdownMode != ShutdownMode.OnExplicitShutdown)
+            {
+                MessageBoxResult dr = MessageBox.Show("Czy na pewno zamknąć aplikację?", "Asystent ZOOM",
+                    MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
+                e.Cancel = dr == MessageBoxResult.No;
+            }
             base.OnClosing(e);
         }
 

@@ -1,7 +1,9 @@
 ﻿using AsystentZOOM.VM.Common;
+using AsystentZOOM.VM.Interfaces;
 using AsystentZOOM.VM.ViewModel;
 using System;
 using System.ComponentModel;
+using System.Timers;
 using System.Windows;
 
 namespace AsystentZOOM.GUI.View
@@ -16,6 +18,7 @@ namespace AsystentZOOM.GUI.View
             InitializeComponent();
             EventAggregator.Subscribe<double>($"{nameof(MainVM)}_Change_{nameof(ViewModel.OutputWindowWidth)}", (w) => Width = w + Offsets.Width, (p) => true);
             EventAggregator.Subscribe<double>($"{nameof(MainVM)}_Change_{nameof(ViewModel.OutputWindowHeight)}", (h) => Height = h + Offsets.Height, (p) => true);
+            EventAggregator.Subscribe<Size>($"{typeof(ILayerVM)}_ChangeOutputSize", ChangeOutputSize, (s) => !ViewModel.ProgressInfo.ProgressBarVisibility);
             Loaded += MainBorderWindow_Loaded;
         }
 
@@ -25,6 +28,12 @@ namespace AsystentZOOM.GUI.View
             internal const double Width = 20;
             internal const double Top = 30;
             internal const double Left = 10;
+        }
+
+        private void ChangeOutputSize(Size size)
+        {
+            double proportions = size.Height / size.Width;
+            Height = Width * proportions + Offsets.Top;
         }
 
         private MainVM ViewModel => SingletonVMFactory.Main;
@@ -56,6 +65,7 @@ namespace AsystentZOOM.GUI.View
         {
             EventAggregator.UnSubscribe($"{nameof(MainVM)}_Change_{nameof(ViewModel.OutputWindowWidth)}");
             EventAggregator.UnSubscribe($"{nameof(MainVM)}_Change_{nameof(ViewModel.OutputWindowHeight)}");
+            EventAggregator.UnSubscribe($"{typeof(ILayerVM)}_ChangeOutputSize");
             base.OnClosing(e);
         }
     }

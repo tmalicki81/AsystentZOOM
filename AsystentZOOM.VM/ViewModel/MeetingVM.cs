@@ -142,23 +142,23 @@ namespace AsystentZOOM.VM.ViewModel
         }
 
         public void ClearLocalFileName()
-            => _localFileName = null;
+            => LocalFileName = null;
 
         public void SaveLocalFile()
         {
-            if (string.IsNullOrEmpty(_localFileName))
+            if (string.IsNullOrEmpty(LocalFileName))
                 return;
-            string shortFileName = PathHelper.GetShortFileName(_localFileName, '\\');
+            string shortFileName = PathHelper.GetShortFileName(LocalFileName, '\\');
             var dr = DialogHelper.ShowMessageBox($"Czy zapisac plik {shortFileName}?", "Zapisywanie pliku", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
             if (dr != MessageBoxResult.Yes)
                 return;
-            SaveFile(_localFileName);
+            SaveFile(LocalFileName);
         }
 
         private static readonly object _meetingsSyncLocker = new object();
         private static void _timer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            if (string.IsNullOrEmpty(_localFileName))
+            if (string.IsNullOrEmpty(LocalFileName))
                 return;
 
             _timer.Stop();
@@ -166,7 +166,7 @@ namespace AsystentZOOM.VM.ViewModel
             {
                 var local = MediaLocalFileRepositoryFactory.Meetings;
                 var remote = MediaFtpFileRepositoryFactory.Meetings;
-                var filePath = new string[] { PathHelper.GetShortFileName(_localFileName, '\\') };
+                var filePath = new string[] { PathHelper.GetShortFileName(LocalFileName, '\\') };
                 lock (_meetingsSyncLocker)
                 {
                     local.Synchronize(remote, filePath);
@@ -193,7 +193,7 @@ namespace AsystentZOOM.VM.ViewModel
         }
         private bool _isEditing;
 
-        private static string _localFileName;
+        public static string LocalFileName;
 
         private DateTime _meetingBegin;
         public DateTime MeetingBegin
@@ -283,10 +283,10 @@ namespace AsystentZOOM.VM.ViewModel
 
         internal void AudioRecording_OnCommandExecuted(object sender, EventArgs<RelayCommand> e)
         {
-            if (!string.IsNullOrEmpty(_localFileName))
+            if (!string.IsNullOrEmpty(LocalFileName))
             {
-                SaveFile(_localFileName);
-                SendFileToCloud(_localFileName);
+                SaveFile(LocalFileName);
+                SendFileToCloud(LocalFileName);
             }
         }
 
@@ -300,7 +300,7 @@ namespace AsystentZOOM.VM.ViewModel
             foreach (var meetingPoint in MeetingPointList)
                 meetingPoint.Dispose();
 
-            if (string.IsNullOrEmpty(_localFileName))
+            if (string.IsNullOrEmpty(LocalFileName))
             {
                 var local = MediaLocalFileRepositoryFactory.TimePiece;
                 var cloud = MediaFtpFileRepositoryFactory.TimePiece;
@@ -481,7 +481,7 @@ namespace AsystentZOOM.VM.ViewModel
 
         public void OpenFromLocal(string fileName)
         {
-            _localFileName = fileName;
+            LocalFileName = fileName;
             _warcher_Create();
             string shortFileName = PathHelper.GetShortFileName(fileName, '\\');
             DialogHelper.RunAsync($"{shortFileName}..", true, "Ładowanie ", (p) =>
@@ -523,7 +523,10 @@ namespace AsystentZOOM.VM.ViewModel
                     finally
                     {
                         _timer.Start();
-                        DialogHelper.ShowMessageBar($"Załadowano dokument {shortFileName}");
+                        MainVM.Dispatcher.Invoke(() =>
+                        {
+                            DialogHelper.ShowMessageBar($"Załadowano dokument {shortFileName}");
+                        });
                     }
                 }
                 p.TaskName = "Pobieranie metadanych";
@@ -543,7 +546,7 @@ namespace AsystentZOOM.VM.ViewModel
         private void _warcher_Create()
         {
             _watcher_Dispose();
-            var fi = new FileInfo(_localFileName);
+            var fi = new FileInfo(LocalFileName);
             _watcher = new FileSystemWatcher(fi.DirectoryName, fi.Name)
             {
                 IncludeSubdirectories = false,
@@ -555,9 +558,12 @@ namespace AsystentZOOM.VM.ViewModel
 
         private void _watcher_Changed(object sender, FileSystemEventArgs e)
         {
-            string shortFileName = PathHelper.GetShortFileName(_localFileName, '\\');
-            DialogHelper.ShowMessageBar($"Wykryto modyfikację dokumentu {shortFileName}.");
-            OpenFromLocal(e.FullPath);
+            string shortFileName = PathHelper.GetShortFileName(LocalFileName, '\\');
+            MainVM.Dispatcher.Invoke(() =>
+                {
+                    DialogHelper.ShowMessageBar($"Wykryto modyfikację dokumentu {shortFileName}.");
+                    OpenFromLocal(e.FullPath);
+                });
         }
 
         private RelayCommand _saveToLocalCommand;
@@ -570,7 +576,7 @@ namespace AsystentZOOM.VM.ViewModel
                 Directory.CreateDirectory(IoConsts.InitialDirectory);
 
             string fileName;
-            if (string.IsNullOrEmpty(_localFileName))
+            if (string.IsNullOrEmpty(LocalFileName))
             {
                 bool? result = DialogHelper.ShowSaveFile("Zapisanie dokumentu ze spotkaniem", IoConsts.Filter, true, IoConsts.DefaultExt, IoConsts.InitialDirectory, out string[] fileNames);
                 fileName = fileNames?.FirstOrDefault();
@@ -579,7 +585,7 @@ namespace AsystentZOOM.VM.ViewModel
             }
             else
             {
-                fileName = _localFileName;
+                fileName = LocalFileName;
             }
             var sourcesToSend = new List<BaseMediaFileInfo>();
             foreach (var meetingPoint in MeetingPointList)
@@ -646,7 +652,7 @@ namespace AsystentZOOM.VM.ViewModel
                 {
                     xmlSerializer.Serialize(fileStream, this);
                 }
-                _localFileName = fileName;
+                LocalFileName = fileName;
                 _warcher_Create();
             }
         }
