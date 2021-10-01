@@ -145,13 +145,19 @@ namespace AsystentZOOM.VM.ViewModel
             => LocalFileName = null;
 
         public void SaveLocalFile()
+            => SaveLocalFile(false);
+
+        public void SaveLocalFile(bool force)
         {
             if (string.IsNullOrEmpty(LocalFileName))
                 return;
             string shortFileName = PathHelper.GetShortFileName(LocalFileName, '\\');
-            var dr = DialogHelper.ShowMessageBox($"Czy zapisac plik {shortFileName}?", "Zapisywanie pliku", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
-            if (dr != MessageBoxResult.Yes)
-                return;
+            if (!force)
+            {
+                var dr = DialogHelper.ShowMessageBox($"Czy zapisać plik {shortFileName}?", "Zapisywanie pliku", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
+                if (dr != MessageBoxResult.Yes)
+                    return;
+            }
             SaveFile(LocalFileName);
         }
 
@@ -633,6 +639,15 @@ namespace AsystentZOOM.VM.ViewModel
                 p.TaskName = "Wysyłanie dokumentu spotkania do chmury";
                 SendFileToCloud(fileName);
             });
+        }
+
+        /// <summary>
+        /// Zapisanie pliku tymczasowego na dysk lokalny
+        /// </summary>
+        public void SaveTempFile()
+        {
+            string tmpMeetingFile = Path.Combine(MediaLocalFileRepositoryFactory.Meetings.RootDirectory, $"{InstanceId}.meeting");
+            SaveFile(tmpMeetingFile);
         }
 
         /// <summary>

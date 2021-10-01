@@ -9,6 +9,7 @@ using System.Windows.Threading;
 using System.Xml.Serialization;
 using System.Diagnostics;
 using System.Reflection;
+using System.IO;
 
 namespace AsystentZOOM.VM.ViewModel
 {
@@ -236,9 +237,11 @@ namespace AsystentZOOM.VM.ViewModel
 
         private void ResetApplicationExecute()
         {
-            Meeting.SaveLocalFile();
-            string meetingFile = MeetingVM.LocalFileName;
-            Process.Start("AsystentZOOM.GUI.exe", meetingFile);
+            if (string.IsNullOrEmpty(MeetingVM.LocalFileName))
+                Meeting.SaveTempFile();
+            else
+                Meeting.SaveLocalFile(true);            
+            Process.Start("AsystentZOOM.GUI.exe", $@"""{MeetingVM.LocalFileName}""");
             Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
             Application.Current.Shutdown();
         }

@@ -42,8 +42,8 @@ namespace AsystentZOOM.GUI
 
             string[] eArgs = e.Args;
 
-            eArgs = new string[] { @"C:\Users\tmali\OneDrive\Dokumenty\Asystent ZOOM\2021-09-29.meeting" };
-            MessageBox.Show("AsystentZOOM.GUI: " + eArgs.FirstOrDefault());
+            //eArgs = new string[] { @"C:\Users\tmali\OneDrive\Dokumenty\Asystent ZOOM\2021-09-29.meeting" };
+            //MessageBox.Show("AsystentZOOM.GUI: " + eArgs.FirstOrDefault());
 
             /*
             var currentProcess = Process.GetCurrentProcess();
