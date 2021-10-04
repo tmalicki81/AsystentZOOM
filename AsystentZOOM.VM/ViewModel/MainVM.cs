@@ -52,82 +52,11 @@ namespace AsystentZOOM.VM.ViewModel
             set => SetValue(ref _warnBeforeStoppingSharing, value, nameof(WarnBeforeStoppingSharing));
         }
 
-        private WindowModeEnum _windowModePrev;
-        private WindowModeEnum _windowMode = WindowModeEnum.Normal;
-        public WindowModeEnum WindowMode
-        {
-            get => _windowMode;
-            set
-            {
-                _windowModePrev = _windowMode;
-                SetValue(ref _windowMode, value, nameof(WindowMode));
-
-                if (_windowMode == WindowModeEnum.FullScreen && WindowState == WindowState.Maximized)
-                {
-                    WindowStyle = WindowStyle.None;
-                    AllowsTransparency = true;
-                    return;
-                }
-                EventAggregator.Publish(nameof(MainVM) + "_Close", WarnBeforeStoppingSharing);
-                switch (_windowMode)
-                {
-                    case WindowModeEnum.FullScreen:
-                        WindowState = WindowState.Maximized;
-                        WindowStyle = WindowStyle.None;
-                        AllowsTransparency = true;
-                        Topmost = false;
-                        break;
-                    case WindowModeEnum.Normal:
-                        WindowState = WindowState.Normal; 
-                        WindowStyle = WindowStyle.SingleBorderWindow;
-                        AllowsTransparency = false;
-                        Topmost = false;
-                        break;
-                    case WindowModeEnum.NoBorder:
-                        WindowState = WindowState.Normal; 
-                        WindowStyle = WindowStyle.None;         
-                        AllowsTransparency = true;
-                        Topmost = true;
-                        break;
-                    default:
-                        throw new NotImplementedException();
-                }
-                EventAggregator.Publish(nameof(MainVM) + "_Open");
-                EventAggregator.Publish(nameof(MainVM) + "_ActivatePanel");
-            }
-        }
-
-        private WindowStyle _windowStyle = WindowStyle.SingleBorderWindow;
-        public WindowStyle WindowStyle
-        {
-            get => _windowStyle;
-            set => SetValue(ref _windowStyle, value, nameof(WindowStyle));
-        }
-
         private WindowState _windowState = WindowState.Normal;
         public WindowState WindowState
         {
             get => _windowState;
-            set
-            {
-                SetValue(ref _windowState, value, nameof(WindowState));
-                if (_windowState == WindowState.Maximized && WindowMode != WindowModeEnum.FullScreen)
-                    WindowMode = WindowModeEnum.FullScreen;
-            }
-        }
-
-        private bool _allowsTransparency = false;
-        public bool AllowsTransparency
-        {
-            get => _allowsTransparency;
-            set => SetValue(ref _allowsTransparency, value, nameof(AllowsTransparency));
-        }
-
-        private bool _topmost = false;
-        public bool Topmost
-        {
-            get => _topmost;
-            set => SetValue(ref _topmost, value, nameof(Topmost));
+            set => SetValue(ref _windowState, value, nameof(WindowState));
         }
 
         private double _outputWindowTop = 50;
@@ -230,16 +159,6 @@ namespace AsystentZOOM.VM.ViewModel
         }
         private bool _IsMenuOpened;
 
-        private RelayCommand _exitFullScreenCommand;
-        public RelayCommand ExitFullScreenCommand
-            => _exitFullScreenCommand ?? (_exitFullScreenCommand = new RelayCommand(ExitFullScreenExecute));
-
-        private void ExitFullScreenExecute()
-        {
-            if (WindowState == WindowState.Maximized)
-                WindowMode = _windowModePrev;
-        }
-
         private RelayCommand _resetApplicationCommand;
         public RelayCommand ResetApplicationCommand
             => _resetApplicationCommand ?? (_resetApplicationCommand = new RelayCommand(ResetApplicationExecute));
@@ -270,12 +189,19 @@ namespace AsystentZOOM.VM.ViewModel
 
             foreach (var target in SingletonVMFactory.AllSingletons)
             {
-                if (target == null)
+                if (target == null || target != this)
                     continue;
                 var source = Activator.CreateInstance(target.GetType());
                 SingletonVMFactory.SetSingletonValues(source);
             }
+            MainVM mainVM = this;
+            MainVM s = (MainVM)Activator.CreateInstance(GetType());
+            SingletonVMFactory.CopyValuesWhenDifferent(s, ref mainVM);
+
             SingletonVMFactory.SaveAllSingletons();
+
+            EventAggregator.Publish($"{nameof(MainVM)}_Change_{nameof(OutputWindowWidth)}", OutputWindowWidth);
+            EventAggregator.Publish($"{nameof(MainVM)}_Change_{nameof(OutputWindowHeight)}", OutputWindowHeight);
         }
     }
 }

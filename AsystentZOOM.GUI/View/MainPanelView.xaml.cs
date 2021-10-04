@@ -117,15 +117,6 @@ namespace AsystentZOOM.GUI.View
         {
             InitializeComponent();
             FillTabs();
-
-            cmbWindowMode.ItemsSource = new Dictionary<WindowModeEnum, string>
-            {
-                { WindowModeEnum.NoBorder,   "Ruchome okno bez krawędzi i tytułu"  },
-                { WindowModeEnum.Normal,     "Zwykłe okno z krawędziami i tytułem" },
-                { WindowModeEnum.FullScreen, "Pełny ekran"                         }
-            };
-            ViewModel.WindowMode = WindowModeEnum.NoBorder;
-            //ViewModel.WindowMode = WindowModeEnum.Normal;
             Loaded += MainPanelView_Loaded;
         }
 
