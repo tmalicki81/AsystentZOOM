@@ -17,7 +17,7 @@ namespace AsystentZOOM.GUI
     /// <summary>
     /// Interaction logic for PanelWindow.xaml
     /// </summary>
-    public partial class PanelWindow : Window, IViewModel<MainVM>
+    public partial class PanelWindow : FlexibleWindow, IViewModel<MainVM>
     {
         private MainOutputWindow _mainOutputWindow;
         private MainBorderWindow _mainBorderWindow;
@@ -29,9 +29,6 @@ namespace AsystentZOOM.GUI
             InitializeComponent();
 
             MainVM.Dispatcher = Dispatcher;
-
-            Height = ViewModel.PanelWindowHeight;
-            Width = ViewModel.PanelWindowWidth;
 
             if (Environment.UserDomainName.ToUpper().Contains("KAMSOFT"))
                 Title = "Entrypoint";//Process.GetCurrentProcess().MainModule.ModuleName;
@@ -48,10 +45,6 @@ namespace AsystentZOOM.GUI
             EventAggregator.Subscribe<OpenFileDialogParameters>("OpenFile_Show", OpenFile_Show, (x) => true);
             EventAggregator.Subscribe<SaveFileDialogParameters>("SaveFile_Show", SaveFile_Show, (x) => true);
 
-            EventAggregator.Subscribe<double>($"{nameof(MainVM)}_Change_{nameof(ViewModel.PanelWindowWidth)}", (w) => Width = w, (p) => true);
-            EventAggregator.Subscribe<double>($"{nameof(MainVM)}_Change_{nameof(ViewModel.PanelWindowHeight)}", (h) => Height = h, (p) => true);
-            EventAggregator.Subscribe<Size>($"{typeof(ILayerVM)}_ChangePanelSize", ChangePanelSize, (s) => true);
-
             Loaded += PanelWindow_Loaded;
         }
 
@@ -59,13 +52,8 @@ namespace AsystentZOOM.GUI
         {
             _mainBorderWindow.Show();
             _mainOutputWindow.Show();
+            _mainBorderWindow.Owner = this;
             _mainOutputWindow.Owner = _mainBorderWindow;
-        }
-
-        private void ChangePanelSize(Size size)
-        {
-            double proportions = size.Height / size.Width;
-            Height = Width * proportions;
         }
 
         private void MessageBox_Show(MessageBoxParameters p)
@@ -146,15 +134,6 @@ namespace AsystentZOOM.GUI
             SingletonVMFactory.SaveAllSingletons();
             SingletonVMFactory.DisposeAllSingletons();
             Application.Current?.Shutdown();
-        }
-
-        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            if (WindowState != WindowState.Maximized)
-            {
-                ViewModel.PanelWindowHeight = e.NewSize.Height;
-                ViewModel.PanelWindowWidth = e.NewSize.Width;
-            }
         }
     }
 }

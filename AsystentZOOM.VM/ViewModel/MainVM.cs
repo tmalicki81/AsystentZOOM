@@ -1,16 +1,12 @@
 ﻿using AsystentZOOM.VM.Common;
-using AsystentZOOM.VM.Enums;
-using AsystentZOOM.VM.Model;
 using AsystentZOOM.VM.Interfaces;
+using AsystentZOOM.VM.Model;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Threading;
 using System.Xml.Serialization;
-using System.Diagnostics;
-using System.Reflection;
-using System.IO;
-using AsystentZOOM.VM.Common.Dialog;
 
 namespace AsystentZOOM.VM.ViewModel
 {
@@ -107,22 +103,14 @@ namespace AsystentZOOM.VM.ViewModel
         public double PanelWindowHeight
         {
             get => _panelWindowHeight;
-            set
-            {
-                if (SetValue(ref _panelWindowHeight, value, nameof(PanelWindowHeight)))
-                    EventAggregator.Publish($"{nameof(MainVM)}_Change_{nameof(PanelWindowHeight)}", _panelWindowHeight);
-            }
+            set => SetValue(ref _panelWindowHeight, value, nameof(PanelWindowHeight));
         }
 
         private double _panelWindowWidth = 824;
         public double PanelWindowWidth
         {
             get => _panelWindowWidth;
-            set
-            {
-                if (SetValue(ref _panelWindowWidth, value, nameof(PanelWindowWidth)))
-                    EventAggregator.Publish($"{nameof(MainVM)}_Change_{nameof(PanelWindowWidth)}", _panelWindowWidth);
-            }
+            set => SetValue(ref _panelWindowWidth, value, nameof(PanelWindowWidth));
         }
 
         #endregion Panel
@@ -146,10 +134,17 @@ namespace AsystentZOOM.VM.ViewModel
         [XmlIgnore]
         public bool IsMenuOpened
         {
-            get => _IsMenuOpened;
-            set => SetValue(ref _IsMenuOpened, value, nameof(IsMenuOpened));
+            get => _isMenuOpened;
+            set => SetValue(ref _isMenuOpened, value, nameof(IsMenuOpened));
         }
-        private bool _IsMenuOpened;
+        private bool _isMenuOpened;
+
+        public bool ToolButtonsVisible
+        {
+            get => _toolButtonsVisible;
+            set => SetValue(ref _toolButtonsVisible, value, nameof(ToolButtonsVisible));
+        }
+        private bool _toolButtonsVisible = true;
 
         private RelayCommand _resetApplicationCommand;
         public RelayCommand ResetApplicationCommand
@@ -160,7 +155,7 @@ namespace AsystentZOOM.VM.ViewModel
             if (string.IsNullOrEmpty(MeetingVM.LocalFileName))
                 Meeting.SaveTempFile();
             else
-                Meeting.SaveLocalFile(true);            
+                Meeting.SaveLocalFile(true);
             Process.Start("AsystentZOOM.GUI.exe", $@"""{MeetingVM.LocalFileName}""");
             Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
             Application.Current.Shutdown();
@@ -192,5 +187,19 @@ namespace AsystentZOOM.VM.ViewModel
 
             SingletonVMFactory.SaveAllSingletons();
         }
+
+        private RelayCommand _newTimePieceCommand;
+        public RelayCommand NewTimePieceCommand
+            => _newTimePieceCommand ??= new RelayCommand(NewTimePieceExecute);
+
+        private void NewTimePieceExecute() 
+        {
+            SingletonVMFactory.TimePiece.IsEnabled = true;
+            SingletonVMFactory.Background.IsEnabled = true;
+        }
+
+        private RelayCommand _quitApplicationCommand;
+        public RelayCommand QuitApplicationCommand
+            => _quitApplicationCommand ??= new RelayCommand(() => Application.Current.MainWindow.Close());
     }
 }

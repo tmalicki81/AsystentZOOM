@@ -27,15 +27,16 @@
 
         <Menu Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
             <MenuItem Header="_Plik" IsSubmenuOpen="{Binding Path=IsMenuOpened, Mode=OneWayToSource}" >
-                <MenuItem Header="Nowe spotkanie" InputGestureText="Ctrl+N"/>
-                <MenuItem Header="Otwórz..."      InputGestureText="Ctrl+O"/>
-                <MenuItem Header="Zapisz"         InputGestureText="Ctrl+S"/>
-                <MenuItem Header="Zapisz jako..." InputGestureText="Ctrl+Alt+S"/>
+                <MenuItem Header="Nowe spotkanie"    InputGestureText="Ctrl+N"/>
+                <MenuItem Header="Nowy pomiar czasu" InputGestureText="Ctrl+Alt+N" Command="{Binding Path=NewTimePieceCommand}"/>
+                <MenuItem Header="Otwórz..."         InputGestureText="Ctrl+O"/>
+                <MenuItem Header="Zapisz"            InputGestureText="Ctrl+S"/>
+                <MenuItem Header="Zapisz jako..."    InputGestureText="Ctrl+Alt+S"/>
                 <Separator/>
                 <MenuItem Header="Wyczyść ustawienia widoków" Command="{Binding Path=ResetVisualSettingsCommand}"/>
                 <Separator/>
                 <MenuItem Header="Restart aplikacji" Command="{Binding Path=ResetApplicationCommand}"/>
-                <MenuItem Header="Wyjdź"             InputGestureText="Alt+F4"/>
+                <MenuItem Header="Wyjdź"             InputGestureText="Alt+F4" Command="{Binding Path=QuitApplicationCommand}"/>
             </MenuItem>
 
             <MenuItem Header="_Chmura" IsSubmenuOpen="{Binding Path=IsMenuOpened, Mode=OneWayToSource}">
@@ -52,6 +53,13 @@
                 <Separator/>
                 <MenuItem Header="Cofnij" InputGestureText="Ctrl+Z"/>
                 <MenuItem Header="Ponów"  InputGestureText="Ctrl+Y"/>
+            </MenuItem>
+
+            <MenuItem Header="_Widok" IsSubmenuOpen="{Binding Path=IsMenuOpened, Mode=OneWayToSource}">
+                <MenuItem Header="Zwiń punkty"/>
+                <MenuItem Header="Rozwiń punkty"/>
+                <Separator/>
+                <MenuItem Header="Widoczność przycisków" InputGestureText="Ctrl+Z" IsCheckable="True" IsChecked="{Binding Path=ToolButtonsVisible, Mode=TwoWay}"/>
             </MenuItem>
 
             <MenuItem Header="_Nagrywanie" IsSubmenuOpen="{Binding Path=IsMenuOpened, Mode=OneWayToSource}">

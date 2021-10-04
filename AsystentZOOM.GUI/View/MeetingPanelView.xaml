@@ -49,9 +49,10 @@
                     <controls:ParametersControl DataContext="{Binding Path=ParameterList, Mode=TwoWay, NotifyOnSourceUpdated=True}" Background="Transparent"/>
                 </StackPanel>
             </Grid>
-            
+
             <!--Przyciski-->
-            <Grid Grid.Column="1" HorizontalAlignment="Stretch" Margin="3" VerticalAlignment="Top">
+            <Grid Visibility="{Binding Path=ToolButtonsVisible, Source={x:Static factory:SingletonVMFactory.Main}, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=COLAPSE}" 
+                  Grid.Column="1" HorizontalAlignment="Stretch" Margin="3" VerticalAlignment="Top">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
