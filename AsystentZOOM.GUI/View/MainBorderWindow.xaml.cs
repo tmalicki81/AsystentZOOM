@@ -46,13 +46,6 @@ namespace AsystentZOOM.GUI.View
             Left = ViewModel.OutputWindowLeft - Offsets.Left;
 
             SizeChanged += MainBorderWindow_SizeChanged;
-            LocationChanged += MainBorderWindow_LocationChanged;
-        }
-
-        private void MainBorderWindow_LocationChanged(object sender, EventArgs e)
-        {
-            //ViewModel.OutputWindowTop = Top + Offsets.Top;
-            //ViewModel.OutputWindowLeft = Left + Offsets.Left;
         }
 
         private void MainBorderWindow_SizeChanged(object sender, SizeChangedEventArgs e)
