@@ -3,11 +3,16 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:AsystentZOOM.GUI.View"
+        xmlns:local="clr-namespace:AsystentZOOM.GUI.View" 
+        xmlns:conv="clr-namespace:AsystentZOOM.GUI.Converters"
+        xmlns:viewmodel="clr-namespace:AsystentZOOM.VM.ViewModel;assembly=AsystentZOOM.VM" 
+        xmlns:factory="clr-namespace:AsystentZOOM.VM.Common;assembly=AsystentZOOM.VM"
+        DataContext="{x:Static factory:SingletonVMFactory.Main}"
         mc:Ignorable="d" 
         Title="MainBorderWindow" Height="450" Width="800" 
-        ShowInTaskbar="False">
-    <Grid>
+        ShowInTaskbar="False"
         
-    </Grid>
+        Top="{Binding Path=OutputWindowTop, Mode=TwoWay, Converter={x:Static conv:OffsetConverter.Instance}, ConverterParameter=30}"
+        Left="{Binding Path=OutputWindowLeft, Mode=TwoWay, Converter={x:Static conv:OffsetConverter.Instance}, ConverterParameter=10}">
+    <Grid/>
 </Window>
