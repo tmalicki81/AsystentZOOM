@@ -16,14 +16,14 @@ namespace AsystentZOOM.GUI.Converters
         {
             var dValue = (double)value;
             double offset = double.Parse(parameter.ToString());
-            return dValue - offset;
+            return dValue + offset;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var dValue = (double)value;
             double offset = double.Parse(parameter.ToString());
-            return dValue + offset;
+            return dValue - offset;
         }
     }
 }

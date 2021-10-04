@@ -12,7 +12,7 @@
         Title="MainBorderWindow" Height="450" Width="800" 
         ShowInTaskbar="False"
         
-        Top="{Binding Path=OutputWindowTop, Mode=TwoWay, Converter={x:Static conv:OffsetConverter.Instance}, ConverterParameter=30}"
-        Left="{Binding Path=OutputWindowLeft, Mode=TwoWay, Converter={x:Static conv:OffsetConverter.Instance}, ConverterParameter=10}">
+        Top="{Binding Path=OutputWindowTop, Mode=TwoWay, Converter={x:Static conv:OffsetConverter.Instance}, ConverterParameter=-30}"
+        Left="{Binding Path=OutputWindowLeft, Mode=TwoWay, Converter={x:Static conv:OffsetConverter.Instance}, ConverterParameter=-10}">
     <Grid/>
 </Window>
