@@ -11,15 +11,12 @@ namespace AsystentZOOM.GUI.View
     /// <summary>
     /// Interaction logic for MainBorderWindow.xaml
     /// </summary>
-    public partial class MainBorderWindow : Window
+    public partial class MainBorderWindow : FlexibleWindow, IViewModel<MainVM>
     {
         public MainBorderWindow()
         {
             InitializeComponent();
-            EventAggregator.Subscribe<double>($"{nameof(MainVM)}_Change_{nameof(ViewModel.OutputWindowWidth)}", (w) => Width = w + Offsets.Width, (p) => true);
-            EventAggregator.Subscribe<double>($"{nameof(MainVM)}_Change_{nameof(ViewModel.OutputWindowHeight)}", (h) => Height = h + Offsets.Height, (p) => true);
             EventAggregator.Subscribe<Size>($"{typeof(ILayerVM)}_ChangeOutputSize", ChangeOutputSize, (s) => !ViewModel.ProgressInfo.ProgressBarVisibility);
-            Loaded += MainBorderWindow_Loaded;
         }
 
         private class Offsets
@@ -36,28 +33,10 @@ namespace AsystentZOOM.GUI.View
             Height = Width * proportions + Offsets.Top;
         }
 
-        private MainVM ViewModel => SingletonVMFactory.Main;
-
-        private void MainBorderWindow_Loaded(object sender, RoutedEventArgs e)
-        {
-            Height = ViewModel.OutputWindowHeight + Offsets.Height;
-            Width = ViewModel.OutputWindowWidth + Offsets.Width;
-            Top = ViewModel.OutputWindowTop - Offsets.Top;
-            Left = ViewModel.OutputWindowLeft - Offsets.Left;
-
-            SizeChanged += MainBorderWindow_SizeChanged;
-        }
-
-        private void MainBorderWindow_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            ViewModel.OutputWindowWidth = e.NewSize.Width - Offsets.Width;
-            ViewModel.OutputWindowHeight = e.NewSize.Height - Offsets.Height;
-        }
+        public MainVM ViewModel => SingletonVMFactory.Main;
 
         protected override void OnClosing(CancelEventArgs e)
         {
-            EventAggregator.UnSubscribe($"{nameof(MainVM)}_Change_{nameof(ViewModel.OutputWindowWidth)}");
-            EventAggregator.UnSubscribe($"{nameof(MainVM)}_Change_{nameof(ViewModel.OutputWindowHeight)}");
             EventAggregator.UnSubscribe($"{typeof(ILayerVM)}_ChangeOutputSize");
             base.OnClosing(e);
         }

@@ -1,4 +1,4 @@
-﻿<Window x:Class="AsystentZOOM.GUI.View.MainBorderWindow"
+﻿<local:FlexibleWindow x:Class="AsystentZOOM.GUI.View.MainBorderWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -13,6 +13,10 @@
         ShowInTaskbar="False"
         
         Top="{Binding Path=OutputWindowTop, Mode=TwoWay, Converter={x:Static conv:OffsetConverter.Instance}, ConverterParameter=-30}"
-        Left="{Binding Path=OutputWindowLeft, Mode=TwoWay, Converter={x:Static conv:OffsetConverter.Instance}, ConverterParameter=-10}">
+        Left="{Binding Path=OutputWindowLeft, Mode=TwoWay, Converter={x:Static conv:OffsetConverter.Instance}, ConverterParameter=-10}"
+        CurrentWidth="{Binding Path=OutputWindowWidth, Mode=TwoWay, Converter={x:Static conv:OffsetConverter.Instance}, ConverterParameter=-20}"
+        CurrentHeight="{Binding Path=OutputWindowHeight, Mode=TwoWay, Converter={x:Static conv:OffsetConverter.Instance}, ConverterParameter=-40}"
+                      
+                      >
     <Grid/>
-</Window>
+</local:FlexibleWindow>
