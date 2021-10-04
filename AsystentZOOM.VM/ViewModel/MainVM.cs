@@ -77,22 +77,14 @@ namespace AsystentZOOM.VM.ViewModel
         public double OutputWindowHeight
         {
             get => _outputWindowHeight;
-            set
-            {
-                if (SetValue(ref _outputWindowHeight, value, nameof(OutputWindowHeight)))
-                    EventAggregator.Publish($"{nameof(MainVM)}_Change_{nameof(OutputWindowHeight)}", _outputWindowHeight);
-            }
+            set => SetValue(ref _outputWindowHeight, value, nameof(OutputWindowHeight));
         }
 
         private double _outputWindowWidth = 824;
         public double OutputWindowWidth
         {
             get => _outputWindowWidth;
-            set
-            {
-                if (SetValue(ref _outputWindowWidth, value, nameof(OutputWindowWidth)))
-                    EventAggregator.Publish($"{nameof(MainVM)}_Change_{nameof(OutputWindowWidth)}", _outputWindowWidth);
-            }
+            set => SetValue(ref _outputWindowWidth, value, nameof(OutputWindowWidth));
         }
 
         #region Panel
@@ -199,9 +191,6 @@ namespace AsystentZOOM.VM.ViewModel
             SingletonVMFactory.CopyValuesWhenDifferent(s, ref mainVM);
 
             SingletonVMFactory.SaveAllSingletons();
-
-            EventAggregator.Publish($"{nameof(MainVM)}_Change_{nameof(OutputWindowWidth)}", OutputWindowWidth);
-            EventAggregator.Publish($"{nameof(MainVM)}_Change_{nameof(OutputWindowHeight)}", OutputWindowHeight);
         }
     }
 }

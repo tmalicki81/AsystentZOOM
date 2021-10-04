@@ -1,13 +1,19 @@
-﻿using AsystentZOOM.GUI.Converters;
+﻿using AsystentZOOM.GUI.Common;
+using AsystentZOOM.GUI.Common.Mouse;
+using AsystentZOOM.GUI.Converters;
 using AsystentZOOM.VM.Common;
+using AsystentZOOM.VM.Enums;
 using AsystentZOOM.VM.Interfaces;
 using AsystentZOOM.VM.ViewModel;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 
 namespace AsystentZOOM.GUI.View
 {
