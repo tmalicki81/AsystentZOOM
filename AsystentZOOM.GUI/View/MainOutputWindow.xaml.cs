@@ -2,6 +2,7 @@
 using AsystentZOOM.GUI.Common.Mouse;
 using AsystentZOOM.GUI.Converters;
 using AsystentZOOM.VM.Common;
+using AsystentZOOM.VM.Common.Dialog;
 using AsystentZOOM.VM.Enums;
 using AsystentZOOM.VM.Interfaces;
 using AsystentZOOM.VM.ViewModel;
@@ -33,6 +34,13 @@ namespace AsystentZOOM.GUI.View
             FillGrid();
 
             EventAggregator.Subscribe<Size>($"{typeof(ILayerVM)}_ChangeOutputSize", ChangeOutputSize, (s) => !ViewModel.ProgressInfo.ProgressBarVisibility);
+
+            ScreenChanged += MainOutputWindow_ScreenChanged;
+        }
+
+        private void MainOutputWindow_ScreenChanged(object sender, EventArgs<System.Windows.Forms.Screen> e)
+        {
+            DialogHelper.ShowMessageBar($"Zmieniono urządzenie wyświetlające {e.Value.DeviceName}");
         }
 
         private void ChangeOutputSize(Size size)

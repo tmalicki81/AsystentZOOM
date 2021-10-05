@@ -10,7 +10,7 @@
         DataContext="{x:Static factory:SingletonVMFactory.Main}"
         mc:Ignorable="d" 
         Title="MainBorderWindow" Height="450" Width="800" 
-        ShowInTaskbar="False"
+        ShowInTaskbar="False" Topmost="True"
         
         Top="{Binding Path=OutputWindowTop, Mode=TwoWay, Converter={x:Static conv:OffsetConverter.Instance}, ConverterParameter=-30}"
         Left="{Binding Path=OutputWindowLeft, Mode=TwoWay, Converter={x:Static conv:OffsetConverter.Instance}, ConverterParameter=-10}"
