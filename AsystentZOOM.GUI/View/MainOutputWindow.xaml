@@ -18,10 +18,10 @@
         WindowStyle="None"
         AllowsTransparency="True"
         
-        Top="{Binding Path=BorderWindowTop, Mode=TwoWay}"
-        Left="{Binding Path=BorderWindowLeft, Mode=TwoWay}"                      
-        CurrentWidth="{Binding Path=BorderWindowWidth, Mode=TwoWay}"
-        CurrentHeight="{Binding Path=BorderWindowHeight, Mode=TwoWay}">
+        Top="{Binding Path=OutputWindowTop, Mode=TwoWay}"
+        Left="{Binding Path=OutputWindowLeft, Mode=TwoWay}"                      
+        CurrentWidth="{Binding Path=OutputWindowWidth, Mode=TwoWay}"
+        CurrentHeight="{Binding Path=OutputWindowHeight, Mode=TwoWay}">
 
     <Window.Resources>
         <conv:SolidColorBrushConverter x:Key="SolidColorBrushConverter"/>

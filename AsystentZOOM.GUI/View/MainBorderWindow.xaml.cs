@@ -19,5 +19,10 @@ namespace AsystentZOOM.GUI.View
         }
 
         public MainVM ViewModel => SingletonVMFactory.Main;
+
+        private void FlexibleWindow_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            DragMove();
+        }
     }
 }

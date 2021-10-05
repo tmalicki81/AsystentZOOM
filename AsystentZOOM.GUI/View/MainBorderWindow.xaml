@@ -1,22 +1,19 @@
 ﻿<local:FlexibleWindow x:Class="AsystentZOOM.GUI.View.MainBorderWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:AsystentZOOM.GUI.View" 
-        xmlns:conv="clr-namespace:AsystentZOOM.GUI.Converters"
-        xmlns:viewmodel="clr-namespace:AsystentZOOM.VM.ViewModel;assembly=AsystentZOOM.VM" 
-        xmlns:factory="clr-namespace:AsystentZOOM.VM.Common;assembly=AsystentZOOM.VM"
-        DataContext="{x:Static factory:SingletonVMFactory.Main}"
-        mc:Ignorable="d" 
-        Title="MainBorderWindow" Height="450" Width="800" 
-        ShowInTaskbar="False" Topmost="True"
-        
-        Top="{Binding Path=BorderWindowTop, Mode=TwoWay, Converter={x:Static conv:OffsetConverter.Instance}, ConverterParameter=-30}"
-        Left="{Binding Path=BorderWindowLeft, Mode=TwoWay, Converter={x:Static conv:OffsetConverter.Instance}, ConverterParameter=-10}"
-        CurrentWidth="{Binding Path=BorderWindowWidth, Mode=TwoWay, Converter={x:Static conv:OffsetConverter.Instance}, ConverterParameter=20}"
-        CurrentHeight="{Binding Path=BorderWindowHeight, Mode=TwoWay, Converter={x:Static conv:OffsetConverter.Instance}, ConverterParameter=40}"
-                      
-                      >
+                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                      xmlns:local="clr-namespace:AsystentZOOM.GUI.View" 
+                      xmlns:conv="clr-namespace:AsystentZOOM.GUI.Converters"
+                      xmlns:viewmodel="clr-namespace:AsystentZOOM.VM.ViewModel;assembly=AsystentZOOM.VM" 
+                      xmlns:factory="clr-namespace:AsystentZOOM.VM.Common;assembly=AsystentZOOM.VM"
+                      DataContext="{x:Static factory:SingletonVMFactory.Main}"
+                      mc:Ignorable="d" Title="(nie udostępniać)" Height="450" Width="800" Icon="{x:Null}"
+                      ShowInTaskbar="False" 
+                      WindowStyle="None" MouseLeftButtonDown="FlexibleWindow_MouseLeftButtonDown"
+                      Top="{Binding Path=BorderWindowTop, Mode=TwoWay}"
+                      Left="{Binding Path=BorderWindowLeft, Mode=TwoWay}"
+                      CurrentWidth="{Binding Path=BorderWindowWidth, Mode=TwoWay}"
+                      CurrentHeight="{Binding Path=BorderWindowHeight, Mode=TwoWay}" >
     <Grid/>
 </local:FlexibleWindow>
