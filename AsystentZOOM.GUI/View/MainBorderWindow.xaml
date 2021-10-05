@@ -12,10 +12,10 @@
         Title="MainBorderWindow" Height="450" Width="800" 
         ShowInTaskbar="False" Topmost="True"
         
-        Top="{Binding Path=OutputWindowTop, Mode=TwoWay, Converter={x:Static conv:OffsetConverter.Instance}, ConverterParameter=-30}"
-        Left="{Binding Path=OutputWindowLeft, Mode=TwoWay, Converter={x:Static conv:OffsetConverter.Instance}, ConverterParameter=-10}"
-        CurrentWidth="{Binding Path=OutputWindowWidth, Mode=TwoWay, Converter={x:Static conv:OffsetConverter.Instance}, ConverterParameter=20}"
-        CurrentHeight="{Binding Path=OutputWindowHeight, Mode=TwoWay, Converter={x:Static conv:OffsetConverter.Instance}, ConverterParameter=40}"
+        Top="{Binding Path=BorderWindowTop, Mode=TwoWay, Converter={x:Static conv:OffsetConverter.Instance}, ConverterParameter=-30}"
+        Left="{Binding Path=BorderWindowLeft, Mode=TwoWay, Converter={x:Static conv:OffsetConverter.Instance}, ConverterParameter=-10}"
+        CurrentWidth="{Binding Path=BorderWindowWidth, Mode=TwoWay, Converter={x:Static conv:OffsetConverter.Instance}, ConverterParameter=20}"
+        CurrentHeight="{Binding Path=BorderWindowHeight, Mode=TwoWay, Converter={x:Static conv:OffsetConverter.Instance}, ConverterParameter=40}"
                       
                       >
     <Grid/>

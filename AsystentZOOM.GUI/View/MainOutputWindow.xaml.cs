@@ -33,20 +33,12 @@ namespace AsystentZOOM.GUI.View
                 Title = "Entrypoint";//Process.GetCurrentProcess().MainModule.ModuleName;
             FillGrid();
 
-            EventAggregator.Subscribe<Size>($"{typeof(ILayerVM)}_ChangeOutputSize", ChangeOutputSize, (s) => !ViewModel.ProgressInfo.ProgressBarVisibility);
-
             ScreenChanged += MainOutputWindow_ScreenChanged;
         }
 
         private void MainOutputWindow_ScreenChanged(object sender, EventArgs<System.Windows.Forms.Screen> e)
         {
             DialogHelper.ShowMessageBar($"Zmieniono urządzenie wyświetlające {e.Value.DeviceName}");
-        }
-
-        private void ChangeOutputSize(Size size)
-        {
-            double proportions = size.Height / size.Width;
-            Height = Width * proportions;
         }
 
         private void FillGrid() 
@@ -73,12 +65,6 @@ namespace AsystentZOOM.GUI.View
                     });
                 grid.Children.Add(contentControl);
             }
-        }
-
-        protected override void OnClosing(CancelEventArgs e)
-        {
-            EventAggregator.UnSubscribe($"{typeof(ILayerVM)}_ChangeOutputSize");
-            base.OnClosing(e);
         }
     }
 }

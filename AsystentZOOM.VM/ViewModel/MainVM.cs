@@ -15,6 +15,13 @@ namespace AsystentZOOM.VM.ViewModel
         public MainVM()
         {
             ProgressInfo = new ProgressInfoVM();
+            EventAggregator.Subscribe<Size>($"{typeof(ILayerVM)}_ChangeOutputSize", ChangeOutputSize, (s) => !ProgressInfo.ProgressBarVisibility);
+        }
+
+        private void ChangeOutputSize(Size size)
+        {
+            double proportions = size.Height / size.Width;
+            BorderWindowHeight = BorderWindowWidth * proportions;
         }
 
         private static Dispatcher _dispatcher;
@@ -55,32 +62,32 @@ namespace AsystentZOOM.VM.ViewModel
             set => SetValue(ref _windowState, value, nameof(WindowState));
         }
 
-        private double _outputWindowTop = 50;
-        public double OutputWindowTop
+        private double _BorderWindowTop = 50;
+        public double BorderWindowTop
         {
-            get => _outputWindowTop;
-            set => SetValue(ref _outputWindowTop, value, nameof(OutputWindowTop));
+            get => _BorderWindowTop;
+            set => SetValue(ref _BorderWindowTop, value, nameof(BorderWindowTop));
         }
 
-        private double _outputWindowLeft = 0;
-        public double OutputWindowLeft
+        private double _BorderWindowLeft = 0;
+        public double BorderWindowLeft
         {
-            get => _outputWindowLeft;
-            set => SetValue(ref _outputWindowLeft, value, nameof(OutputWindowLeft));
+            get => _BorderWindowLeft;
+            set => SetValue(ref _BorderWindowLeft, value, nameof(BorderWindowLeft));
         }
 
-        private double _outputWindowHeight = 600;
-        public double OutputWindowHeight
+        private double _BorderWindowHeight = 600;
+        public double BorderWindowHeight
         {
-            get => _outputWindowHeight;
-            set => SetValue(ref _outputWindowHeight, value, nameof(OutputWindowHeight));
+            get => _BorderWindowHeight;
+            set => SetValue(ref _BorderWindowHeight, value, nameof(BorderWindowHeight));
         }
 
-        private double _outputWindowWidth = 824;
-        public double OutputWindowWidth
+        private double _BorderWindowWidth = 824;
+        public double BorderWindowWidth
         {
-            get => _outputWindowWidth;
-            set => SetValue(ref _outputWindowWidth, value, nameof(OutputWindowWidth));
+            get => _BorderWindowWidth;
+            set => SetValue(ref _BorderWindowWidth, value, nameof(BorderWindowWidth));
         }
 
         #region Panel
