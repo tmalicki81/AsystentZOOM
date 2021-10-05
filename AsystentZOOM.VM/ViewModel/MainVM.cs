@@ -25,36 +25,15 @@ namespace AsystentZOOM.VM.ViewModel
             ChangeOutputSize();
         }
 
-        private enum SizeConvDir : int
-        {
-            ToBorder = -1,
-            ToOutput = 1
-        }
-
-        private static class SizeConv
-        {
-            private const int _margin = 8;
-            private const int _top = 30;
-
-            internal static double GetWidth(SizeConvDir direction, double width)
-                => width - _margin * 2 * (int)direction;
-
-            internal static double GetHeight(SizeConvDir direction, double height) 
-                => height - _top * (int)direction - _margin * (int)direction;
-
-            internal static double GetTop(SizeConvDir direction, double top)
-                => top +  _top + (int)direction;
-
-            internal static double GetLeft(SizeConvDir direction, double left)
-                => left + _margin * (int)direction;
-        }
-
         private void ChangeOutputSize()
         {
-            double calcOutputWindowTop = SizeConv.GetTop(SizeConvDir.ToOutput, BorderWindowTop);
-            double calcOutputWindowLeft = SizeConv.GetLeft(SizeConvDir.ToOutput, BorderWindowLeft);
-            double calcOutputWindowWidth = SizeConv.GetWidth(SizeConvDir.ToOutput, BorderWindowWidth);
-            double calcOutputWindowHeight = SizeConv.GetHeight(SizeConvDir.ToOutput, BorderWindowHeight);
+            const int _margin = 8;
+            const int _titleHeight = 30;
+
+            double calcOutputWindowTop = BorderWindowTop + _titleHeight;
+            double calcOutputWindowLeft = BorderWindowLeft + _margin;
+            double calcOutputWindowWidth = BorderWindowWidth - _margin * 2;
+            double calcOutputWindowHeight = BorderWindowHeight - _titleHeight - _margin;
 
             if (_mediaSize == default)
             {
@@ -316,7 +295,7 @@ namespace AsystentZOOM.VM.ViewModel
         public RelayCommand NewTimePieceCommand
             => _newTimePieceCommand ??= new RelayCommand(NewTimePieceExecute);
 
-        private void NewTimePieceExecute() 
+        private void NewTimePieceExecute()
         {
             SingletonVMFactory.TimePiece.IsEnabled = true;
             SingletonVMFactory.Background.IsEnabled = true;
