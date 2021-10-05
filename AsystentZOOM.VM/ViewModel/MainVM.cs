@@ -28,7 +28,7 @@ namespace AsystentZOOM.VM.ViewModel
         private void ChangeOutputSize()
         {
             const int _margin = 8;
-            const int _titleHeight = 30;
+            const int _titleHeight = 34;
 
             double calcOutputWindowTop = BorderWindowTop + _titleHeight;
             double calcOutputWindowLeft = BorderWindowLeft + _margin;

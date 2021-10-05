@@ -15,5 +15,21 @@
                       Left="{Binding Path=BorderWindowLeft, Mode=TwoWay}"
                       CurrentWidth="{Binding Path=BorderWindowWidth, Mode=TwoWay}"
                       CurrentHeight="{Binding Path=BorderWindowHeight, Mode=TwoWay}" >
-    <Grid/>
+    <Grid Margin="0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="26"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Image Margin="7,0,0,0" Grid.Column="0" Height="16" Source="../Images/Blackvariant-Button-Ui-System-Folders-Alt-Group.ico"/>
+            <Label Grid.Column="1" VerticalAlignment="Top" Content="Asystent ZOOM - udostępnianie" />
+        </Grid>
+        
+        <Grid Grid.Row="1" Background="Black"/>
+    </Grid>
 </local:FlexibleWindow>

@@ -10,6 +10,8 @@ namespace AsystentZOOM.GUI.View
     {
         public FlexibleWindow()
         {
+            MinWidth = 100;
+            MinHeight = 100;
             Loaded += FlexibleWindow_Loaded;
         }
 
