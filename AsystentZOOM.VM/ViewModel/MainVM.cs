@@ -53,7 +53,6 @@ namespace AsystentZOOM.VM.ViewModel
         {
             double calcOutputWindowTop = SizeConv.GetTop(SizeConvDir.ToOutput, BorderWindowTop);
             double calcOutputWindowLeft = SizeConv.GetLeft(SizeConvDir.ToOutput, BorderWindowLeft);
-
             double calcOutputWindowWidth = SizeConv.GetWidth(SizeConvDir.ToOutput, BorderWindowWidth);
             double calcOutputWindowHeight = SizeConv.GetHeight(SizeConvDir.ToOutput, BorderWindowHeight);
 
@@ -68,13 +67,12 @@ namespace AsystentZOOM.VM.ViewModel
             else
             {
                 double proportions = _mediaSize.Height / _mediaSize.Width;
-
-                // Testuj dostosowanie wysokości
                 double targetOutputWindowHeight = calcOutputWindowWidth * proportions;
                 double targetOutputWindowWidth = calcOutputWindowHeight / proportions;
 
                 if (targetOutputWindowHeight <= calcOutputWindowHeight)
                 {
+                    // Jeśli dostosować wysokość
                     OutputWindowHeight = targetOutputWindowHeight;
                     OutputWindowWidth = calcOutputWindowWidth;
                     OutputWindowTop = calcOutputWindowTop + (calcOutputWindowHeight - targetOutputWindowHeight) / 2;
@@ -82,13 +80,11 @@ namespace AsystentZOOM.VM.ViewModel
                 }
                 else if (targetOutputWindowWidth <= calcOutputWindowWidth)
                 {
+                    // Jeśli dostosować szerokość
                     OutputWindowHeight = calcOutputWindowHeight;
                     OutputWindowWidth = targetOutputWindowWidth;
                     OutputWindowTop = calcOutputWindowTop;
                     OutputWindowLeft = calcOutputWindowLeft + (calcOutputWindowWidth - targetOutputWindowWidth) / 2;
-                }
-                else
-                { 
                 }
             }
         }
