@@ -25,23 +25,72 @@ namespace AsystentZOOM.VM.ViewModel
             ChangeOutputSize();
         }
 
+        private enum SizeConvDir : int
+        {
+            ToBorder = -1,
+            ToOutput = 1
+        }
+
+        private static class SizeConv
+        {
+            private const int _margin = 8;
+            private const int _top = 30;
+
+            internal static double GetWidth(SizeConvDir direction, double width)
+                => width - _margin * 2 * (int)direction;
+
+            internal static double GetHeight(SizeConvDir direction, double height) 
+                => height - _top * (int)direction - _margin * (int)direction;
+
+            internal static double GetTop(SizeConvDir direction, double top)
+                => top +  _top + (int)direction;
+
+            internal static double GetLeft(SizeConvDir direction, double left)
+                => left + _margin * (int)direction;
+        }
+
         private void ChangeOutputSize()
         {
-            const int margin = 8;
-            const int top = 30;
-            OutputWindowTop = BorderWindowTop + 30;
-            OutputWindowLeft = BorderWindowLeft + margin;
+            double calcOutputWindowTop = SizeConv.GetTop(SizeConvDir.ToOutput, BorderWindowTop);
+            double calcOutputWindowLeft = SizeConv.GetLeft(SizeConvDir.ToOutput, BorderWindowLeft);
 
-            if (_mediaSize != default)
+            double calcOutputWindowWidth = SizeConv.GetWidth(SizeConvDir.ToOutput, BorderWindowWidth);
+            double calcOutputWindowHeight = SizeConv.GetHeight(SizeConvDir.ToOutput, BorderWindowHeight);
+
+            if (_mediaSize == default)
             {
-                double proportions = _mediaSize.Height / _mediaSize.Width;
-                OutputWindowHeight = BorderWindowWidth * proportions - margin;
+                // Jeśli nie włączono żadnego medium
+                OutputWindowTop = calcOutputWindowTop;
+                OutputWindowLeft = calcOutputWindowLeft;
+                OutputWindowHeight = calcOutputWindowHeight;
+                OutputWindowWidth = calcOutputWindowWidth;
             }
             else
             {
-                OutputWindowHeight = BorderWindowHeight - top - margin;
+                double proportions = _mediaSize.Height / _mediaSize.Width;
+
+                // Testuj dostosowanie wysokości
+                double targetOutputWindowHeight = calcOutputWindowWidth * proportions;
+                double targetOutputWindowWidth = calcOutputWindowHeight / proportions;
+
+                if (targetOutputWindowHeight <= calcOutputWindowHeight)
+                {
+                    OutputWindowHeight = targetOutputWindowHeight;
+                    OutputWindowWidth = calcOutputWindowWidth;
+                    OutputWindowTop = calcOutputWindowTop + (calcOutputWindowHeight - targetOutputWindowHeight) / 2;
+                    OutputWindowLeft = calcOutputWindowLeft;
+                }
+                else if (targetOutputWindowWidth <= calcOutputWindowWidth)
+                {
+                    OutputWindowHeight = calcOutputWindowHeight;
+                    OutputWindowWidth = targetOutputWindowWidth;
+                    OutputWindowTop = calcOutputWindowTop;
+                    OutputWindowLeft = calcOutputWindowLeft + (calcOutputWindowWidth - targetOutputWindowWidth) / 2;
+                }
+                else
+                { 
+                }
             }
-            OutputWindowWidth = BorderWindowWidth - 2 * margin;
         }
 
         private static Dispatcher _dispatcher;
