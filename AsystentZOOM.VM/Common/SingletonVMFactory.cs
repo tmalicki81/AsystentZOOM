@@ -78,6 +78,7 @@ namespace AsystentZOOM.VM.Common
             {
                 Type layerType = source.GetType();
                 SingletonBaseVM target = AllSingletons.First(x => x.GetType() == layerType);
+                target.IsDataReady = false;
 
                 var properties = layerType
                     .GetProperties()
@@ -89,6 +90,7 @@ namespace AsystentZOOM.VM.Common
                     object sourcePropertyValue = pi.GetValue(source);
                     pi.SetValue(target, sourcePropertyValue);
                 }
+                target.IsDataReady = true;
                 return target;
             }
         }
@@ -151,6 +153,9 @@ namespace AsystentZOOM.VM.Common
                 .Where(p => p.SetMethod != null && p.GetMethod != null)
                 .Where(p => !p.GetCustomAttributes(typeof(XmlIgnoreAttribute), false).Any())
                 .ToList();
+
+            target.IsDataReady = false;
+
             foreach (var pi in properties)
             {
                 object sourcePropertyValue = pi.GetValue(source);
@@ -239,7 +244,7 @@ namespace AsystentZOOM.VM.Common
                 (targetPropertyValue as IXmlDeserializationCallback)?.OnDeserialized(null);
             }
             target.OnDeserialized(null);
-
+            target.IsDataReady = true;
             return true;
         }
 

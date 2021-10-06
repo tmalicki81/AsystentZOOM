@@ -24,6 +24,9 @@ namespace AsystentZOOM.VM.Common
         [XmlAttribute("instance-id")]
         public string InstanceId { get; set; } = Guid.NewGuid().ToString();
 
+        [XmlIgnore]
+        public bool IsDataReady { get; set; }
+
         /// <summary>
         /// Odświeżenie możliwości wykonania wszystkich poleceń
         /// </summary>

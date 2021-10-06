@@ -63,6 +63,8 @@ namespace AsystentZOOM.VM.Common
             var result = base.Deserialize(stream);
             var visitatedObjects = new List<object>();
             DeserializePropertyValue(result, visitatedObjects);
+            if (result is IXmlDeserializationCallback vm)
+                vm.IsDataReady = true;
             return result;
         }
     }

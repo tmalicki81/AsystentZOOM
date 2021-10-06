@@ -13,6 +13,9 @@
              DataContext="{x:Static factory:SingletonVMFactory.Main}">
     <UserControl.InputBindings>
         <KeyBinding Modifiers="Ctrl" Key="S" Command="{Binding Path=Meeting.SaveToLocalCommand}"/>
+        <KeyBinding Modifiers="Ctrl" Key="O" Command="{Binding Path=Meeting.OpenFromLocalCommand}"/>
+        <KeyBinding Modifiers="Ctrl" Key="Z" Command="{Binding Path=Meeting.UndoCommand}"/>
+        <KeyBinding Modifiers="Ctrl" Key="Y" Command="{Binding Path=Meeting.RedoCommand}"/>
     </UserControl.InputBindings>
     <Grid>
         <Grid.Resources>
@@ -29,8 +32,8 @@
             <MenuItem Header="_Plik" IsSubmenuOpen="{Binding Path=IsMenuOpened, Mode=OneWayToSource}" >
                 <MenuItem Header="Nowe spotkanie"    InputGestureText="Ctrl+N"/>
                 <MenuItem Header="Nowy pomiar czasu" InputGestureText="Ctrl+Alt+N" Command="{Binding Path=NewTimePieceCommand}"/>
-                <MenuItem Header="Otwórz..."         InputGestureText="Ctrl+O"/>
-                <MenuItem Header="Zapisz"            InputGestureText="Ctrl+S"/>
+                <MenuItem Header="Otwórz..."         InputGestureText="Ctrl+O"     Command="{Binding Path=Meeting.OpenFromLocalCommand}"/>
+                <MenuItem Header="Zapisz"            InputGestureText="Ctrl+S"     Command="{Binding Path=Meeting.SaveToLocalCommand}"/>
                 <MenuItem Header="Zapisz jako..."    InputGestureText="Ctrl+Alt+S"/>
                 <Separator/>
                 <MenuItem Header="Wyczyść ustawienia widoków" Command="{Binding Path=ResetVisualSettingsCommand}"/>
@@ -51,8 +54,8 @@
                 <MenuItem Header="Dodaj parametr spotkania"/>
                 <MenuItem Header="Dodaj punkt spotkania"/>
                 <Separator/>
-                <MenuItem Header="Cofnij" InputGestureText="Ctrl+Z"/>
-                <MenuItem Header="Ponów"  InputGestureText="Ctrl+Y"/>
+                <MenuItem Header="Cofnij" InputGestureText="Ctrl+Z" DataContext="{Binding Path=Meeting}" Command="{Binding Path=UndoCommand}"/>
+                <MenuItem Header="Ponów"  InputGestureText="Ctrl+Y" DataContext="{Binding Path=Meeting}" Command="{Binding Path=RedoCommand}"/>
             </MenuItem>
 
             <MenuItem Header="_Widok" IsSubmenuOpen="{Binding Path=IsMenuOpened, Mode=OneWayToSource}">

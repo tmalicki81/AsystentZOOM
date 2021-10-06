@@ -22,7 +22,7 @@ using System.Xml.Serialization;
 namespace AsystentZOOM.VM.ViewModel
 {
     [Serializable]
-    public class MeetingVM : SingletonBaseVM
+    public class MeetingVM : SingletonBaseVM, ICloneable
     {
         private class IoConsts
         {
@@ -137,6 +137,9 @@ namespace AsystentZOOM.VM.ViewModel
                 };
 
                 meeting.ConfigureAudioRecording();
+                meeting.ClearSnapshots();
+                meeting.IsDataReady = true;
+                meeting.RegisterSnapshot();
                 return meeting;
             }
         }
@@ -219,7 +222,11 @@ namespace AsystentZOOM.VM.ViewModel
         public string MeetingTitle
         {
             get => _meetingTitle;
-            set => SetValue(ref _meetingTitle, value, nameof(MeetingTitle));
+            set
+            {
+                SetValue(ref _meetingTitle, value, nameof(MeetingTitle));
+                RegisterSnapshot();
+            }
         }
 
         private string _meetingDescription;
@@ -392,6 +399,7 @@ namespace AsystentZOOM.VM.ViewModel
         private void ColapseAllMeetingPoints()
         {
             MeetingPointList.Where(mp => mp.IsExpanded).ToList().ForEach(mp => mp.IsExpanded = false);
+            RegisterSnapshot(); 
             RaiseCanExecuteChanged4All();
         }
 
@@ -404,6 +412,7 @@ namespace AsystentZOOM.VM.ViewModel
         private void ExpandAllMeetingPoints()
         {
             MeetingPointList.Where(mp => !mp.IsExpanded).ToList().ForEach(mp => mp.IsExpanded = true);
+            RegisterSnapshot(); 
             RaiseCanExecuteChanged4All();
         }
 
@@ -416,6 +425,7 @@ namespace AsystentZOOM.VM.ViewModel
             var newMeetingPoint = new MeetingPointVM { Meeting = this };
             MeetingPointList.Add(newMeetingPoint);
             newMeetingPoint.Sorter.Sort();
+            RegisterSnapshot();
         }
 
         private RelayCommand _openFromLocalCommand;
@@ -537,6 +547,8 @@ namespace AsystentZOOM.VM.ViewModel
                 }
                 p.TaskName = "Pobieranie metadanych";
                 DownloadAndFillMetadata(p);
+                ClearSnapshots();
+                RegisterSnapshot();
             });
         }
 
@@ -670,6 +682,7 @@ namespace AsystentZOOM.VM.ViewModel
                 LocalFileName = fileName;
                 _warcher_Create();
             }
+            _isChanged = false;
         }
 
         private void SendFileToCloud(string fileName)
@@ -695,6 +708,58 @@ namespace AsystentZOOM.VM.ViewModel
             var p = DialogHelper.GetProgressInfo();
             p.PercentCompletted = e.PercentCompleted;
             p.TaskName = $"Wysyłanie pliku {e.FileName}";
+        }
+
+        private static UndoRedoManager<MeetingVM> _undoRedoManager = new();
+
+        private bool _isChanged;
+
+        private void ClearSnapshots()
+        {
+            _undoRedoManager.ClearSnapshots();
+        }
+
+        private void RegisterSnapshot()
+        {
+            if (!IsDataReady)
+                return;
+            _undoRedoManager.AddSnapshot(this);
+            _isChanged = true;
+        }
+
+        private RelayCommand _undoCommand;
+        public RelayCommand UndoCommand
+            => _undoCommand ??= new RelayCommand(UndoExecute, () => _undoRedoManager.CanUndo);
+
+        private void UndoExecute()
+        {
+            var undoMeeting = _undoRedoManager.GetUndo();
+            var target = this;
+            SingletonVMFactory.CopyValuesWhenDifferent(undoMeeting, ref target);
+            RaiseCanExecuteChanged4All();
+        }
+
+        private RelayCommand _redoCommand;
+        public RelayCommand RedoCommand
+            => _redoCommand ??= new RelayCommand(RedoExecute, () => _undoRedoManager.CanRedo);
+
+        private void RedoExecute()
+        {
+            var RedoMeeting = _undoRedoManager.GetRedo();
+            var target = this;
+            SingletonVMFactory.CopyValuesWhenDifferent(RedoMeeting, ref target);
+            RaiseCanExecuteChanged4All();
+        }
+
+        public object Clone()
+        {
+            var serializer = new CustomXmlSerializer(GetType());
+            using (var ms = new MemoryStream())
+            {
+                serializer.Serialize(ms, this);
+                ms.Position = 0;
+                return serializer.Deserialize(ms);
+            }
         }
     }
 }
