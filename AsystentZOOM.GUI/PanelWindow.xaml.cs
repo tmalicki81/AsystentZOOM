@@ -124,6 +124,10 @@ namespace AsystentZOOM.GUI
                     MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
                 e.Cancel = dr == MessageBoxResult.No;
             }
+
+            if (!e.Cancel)
+                SingletonVMFactory.DisposeAllSingletons();
+
             base.OnClosing(e);
         }
 
@@ -132,7 +136,6 @@ namespace AsystentZOOM.GUI
             base.OnClosed(e);
             _mainOutputWindow.Close();
             SingletonVMFactory.SaveAllSingletons();
-            SingletonVMFactory.DisposeAllSingletons();
             Application.Current?.Shutdown();
         }
     }

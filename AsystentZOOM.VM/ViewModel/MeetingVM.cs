@@ -311,6 +311,13 @@ namespace AsystentZOOM.VM.ViewModel
 
         public override void Dispose()
         {
+            if (_isChanged)
+            {
+                var dr = DialogHelper.ShowMessageBox($"Czy zapisać plik przed zamknięciem aplikacji?", "Zapisywanie pliku", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
+                if (dr == MessageBoxResult.Yes)
+                    SaveToLocal();
+            }
+
             _watcher_Dispose();
             AudioRecording.OnCommandExecuted -= AudioRecording_OnCommandExecuted; 
             AudioRecording?.Dispose();
