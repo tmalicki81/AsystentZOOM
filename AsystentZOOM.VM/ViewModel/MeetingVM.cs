@@ -145,6 +145,7 @@ namespace AsystentZOOM.VM.ViewModel
                 meeting.ClearSnapshots();
                 meeting.IsDataReady = true;
                 meeting.TryRegisterSnapshot();
+                meeting._isChanged = false;
                 return meeting;
             }
         }
@@ -562,6 +563,7 @@ namespace AsystentZOOM.VM.ViewModel
                 DownloadAndFillMetadata(p);
                 ClearSnapshots();
                 TryRegisterSnapshot();
+                _isChanged = false;
             });
         }
 
