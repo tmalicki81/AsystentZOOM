@@ -15,6 +15,11 @@ namespace AsystentZOOM.VM.ViewModel
     [Serializable]
     public abstract class PlayerVM : SingletonBaseVM
     {
+        public override void ChangeFromChild(BaseVM child)
+        {
+            (FileInfo as BaseMediaFileInfo)?.MeetingPoint?.ChangeFromChild(child);
+        }
+
         private bool _isEnabled;
         public bool IsEnabled
         {
@@ -26,7 +31,11 @@ namespace AsystentZOOM.VM.ViewModel
         public PlayerStateEnum AfterEndBookmark
         {
             get => _afterEndBookmark;
-            set => SetValue(ref _afterEndBookmark, value, nameof(AfterEndBookmark));
+            set
+            {
+                SetValue(ref _afterEndBookmark, value, nameof(AfterEndBookmark));
+                ChangeFromChild(this);
+            }
         }
 
         private List<PlayerStateEnum> _afterEndBookmarkList;
@@ -237,10 +246,10 @@ namespace AsystentZOOM.VM.ViewModel
         private RelayCommand _restartCommand;
         public RelayCommand RestartCommand
             => _restartCommand ??= new RelayCommand(() =>
-            {
-                EventAggregator.Publish($"{GetType().Name}_Restart");
-                PlayerState = PlayerStateEnum.Played;
-            },
+                {
+                    EventAggregator.Publish($"{GetType().Name}_Restart");
+                    PlayerState = PlayerStateEnum.Played;
+                },
                 () => true);
 
         private BookmarkVM GetSelectedBookmark()
@@ -278,12 +287,12 @@ namespace AsystentZOOM.VM.ViewModel
             var dr = DialogHelper.ShowMessageBox($"Czy usunąć zakładkę {selectedBookmark.Name}?", "Usuwanie zakładki", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
             if (dr != MessageBoxResult.Yes)
                 return;
-
             var bookmarks = GetBookmarks();
             bookmarks.Remove(selectedBookmark);
             if (!bookmarks.Any())
                 IsSelectionRangeEnabled = false;
             SetBookmarks(bookmarks);
+            ChangeFromChild(this);
         }
 
         private TimeSpan TrimPosition()
@@ -301,6 +310,7 @@ namespace AsystentZOOM.VM.ViewModel
             selectedBookmark.Position = TrimPosition();
             SetBookmarks(bookmarks.OrderBy(b => b.Position));
             SetSelectedBookmark(selectedBookmark);
+            ChangeFromChild(this);
         }
 
         private RelayCommand _addBookmarkCommand;
@@ -317,6 +327,7 @@ namespace AsystentZOOM.VM.ViewModel
 
             SetBookmarks(bookmarks.OrderBy(b => b.Position));
             SetSelectedBookmark(newBookmark);
+            ChangeFromChild(this);
         }
     }
 }

@@ -267,7 +267,11 @@ namespace AsystentZOOM.VM.Model
         public string Title
         {
             get => _title;
-            set => SetValue(ref _title, value, nameof(Title));
+            set
+            {
+                SetValue(ref _title, value, nameof(Title));
+                ChangeFromChild(this);
+            }
         }
 
         private string _fileName;
@@ -327,6 +331,11 @@ namespace AsystentZOOM.VM.Model
         {
             get => _parameterList;
             set => SetValue(ref _parameterList, value, nameof(ParameterList));
+        }
+
+        public override void ChangeFromChild(BaseVM child)
+        {
+            MeetingPoint?.ChangeFromChild(child);
         }
 
         [XmlIgnore]

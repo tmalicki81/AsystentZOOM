@@ -334,8 +334,7 @@ namespace AsystentZOOM.VM.ViewModel
                 UseShellExecute = true,
                 FileName = WebAddress
             });
-        }
-        
+        }        
 
         private RelayCommand _changeExpandedCommand;
         public RelayCommand ChangeExpandedCommand
@@ -411,6 +410,7 @@ namespace AsystentZOOM.VM.ViewModel
             GetSourcesFromLocal(fileNames)
                 .ForEach(s => Sources.Add(s));
             SetOrder();
+            ChangeFromChild(this);
         }
 
         private bool _isCurrent;

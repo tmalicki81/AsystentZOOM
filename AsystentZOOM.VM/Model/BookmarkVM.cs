@@ -9,6 +9,11 @@ namespace AsystentZOOM.VM.Model
     [Serializable]
     public class BookmarkVM : BaseVM
     {
+        public override void ChangeFromChild(BaseVM child)
+        {
+            (FileInfo as BaseVM)?.ChangeFromChild(child);
+        }
+
         [XmlIgnore]
         public IMovable FileInfo
         {
@@ -21,7 +26,11 @@ namespace AsystentZOOM.VM.Model
         public TimeSpan Position
         {
             get => _position;
-            set => SetValue(ref _position, value, nameof(Position));
+            set
+            {
+                SetValue(ref _position, value, nameof(Position));
+                ChangeFromChild(this);
+            }
         }
 
         public const string NewBookmarkName = "Nowa zakładka";
@@ -30,14 +39,22 @@ namespace AsystentZOOM.VM.Model
         public string Name
         {
             get => _name;
-            set => SetValue(ref _name, value, nameof(Name));
+            set
+            {
+                SetValue(ref _name, value, nameof(Name));
+                ChangeFromChild(this);
+            }
         }
 
         private Color _color;
         public Color Color
         {
             get => _color;
-            set => SetValue(ref _color, value, nameof(Color));
+            set
+            {
+                SetValue(ref _color, value, nameof(Color));
+                ChangeFromChild(this);
+            }
         }
 
         [XmlIgnore]        
