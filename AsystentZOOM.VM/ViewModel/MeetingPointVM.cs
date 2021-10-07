@@ -158,21 +158,33 @@ namespace AsystentZOOM.VM.ViewModel
         public string PointTitle 
         {
             get => _pointTitle;
-            set => SetValue(ref _pointTitle, value, nameof(PointTitle));
+            set
+            {
+                SetValue(ref _pointTitle, value, nameof(PointTitle));
+                ChangeFromChild(this);
+            }
         }
 
         private int _indent;
         public int Indent
         {
             get => _indent;
-            set => SetValue(ref _indent, value, nameof(Indent));
+            set
+            {
+                SetValue(ref _indent, value, nameof(Indent));
+                ChangeFromChild(this);
+            }
         }
 
         private TimeSpan _duration = TimeSpan.FromMinutes(5);
         public TimeSpan Duration
         {
             get => _duration;
-            set => SetValue(ref _duration, value, nameof(Duration));
+            set
+            {
+                SetValue(ref _duration, value, nameof(Duration));
+                ChangeFromChild(this);
+            }
         }
 
         private TimeSpan _position;
@@ -191,14 +203,22 @@ namespace AsystentZOOM.VM.ViewModel
         public Color TitleColor
         {
             get => _titleColor;
-            set => SetValue(ref _titleColor, value, nameof(TitleColor));
+            set
+            {
+                SetValue(ref _titleColor, value, nameof(TitleColor));
+                ChangeFromChild(this);
+            }
         }
 
         private string _webAddress;
         public string WebAddress
         {
             get => _webAddress;
-            set => SetValue(ref _webAddress, value, nameof(WebAddress));
+            set
+            {
+                SetValue(ref _webAddress, value, nameof(WebAddress));
+                ChangeFromChild(this);
+            }
         }
 
         [XmlIgnore]
@@ -236,12 +256,16 @@ namespace AsystentZOOM.VM.ViewModel
         public bool IsExpanded
         {
             get => _isExpanded;
-            set => SetValue(ref _isExpanded, value, nameof(IsExpanded));
+            set
+            {
+                SetValue(ref _isExpanded, value, nameof(IsExpanded));
+                ChangeFromChild(this);
+            }
         }
 
         public override void ChangeFromChild(BaseVM child)
         {
-            Meeting.ChangeFromChild(this);
+            Meeting?.ChangeFromChild(this);
         }
 
         [XmlIgnore]
@@ -286,7 +310,9 @@ namespace AsystentZOOM.VM.ViewModel
             var dr = DialogHelper.ShowMessageBox("Czy na pewno wyczyścić playlistę?", "Playlista",
                 MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
             if (dr == MessageBoxResult.Yes)
+            {
                 Sources = new ObservableCollection<BaseMediaFileInfo>();
+            }
         }
 
         private RelayCommand _playAllCommand;

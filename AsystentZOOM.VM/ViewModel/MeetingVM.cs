@@ -743,7 +743,6 @@ namespace AsystentZOOM.VM.ViewModel
         {
             var undoMeeting = _undoRedoManager.GetUndo();
             var target = this;
-            //ParameterList.Owner = null;
             SingletonVMFactory.CopyValuesWhenDifferent(undoMeeting, ref target);
             RaiseCanExecuteChanged4All();
         }
