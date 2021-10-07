@@ -216,7 +216,7 @@ namespace AsystentZOOM.VM.ViewModel
                 }
                 EventAggregator.Publish(nameof(MeetingPointVM) + "_SourcesChanged", this);
                 if (ParameterList == null)
-                    ParameterList = new ParametersCollectionVM();
+                    ParameterList = new ParametersCollectionVM { Owner = value };
 
                 AudioRecording._meetingPoint = this;
                 AudioRecording.OnCommandExecuted -= Meeting.AudioRecording_OnCommandExecuted;
@@ -225,7 +225,7 @@ namespace AsystentZOOM.VM.ViewModel
         }
         private MeetingVM _meeting;
 
-        private ParametersCollectionVM _parameterList = new ParametersCollectionVM();
+        private ParametersCollectionVM _parameterList;
         public ParametersCollectionVM ParameterList
         {
             get => _parameterList;
@@ -237,6 +237,11 @@ namespace AsystentZOOM.VM.ViewModel
         {
             get => _isExpanded;
             set => SetValue(ref _isExpanded, value, nameof(IsExpanded));
+        }
+
+        public override void ChangeFromChild(BaseVM child)
+        {
+            Meeting.ChangeFromChild(this);
         }
 
         [XmlIgnore]
@@ -445,6 +450,15 @@ namespace AsystentZOOM.VM.ViewModel
         private void _changePositionTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             MainVM.Dispatcher.Invoke(() => Position = DateTime.Now - BeginTime);
+        }
+
+        public override void OnDeserialized(object sender)
+        {
+            if (ParameterList == null)
+                ParameterList = new ParametersCollectionVM();
+            ParameterList.Owner = this;
+
+            base.OnDeserialized(sender);
         }
 
         public void Dispose()

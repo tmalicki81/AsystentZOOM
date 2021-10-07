@@ -2,22 +2,41 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Xml.Serialization;
 
 namespace AsystentZOOM.VM.Model
 {
     [Serializable]
     public class ParametersCollectionVM : BaseVM, IDisposable
     {
-        private ObservableCollection<ParameterVM> _parameters = new ObservableCollection<ParameterVM>();
+        #region Parameters
+
+        private ObservableCollection<ParameterVM> _parameters = new();
         public ObservableCollection<ParameterVM> Parameters
         {
             get => _parameters;
             set => SetValue(ref _parameters, value, nameof(Parameters));
         }
 
+        #endregion Parameters
+
+        #region Owner
+
+        [XmlIgnore]
+        public BaseVM Owner
+        {
+            get => _owner;
+            set => SetValue(ref _owner, value, nameof(Owner));
+        }
+        private BaseVM _owner;
+
+        #endregion Owner
+
+        #region AddParameterCommand
+
         private RelayCommand _addParameterCommand;
         public RelayCommand AddParameterCommand
-            => _addParameterCommand ?? (_addParameterCommand = new RelayCommand(AddParameter));
+            => _addParameterCommand ??= new RelayCommand(AddParameter);
 
         private void AddParameter()
         {
@@ -26,7 +45,10 @@ namespace AsystentZOOM.VM.Model
                 ParametersCollection = this,
             };
             newParameter.Sorter.MoveToEnd();
+            Owner?.ChangeFromChild(this);
         }
+
+        #endregion AddParameterCommand
 
         public void Trim()
         {
@@ -34,14 +56,12 @@ namespace AsystentZOOM.VM.Model
             foreach (var i in Parameters.ToList())
                 if (string.IsNullOrEmpty(i.Key) && string.IsNullOrEmpty(i.Value))
                     Parameters.Remove(i);
-            SetOrder();
-        }
 
-        public void SetOrder()
-        {
             int lp = 1;
             foreach (var i in Parameters)
                 i.Sorter.Lp = lp++;
+
+            ChangeFromChild(this);
         }
 
         public override void OnDeserialized(object sender)
@@ -49,6 +69,11 @@ namespace AsystentZOOM.VM.Model
             if (Parameters == null) return;
             foreach (var p in Parameters)
                 p.ParametersCollection = this;
+        }
+
+        public override void ChangeFromChild(BaseVM child)
+        {
+            Owner?.ChangeFromChild(child);
         }
 
         public void Dispose()

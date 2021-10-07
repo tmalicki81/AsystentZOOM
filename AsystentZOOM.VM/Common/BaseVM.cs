@@ -24,8 +24,18 @@ namespace AsystentZOOM.VM.Common
         [XmlAttribute("instance-id")]
         public string InstanceId { get; set; } = Guid.NewGuid().ToString();
 
+        /// <summary>
+        /// Czy dane są juz kompletne (po serializacji lub po kopiowaniu wartosci z innego VM)
+        /// </summary>
         [XmlIgnore]
         public bool IsDataReady { get; set; }
+
+        /// <summary>
+        /// Sygnał o zmianie stanu dziecka przekazywany rodzicowi
+        /// </summary>
+        public virtual void ChangeFromChild(BaseVM child)
+        { 
+        }
 
         /// <summary>
         /// Odświeżenie możliwości wykonania wszystkich poleceń

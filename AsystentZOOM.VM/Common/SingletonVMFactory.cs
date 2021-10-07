@@ -90,6 +90,7 @@ namespace AsystentZOOM.VM.Common
                     object sourcePropertyValue = pi.GetValue(source);
                     pi.SetValue(target, sourcePropertyValue);
                 }
+                target.OnDeserialized(null);
                 target.IsDataReady = true;
                 return target;
             }
@@ -154,6 +155,7 @@ namespace AsystentZOOM.VM.Common
                 .Where(p => !p.GetCustomAttributes(typeof(XmlIgnoreAttribute), false).Any())
                 .ToList();
 
+            source.IsDataReady = false;
             target.IsDataReady = false;
 
             foreach (var pi in properties)
@@ -244,6 +246,7 @@ namespace AsystentZOOM.VM.Common
                 (targetPropertyValue as IXmlDeserializationCallback)?.OnDeserialized(null);
             }
             target.OnDeserialized(null);
+            source.IsDataReady = true;
             target.IsDataReady = true;
             return true;
         }

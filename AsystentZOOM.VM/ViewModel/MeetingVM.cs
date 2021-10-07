@@ -63,7 +63,12 @@ namespace AsystentZOOM.VM.ViewModel
         {
             AudioRecording = new MeetingAudioRecordingProvider();
             MeetingPointList = new ObservableCollection<MeetingPointVM>();
-            ParameterList = new ParametersCollectionVM();            
+            ParameterList = new ParametersCollectionVM { Owner = this };
+        }
+
+        public override void ChangeFromChild(BaseVM child)
+        {
+            TryRegisterSnapshot();
         }
 
         private List<string> _timePiecesToDeleteWhenExitWithoutSave = new List<string>();
@@ -82,7 +87,7 @@ namespace AsystentZOOM.VM.ViewModel
                     MeetingDescription = "Opis spotkania", 
                     MeetingPointList = new ObservableCollection<MeetingPointVM>()
                 };
-                var parameters = new ParametersCollectionVM();
+                var parameters = new ParametersCollectionVM { Owner = meeting };
                 meeting.ParameterList = parameters;
                 parameters.Parameters = new ObservableCollection<ParameterVM> 
                 { 
@@ -127,7 +132,7 @@ namespace AsystentZOOM.VM.ViewModel
                 timePieceFileInfo.Title = $"Spotkanie o {meetingBeginTimespan.ToString(timePieceVM.TimerFormat)}";
                 firstPoint.Sources.Add(timePieceFileInfo);
                 
-                var pointParemeters = new ParametersCollectionVM();
+                var pointParemeters = new ParametersCollectionVM { Owner = firstPoint };
                 firstPoint.ParameterList = pointParemeters;
                 pointParemeters.Parameters = new ObservableCollection<ParameterVM>
                 {
@@ -139,7 +144,7 @@ namespace AsystentZOOM.VM.ViewModel
                 meeting.ConfigureAudioRecording();
                 meeting.ClearSnapshots();
                 meeting.IsDataReady = true;
-                meeting.RegisterSnapshot();
+                meeting.TryRegisterSnapshot();
                 return meeting;
             }
         }
@@ -225,7 +230,7 @@ namespace AsystentZOOM.VM.ViewModel
             set
             {
                 SetValue(ref _meetingTitle, value, nameof(MeetingTitle));
-                RegisterSnapshot();
+                TryRegisterSnapshot();
             }
         }
 
@@ -283,6 +288,7 @@ namespace AsystentZOOM.VM.ViewModel
                 meetingPoint.Meeting = this;
             if (ParameterList == null)
                 ParameterList = new ParametersCollectionVM();
+            ParameterList.Owner = this;
 
             ConfigureAudioRecording();
         }
@@ -399,7 +405,7 @@ namespace AsystentZOOM.VM.ViewModel
         private void ColapseAllMeetingPoints()
         {
             MeetingPointList.Where(mp => mp.IsExpanded).ToList().ForEach(mp => mp.IsExpanded = false);
-            RegisterSnapshot(); 
+            TryRegisterSnapshot(); 
             RaiseCanExecuteChanged4All();
         }
 
@@ -412,7 +418,7 @@ namespace AsystentZOOM.VM.ViewModel
         private void ExpandAllMeetingPoints()
         {
             MeetingPointList.Where(mp => !mp.IsExpanded).ToList().ForEach(mp => mp.IsExpanded = true);
-            RegisterSnapshot(); 
+            TryRegisterSnapshot(); 
             RaiseCanExecuteChanged4All();
         }
 
@@ -425,7 +431,7 @@ namespace AsystentZOOM.VM.ViewModel
             var newMeetingPoint = new MeetingPointVM { Meeting = this };
             MeetingPointList.Add(newMeetingPoint);
             newMeetingPoint.Sorter.Sort();
-            RegisterSnapshot();
+            TryRegisterSnapshot();
         }
 
         private RelayCommand _openFromLocalCommand;
@@ -548,7 +554,7 @@ namespace AsystentZOOM.VM.ViewModel
                 p.TaskName = "Pobieranie metadanych";
                 DownloadAndFillMetadata(p);
                 ClearSnapshots();
-                RegisterSnapshot();
+                TryRegisterSnapshot();
             });
         }
 
@@ -719,12 +725,13 @@ namespace AsystentZOOM.VM.ViewModel
             _undoRedoManager.ClearSnapshots();
         }
 
-        private void RegisterSnapshot()
+        private bool TryRegisterSnapshot()
         {
             if (!IsDataReady)
-                return;
+                return false;
             _undoRedoManager.AddSnapshot(this);
             _isChanged = true;
+            return true;
         }
 
         private RelayCommand _undoCommand;
@@ -735,6 +742,7 @@ namespace AsystentZOOM.VM.ViewModel
         {
             var undoMeeting = _undoRedoManager.GetUndo();
             var target = this;
+            //ParameterList.Owner = null;
             SingletonVMFactory.CopyValuesWhenDifferent(undoMeeting, ref target);
             RaiseCanExecuteChanged4All();
         }
