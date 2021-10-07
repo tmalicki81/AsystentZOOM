@@ -28,6 +28,11 @@
                         <Image Source="../Images/icons8-play-32.png"/>
                     </MenuItem.Icon>
                 </MenuItem>
+                <MenuItem Header="Odśwież dane" Command="{Binding Path=RefreshCommand}">
+                    <!--<MenuItem.Icon>
+                        <Image Source="../Images/icons8-play-32.png"/>
+                    </MenuItem.Icon>-->
+                </MenuItem>
             </local:SortableItemsContextMenu>
         </Grid.ContextMenu>
 

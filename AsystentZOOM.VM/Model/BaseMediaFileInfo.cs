@@ -126,6 +126,15 @@ namespace AsystentZOOM.VM.Model
             return _bytesToDownload.Value;
         }
 
+        private RelayCommand _refreshCommand;
+        public RelayCommand RefreshCommand
+            => _refreshCommand ??= new RelayCommand(RefreshExecute);
+        private void RefreshExecute()
+        {
+            CheckFileExist();
+            FillMetadata();
+        }
+
         public void CheckFileExist()
         {
             if (_fileWhenNotExistsChecked || string.IsNullOrEmpty(FileName))
