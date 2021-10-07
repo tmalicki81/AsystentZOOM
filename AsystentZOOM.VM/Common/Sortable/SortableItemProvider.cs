@@ -11,7 +11,7 @@ namespace AsystentZOOM.VM.Common.Sortable
 {
     [Serializable]
     public abstract class SortableItemProvider<TItem> : BaseVM, ISortableItemProvider
-        where TItem : class, ISortableItemVM
+        where TItem : BaseVM, ISortableItemVM
     {
         public SortableItemProvider(TItem parameter) => Item = parameter;
 
@@ -159,6 +159,7 @@ namespace AsystentZOOM.VM.Common.Sortable
             ContainerItemsSource.Insert(Item.Sorter.Lp - 2, Item);
             Sort();
             RaiseCanExecuteChanged4All();
+            Item.ChangeFromChild(this);
         }
 
         /// <summary>
@@ -175,13 +176,14 @@ namespace AsystentZOOM.VM.Common.Sortable
             ContainerItemsSource.Insert(Item.Sorter.Lp, Item);
             Sort();
             RaiseCanExecuteChanged4All();
+            Item.ChangeFromChild(this);
         }
 
         /// <summary>
         /// Dodanie elementu
         /// </summary>
         public RelayCommand InsertCommand
-            => _insertCommand ?? (_insertCommand = new RelayCommand(Insert));
+            => _insertCommand ??= new RelayCommand(Insert);
         private RelayCommand _insertCommand;
 
         private void Insert()
@@ -190,6 +192,7 @@ namespace AsystentZOOM.VM.Common.Sortable
             Sort();
             ContainerItemsSource.Insert(Item.Sorter.Lp - 1, newParameter);
             Sort();
+            Item.ChangeFromChild(this);
         }
 
         /// <summary>
@@ -220,7 +223,10 @@ namespace AsystentZOOM.VM.Common.Sortable
                     $"Usuwanie elementu {ItemName}",
                     MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
                 if (result == MessageBoxResult.Yes)
+                {
                     ContainerItemsSource.Remove(Item);
+                    Item.ChangeFromChild(this);
+                }
             }
             finally
             {
@@ -292,6 +298,7 @@ namespace AsystentZOOM.VM.Common.Sortable
             else
             { 
             }
+            Item.ChangeFromChild(this);
         }
 
         #region Niejawna implementacja interfejsu ISortableItemProvider

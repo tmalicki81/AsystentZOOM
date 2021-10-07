@@ -15,7 +15,11 @@ namespace AsystentZOOM.VM.Model
         public ObservableCollection<ParameterVM> Parameters
         {
             get => _parameters;
-            set => SetValue(ref _parameters, value, nameof(Parameters));
+            set
+            {
+                SetValue(ref _parameters, value, nameof(Parameters));
+                ChangeFromChild(this);
+            }
         }
 
         #endregion Parameters
@@ -45,23 +49,37 @@ namespace AsystentZOOM.VM.Model
                 ParametersCollection = this,
             };
             newParameter.Sorter.MoveToEnd();
-            Owner?.ChangeFromChild(this);
+            ChangeFromChild(newParameter);
         }
 
         #endregion AddParameterCommand
 
-        public void Trim()
+        public bool Trim()
         {
-            if (Parameters == null) return;
+            if (Parameters == null) return false;
+            bool hasChanged = false;
             foreach (var i in Parameters.ToList())
+            {
                 if (string.IsNullOrEmpty(i.Key) && string.IsNullOrEmpty(i.Value))
+                {
                     Parameters.Remove(i);
+                    hasChanged = true;
+                }
+            }
 
             int lp = 1;
             foreach (var i in Parameters)
-                i.Sorter.Lp = lp++;
-
-            ChangeFromChild(this);
+            {
+                lp++;
+                if (i.Sorter.Lp != lp)
+                {
+                    i.Sorter.Lp = lp;
+                    hasChanged = true;
+                }
+            }
+            if(hasChanged)
+                ChangeFromChild(this);
+            return hasChanged;
         }
 
         public override void OnDeserialized(object sender)

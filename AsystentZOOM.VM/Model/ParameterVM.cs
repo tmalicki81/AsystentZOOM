@@ -62,9 +62,11 @@ namespace AsystentZOOM.VM.Model
             get => _key;
             set
             {
+                if (_key == value) return;
                 SetValue(ref _key, value, nameof(Key));
                 Sorter.IsNew = false;
-                ParametersCollection?.Trim();
+                if(ParametersCollection?.Trim() == false)
+                    ChangeFromChild(this);
             }
         }
 
@@ -74,10 +76,17 @@ namespace AsystentZOOM.VM.Model
             get => _value;
             set
             {
+                if (_value == value) return;
                 SetValue(ref _value, value, nameof(Value));
                 Sorter.IsNew = false;
-                ParametersCollection?.Trim();
+                if (ParametersCollection?.Trim() == false)
+                    ChangeFromChild(this);
             }
+        }
+
+        public override void ChangeFromChild(BaseVM child)
+        {
+            ParametersCollection?.ChangeFromChild(this);
         }
 
 #if (DEBUG)

@@ -96,7 +96,7 @@ namespace AsystentZOOM.VM.Common
             }
         }
 
-        private static bool EqualsVM(BaseVM source, BaseVM target)
+        public static bool EqualsVM(object source, object target)
         {
             Type sourceType = source.GetType();
             Type targetType = target.GetType();
@@ -113,11 +113,11 @@ namespace AsystentZOOM.VM.Common
                 targetSerializer.Serialize(oldValueWriter, target);
                 newValueWriter.Flush();
                 oldValueWriter.Flush();
-                return (newValueWriter.ToString() == oldValueWriter.ToString());
+                return newValueWriter.ToString() == oldValueWriter.ToString();
             }
         }
 
-        private static bool EqualsCollections(IEnumerable source, IEnumerable target)
+        public static bool EqualsCollections(IEnumerable source, IEnumerable target)
         {
             var serializer = new XmlSerializer(source.GetType());
             using (var newValueWriter = new StringWriter())
@@ -127,7 +127,7 @@ namespace AsystentZOOM.VM.Common
                 serializer.Serialize(oldValueWriter, target);
                 newValueWriter.Flush();
                 oldValueWriter.Flush();
-                return (newValueWriter.ToString() == oldValueWriter.ToString());
+                return newValueWriter.ToString() == oldValueWriter.ToString();
             }
         }
 

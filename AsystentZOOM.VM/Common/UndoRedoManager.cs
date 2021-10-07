@@ -4,13 +4,13 @@ using System.Collections.Generic;
 namespace AsystentZOOM.VM.Common
 {
     public class UndoRedoManager<T>
-        where T : ICloneable
+        where T : BaseVM, ICloneable
     {
         public class Snapshot<T>
         {
-            public Snapshot(T obj) => Object = obj;
+            public Snapshot(T obj) => Value = obj;
             public DateTime Added { get; set; } = DateTime.Now;
-            public T Object { get; set; }
+            public T Value { get; set; }
         }
 
         public void ClearSnapshots()
@@ -19,30 +19,46 @@ namespace AsystentZOOM.VM.Common
             _currObj = -1;
         }
 
-        public void AddSnapshot(T obj)
+        public bool AddSnapshot(T obj)
         {
-            // Jeśli aktualny zrzut nie jest ostanio dodanym => Usuń kolejne
-            if (_currObj < _lastObj)
-                _snapshots.RemoveRange(_currObj + 1, _lastObj - _currObj);
+            obj.IsDataReady = false;
+            try
+            {
+                // Jeśli aktualny zrzut nie jest ostanio dodanym => Usuń kolejne
+                if (_currObj < _lastObj)
+                    _snapshots.RemoveRange(_currObj + 1, _lastObj - _currObj);
 
-            // Dodaj zrzut i wskaźnik na niego
-            var clonedObj = (T)obj.Clone();
-            _snapshots.Add(new Snapshot<T>(clonedObj));
-            _currObj++;
+                // Dodaj zrzut i wskaźnik na niego
+                var clonedObj = (T)obj.Clone();
+
+                if (CanUndo)
+                {
+                    var prevObj = _snapshots[_currObj].Value;
+                    if (SingletonVMFactory.EqualsVM(clonedObj, prevObj))
+                        return false;
+                }
+                _snapshots.Add(new Snapshot<T>(clonedObj));
+                _currObj++;
+                return true;
+            }
+            finally
+            {
+                obj.IsDataReady = true;
+            }
         }
 
         public T GetUndo()
         {
             if (!CanUndo)
                 throw new Exception($"Nie można przesunąć się przed pozycję {_currObj}.");
-            return _snapshots[--_currObj].Object;
+            return _snapshots[--_currObj].Value;
         }
 
         public T GetRedo()
         {
             if (!CanRedo)
                 throw new Exception($"Nie można przesunąć się za pozycję {_currObj}.");
-            return _snapshots[++_currObj].Object;
+            return _snapshots[++_currObj].Value;
         }
 
         public bool CanUndo => _currObj > 0;

@@ -729,7 +729,8 @@ namespace AsystentZOOM.VM.ViewModel
         {
             if (!IsDataReady)
                 return false;
-            _undoRedoManager.AddSnapshot(this);
+            if (!_undoRedoManager.AddSnapshot(this))
+                return false;
             _isChanged = true;
             return true;
         }
