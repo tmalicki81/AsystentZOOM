@@ -6,7 +6,7 @@ namespace AsystentZOOM.VM.ViewModel
     public class AudioVM : PlayerVM, ILayerVM
     {
         public string LayerName => "Audio";
-        
+
         public bool IsVisibleInRelease => true;
 
         BaseMediaFileInfo ILayerVM.FileInfo

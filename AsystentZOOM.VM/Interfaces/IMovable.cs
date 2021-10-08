@@ -6,10 +6,11 @@ namespace AsystentZOOM.VM.Interfaces
 {
     public interface IMovable
     {
+        ObservableCollection<IBookmarkVM> Bookmarks { get; set; }
         TimeSpan Duration { get; set; }
-        TimeSpan Position { get; set; }
         TimeSpan FinishBefore { get; set; }
-        BookmarkVM SelectedBookmark { get; set; }
-        ObservableCollection<BookmarkVM> Bookmarks { get; set; }
+        int PercentComplette { get; }
+        TimeSpan Position { get; set; }
+        IBookmarkVM SelectedBookmark { get; set; }
     }
 }

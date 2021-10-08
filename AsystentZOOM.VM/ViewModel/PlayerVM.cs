@@ -252,17 +252,17 @@ namespace AsystentZOOM.VM.ViewModel
                 },
                 () => true);
 
-        private BookmarkVM GetSelectedBookmark()
+        private IBookmarkVM GetSelectedBookmark()
             => FileInfo?.SelectedBookmark;
 
-        private void SetSelectedBookmark(BookmarkVM bookmark)
+        private void SetSelectedBookmark(IBookmarkVM bookmark)
             => FileInfo.SelectedBookmark = bookmark;
 
-        public ObservableCollection<BookmarkVM> GetBookmarks()
+        public ObservableCollection<IBookmarkVM> GetBookmarks()
             => FileInfo?.Bookmarks;
 
-        private void SetBookmarks(IEnumerable<BookmarkVM> bookmarks)
-            => FileInfo.Bookmarks = new ObservableCollection<BookmarkVM>(bookmarks);
+        private void SetBookmarks(IEnumerable<IBookmarkVM> bookmarks)
+            => FileInfo.Bookmarks = new ObservableCollection<IBookmarkVM>(bookmarks);
 
         private RelayCommand _setPositionFromBookmarkCommand;
         public RelayCommand SetPositionFromBookmarkCommand

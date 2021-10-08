@@ -37,8 +37,8 @@ namespace AsystentZOOM.VM.ViewModel
 
         BaseMediaFileInfo ILayerVM.FileInfo
         {
-            get => (BaseMediaFileInfo)base.FileInfo;
-            set => base.FileInfo = (IMovable)value;
+            get => (BaseMediaFileInfo)FileInfo;
+            set => FileInfo = (IMovable)value;
         }
     }
 }

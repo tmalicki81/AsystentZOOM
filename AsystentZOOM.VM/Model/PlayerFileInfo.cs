@@ -1,4 +1,5 @@
-﻿using AsystentZOOM.VM.Interfaces;
+﻿using AsystentZOOM.VM.Common;
+using AsystentZOOM.VM.Interfaces;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -6,20 +7,7 @@ using System.Xml.Serialization;
 
 namespace AsystentZOOM.VM.Model
 {
-    public interface IPlayerFileInfo : IMovable
-    {
-        ObservableCollection<BookmarkVM> Bookmarks { get; set; }
-        TimeSpan Duration { get; set; }
-        TimeSpan FinishBefore { get; set; }
-        int PercentComplette { get; }
-        TimeSpan Position { get; set; }
-        BookmarkVM SelectedBookmark { get; set; }
-
-        void OnDeserialized(object sender);
-        string ToString();
-    }
-
-    public abstract class PlayerFileInfo<TContent> : BaseMediaFileInfo<TContent>, IPlayerFileInfo 
+    public abstract class PlayerFileInfo<TContent> : BaseMediaFileInfo<TContent>, IMovable
         where TContent : class, ILayerVM
     {
         private TimeSpan _duration;
@@ -70,7 +58,7 @@ namespace AsystentZOOM.VM.Model
         }
         private BookmarkVM _selectedBookmark;
 
-        private ObservableCollection<BookmarkVM> _bookmarks = new ObservableCollection<BookmarkVM>();
+        private ObservableCollection<BookmarkVM> _bookmarks = new();
         public ObservableCollection<BookmarkVM> Bookmarks
         {
             get => _bookmarks;
@@ -86,6 +74,22 @@ namespace AsystentZOOM.VM.Model
                     bookmark.FileInfo = this;
             }
         }
+
+        #region IMovable
+
+        ObservableCollection<IBookmarkVM> IMovable.Bookmarks
+        {
+            get => Bookmarks?.Convert<BookmarkVM, IBookmarkVM>();
+            set => Bookmarks = value?.Convert<IBookmarkVM, BookmarkVM>();
+        }
+
+        IBookmarkVM IMovable.SelectedBookmark
+        {
+            get => SelectedBookmark;
+            set => SelectedBookmark = (BookmarkVM)value;
+        }
+
+        #endregion IMovable
 
 #if (DEBUG)
         public override string ToString()

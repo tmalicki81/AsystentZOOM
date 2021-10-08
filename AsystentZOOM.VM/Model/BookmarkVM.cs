@@ -6,8 +6,18 @@ using System.Xml.Serialization;
 
 namespace AsystentZOOM.VM.Model
 {
+    public interface IBookmarkVM
+    {
+        IMovable FileInfo { get; set; }
+        Color Color { get; set; }
+        bool IsPlaying { get; set; }
+        bool IsSelected { get; set; }
+        string Name { get; set; }
+        TimeSpan Position { get; set; }
+    }
+
     [Serializable]
-    public class BookmarkVM : BaseVM
+    public class BookmarkVM : BaseVM, IBookmarkVM
     {
         public override void ChangeFromChild(BaseVM child)
         {
@@ -57,7 +67,7 @@ namespace AsystentZOOM.VM.Model
             }
         }
 
-        [XmlIgnore]        
+        [XmlIgnore]
         public bool IsSelected
         {
             get => _isSelected;
