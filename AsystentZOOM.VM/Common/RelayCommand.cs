@@ -29,7 +29,7 @@ namespace AsystentZOOM.VM.Common
             => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
     }
 
-    public class RelayCommand<T> : IRelayCommand
+    public class RelayCommand<T> : IRelayCommand<T>
     {
         public event EventHandler CanExecuteChanged;
 

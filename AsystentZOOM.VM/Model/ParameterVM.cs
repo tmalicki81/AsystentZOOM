@@ -8,8 +8,16 @@ using System.Xml.Serialization;
 
 namespace AsystentZOOM.VM.Model
 {
+    public interface IParameterVM : IBaseVM, ISortableItemVM
+    {
+        string Key { get; set; }
+        string Value { get; set; }
+        IParametersCollectionVM ParametersCollection { get; set; }
+        void ChangeFromChild(IBaseVM child);
+    }
+
     [Serializable]
-    public class ParameterVM : BaseVM, ISortableItemVM
+    public class ParameterVM : BaseVM, IParameterVM
     {
         public class SortableParameterProvider : SortableItemProvider<ParameterVM>
         {
@@ -65,7 +73,7 @@ namespace AsystentZOOM.VM.Model
                 if (_key == value) return;
                 SetValue(ref _key, value, nameof(Key));
                 Sorter.IsNew = false;
-                if(ParametersCollection?.Trim() == false)
+                if (ParametersCollection?.Trim() == false)
                     ChangeFromChild(this);
             }
         }
@@ -84,13 +92,13 @@ namespace AsystentZOOM.VM.Model
             }
         }
 
-        public override void ChangeFromChild(BaseVM child)
+        IParametersCollectionVM IParameterVM.ParametersCollection
         {
-            ParametersCollection?.ChangeFromChild(this);
+            get => ParametersCollection;
+            set => ParametersCollection = (ParametersCollectionVM)value;
         }
 
-#if (DEBUG)
-        public override string ToString() => $"{Key} : {Value}";
-#endif
+        public void ChangeFromChild(IBaseVM child)
+            => ParametersCollection?.ChangeFromChild(this);
     }
 }

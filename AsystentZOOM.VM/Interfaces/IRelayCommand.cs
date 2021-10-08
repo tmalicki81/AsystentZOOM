@@ -6,4 +6,8 @@ namespace AsystentZOOM.VM.Interfaces
     {
         void RaiseCanExecuteChanged();
     }
+
+    public interface IRelayCommand<T> : IRelayCommand
+    {
+    }
 }

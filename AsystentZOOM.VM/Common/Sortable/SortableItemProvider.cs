@@ -11,7 +11,7 @@ namespace AsystentZOOM.VM.Common.Sortable
 {
     [Serializable]
     public abstract class SortableItemProvider<TItem> : BaseVM, ISortableItemProvider
-        where TItem : BaseVM, ISortableItemVM
+        where TItem : class, IBaseVM, ISortableItemVM
     {
         public SortableItemProvider(TItem parameter) => Item = parameter;
 

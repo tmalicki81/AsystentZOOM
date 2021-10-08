@@ -7,11 +7,20 @@ using System.Xml.Serialization;
 
 namespace AsystentZOOM.VM.Common
 {
+    public interface IBaseVM : IXmlDeserializationCallback
+    {
+        string InstanceId { get; set; }
+        event PropertyChangedEventHandler PropertyChanged;
+        void ChangeFromChild(IBaseVM child);
+        void RaiseCanExecuteChanged4All();
+        void RaisePropertyChanged(string propertyName);
+    }
+
     /// <summary>
     /// Klasa bazowa dla wszystkich ViewModel-i
     /// </summary>
     [Serializable]
-    public abstract class BaseVM : INotifyPropertyChanged, IXmlDeserializationCallback
+    public abstract class BaseVM : INotifyPropertyChanged, IBaseVM
     {
         /// <summary>
         /// Lista poleceń
@@ -33,8 +42,8 @@ namespace AsystentZOOM.VM.Common
         /// <summary>
         /// Sygnał o zmianie stanu dziecka przekazywany rodzicowi
         /// </summary>
-        public virtual void ChangeFromChild(BaseVM child)
-        { 
+        public virtual void ChangeFromChild(IBaseVM child)
+        {
         }
 
         /// <summary>
@@ -45,7 +54,7 @@ namespace AsystentZOOM.VM.Common
             if (_commandList == null)
             {
                 _commandList = GetType().GetProperties()
-                    .Where(x => x.PropertyType .GetInterfaces().Any(i => i == typeof(IRelayCommand)))
+                    .Where(x => x.PropertyType.GetInterfaces().Any(i => i == typeof(IRelayCommand)))
                     .Where(x => x.GetMethod != null)
                     .Select(x => (IRelayCommand)x.GetValue(this))
                     .ToList();
@@ -77,12 +86,12 @@ namespace AsystentZOOM.VM.Common
             //    wasSetup = field != null && !field.Equals(value);
             //if (wasSetup)
             //{
-                field = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            field = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             //}
             //return wasSetup;
 
-            if(raiseCanExecuteChanged4All)
+            if (raiseCanExecuteChanged4All)
                 RaiseCanExecuteChanged4All();
             return true;
         }

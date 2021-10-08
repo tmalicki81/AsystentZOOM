@@ -15,10 +15,8 @@ namespace AsystentZOOM.VM.ViewModel
     [Serializable]
     public abstract class PlayerVM : SingletonBaseVM
     {
-        public override void ChangeFromChild(BaseVM child)
-        {
-            (FileInfo as BaseMediaFileInfo)?.MeetingPoint?.ChangeFromChild(child);
-        }
+        public override void ChangeFromChild(IBaseVM child)
+            => (FileInfo as IBaseMediaFileInfo)?.MeetingPoint?.ChangeFromChild(child);
 
         private bool _isEnabled;
         public bool IsEnabled

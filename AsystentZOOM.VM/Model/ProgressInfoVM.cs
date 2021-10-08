@@ -2,7 +2,16 @@
 
 namespace AsystentZOOM.VM.Model
 {
-    public class ProgressInfoVM : BaseVM
+    public interface IProgressInfoVM
+    {
+        bool IsIndeterminate { get; set; }
+        string OperationName { get; set; }
+        int PercentCompletted { get; set; }
+        bool ProgressBarVisibility { get; set; }
+        string TaskName { get; set; }
+    }
+
+    public class ProgressInfoVM : BaseVM, IProgressInfoVM
     {
         public int PercentCompletted
         {

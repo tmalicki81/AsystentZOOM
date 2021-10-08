@@ -1,5 +1,6 @@
 ﻿using AsystentZOOM.VM.Common.Dialog;
 using AsystentZOOM.VM.FileRepositories;
+using AsystentZOOM.VM.Interfaces;
 using AsystentZOOM.VM.Model;
 using AsystentZOOM.VM.ViewModel;
 using FileService.Common;
@@ -17,11 +18,26 @@ using System.Xml.Serialization;
 
 namespace AsystentZOOM.VM.Common.AudioRecording
 {
+    public interface IAudioRecordingProvider : IBaseVM, IDisposable
+    {
+        bool IsEnabledInThisMachine { get; set; }
+        bool IsReady { get; }
+        bool IsRecording { get; set; }
+        IRelayCommand OpenRecordingFolderCommand { get; }
+        TimeSpan RecordingTime { get; set; }
+        IRelayCommand StartRecordingCommand { get; }
+        IRelayCommand StopRecordingCommand { get; }
+        string Title { get; }
+        bool UseMicrophoneInThisMachine { get; set; }
+        event EventHandler<EventArgs<IRelayCommand>> OnCommandExecuted;
+        void ExecuteRequests();
+    }
+
     /// <summary>
     /// Rejestrowanie dźwięku przez inny komponent (np. spotkanie albo punkt)
     /// </summary>
     [Serializable]
-    public abstract class AudioRecordingProvider : BaseVM, IDisposable
+    public abstract class AudioRecordingProvider : BaseVM, IAudioRecordingProvider
     {
         /// <summary>
         /// Tytuł spotkania lub punktu, które będzie nagrywane
@@ -57,7 +73,7 @@ namespace AsystentZOOM.VM.Common.AudioRecording
 
                 _requestStartRecording = !_isRecording && value;
                 _requestStopRecording = _isRecording && !value;
-                
+
                 ExecuteRequests();
 
                 SetValue(ref _isRecording, value, nameof(IsRecording));
@@ -75,7 +91,7 @@ namespace AsystentZOOM.VM.Common.AudioRecording
                 else if (_requestStopRecording)
                     // Jeśli zarządano zakończenia nagrywania
                     MainVM.Dispatcher.Invoke(StopRecording);
-                
+
                 _requestStartRecording = false;
                 _requestStopRecording = false;
             }
@@ -124,7 +140,7 @@ namespace AsystentZOOM.VM.Common.AudioRecording
         /// <summary>
         /// Zdarzenie wykonania polecenia z interfejsu użytkownika
         /// </summary>
-        public event EventHandler<EventArgs<RelayCommand>> OnCommandExecuted;
+        public event EventHandler<EventArgs<IRelayCommand>> OnCommandExecuted;
 
         /// <summary>
         /// Krótka nazwa pliku
@@ -143,7 +159,7 @@ namespace AsystentZOOM.VM.Common.AudioRecording
             if (IsRecording)
                 return;
             IsRecording = true;
-            OnCommandExecuted?.Invoke(this, new EventArgs<RelayCommand>(StartRecordingCommand));
+            OnCommandExecuted?.Invoke(this, new EventArgs<IRelayCommand>(StartRecordingCommand));
         }
 
         private void StartRecording()
@@ -193,7 +209,7 @@ namespace AsystentZOOM.VM.Common.AudioRecording
             if (!IsRecording)
                 return;
             IsRecording = false;
-            OnCommandExecuted?.Invoke(this, new EventArgs<RelayCommand>(StopRecordingCommand));
+            OnCommandExecuted?.Invoke(this, new EventArgs<IRelayCommand>(StopRecordingCommand));
         }
 
         private void StopRecording()
@@ -266,7 +282,7 @@ namespace AsystentZOOM.VM.Common.AudioRecording
             {
                 var mixer = new MixingSampleProvider(audioFileReaders);
                 var waveProvider = mixer.ToWaveProvider();
-                
+
                 using (var mp3Writer = new LameMP3FileWriter(fileNameForMix, mixer.WaveFormat, 128))
                 using (var waveStream = new WaveProviderToWaveStream(waveProvider))
                 {
@@ -299,6 +315,7 @@ namespace AsystentZOOM.VM.Common.AudioRecording
 
         public RelayCommand OpenRecordingFolderCommand
             => _openRecordingFolderCommand ??= new RelayCommand(OpenRecordingFolder);
+
         private RelayCommand _openRecordingFolderCommand;
 
         /// <summary>
@@ -331,5 +348,13 @@ namespace AsystentZOOM.VM.Common.AudioRecording
             if (IsRecording)
                 IsRecording = false;
         }
+
+        #region IAudioRecordingProvider
+
+        IRelayCommand IAudioRecordingProvider.OpenRecordingFolderCommand => OpenRecordingFolderCommand;
+        IRelayCommand IAudioRecordingProvider.StartRecordingCommand => StartRecordingCommand;
+        IRelayCommand IAudioRecordingProvider.StopRecordingCommand => StopRecordingCommand;
+
+        #endregion IAudioRecordingProvider
     }
 }

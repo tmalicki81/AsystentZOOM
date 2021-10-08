@@ -19,8 +19,39 @@ using System.Xml.Serialization;
 
 namespace AsystentZOOM.VM.ViewModel
 {
+    public interface IMeetingPointVM : IBaseVM, ISortableItemVM, IDisposable
+    {
+        IRelayCommand AddIndentCommand { get; }
+        IRelayCommand<bool> AddSourcesCommand { get; }
+        IAudioRecordingProvider AudioRecording { get; set; }
+        bool BeforeTimeout { get; }
+        IRelayCommand ChangeExpandedCommand { get; }
+        IRelayCommand ClearCurrentCommand { get; }
+        IRelayCommand ClearSourcesCommand { get; }
+        bool ContinueOnNext { get; set; }
+        TimeSpan Duration { get; set; }
+        int Indent { get; set; }
+        bool IsCurrent { get; set; }
+        bool IsExpanded { get; set; }
+        IMeetingVM Meeting { get; set; }
+        IRelayCommand OpenWwwCommand { get; }
+        IParametersCollectionVM ParameterList { get; set; }
+        IRelayCommand PlayAllCommand { get; }
+        string PointTitle { get; set; }
+        TimeSpan Position { get; set; }
+        IRelayCommand RemoveIndentCommand { get; }
+        IRelayCommand SetAsCurrentCommand { get; }
+        IBaseMediaFileInfo Source { get; set; }
+        ObservableCollection<IBaseMediaFileInfo> Sources { get; set; }
+        bool Timeout { get; }
+        Color TitleColor { get; set; }
+        string WebAddress { get; set; }
+        ISortableItemVM[] GetDataFromFileDrop(DragEventArgs e);
+        void SetOrder();
+    }
+
     [Serializable]
-    public class MeetingPointVM : BaseVM, ISortableItemVM, IDisposable
+    public class MeetingPointVM : BaseVM, ISortableItemVM, IDisposable, IMeetingPointVM
     {
         public class SortableMeetingPointProvider : SortableItemProvider<MeetingPointVM>
         {
@@ -29,10 +60,10 @@ namespace AsystentZOOM.VM.ViewModel
             public override string ItemName => Item.PointTitle;
             public override bool CanCreateNewItem => true;
             public override ObservableCollection<MeetingPointVM> ContainerItemsSource => Item.Meeting.MeetingPointList;
-            public override MeetingPointVM NewItem() => new MeetingPointVM 
-            { 
-                Meeting = Item.Meeting, 
-                TitleColor = Item.TitleColor 
+            public override MeetingPointVM NewItem() => new MeetingPointVM
+            {
+                Meeting = Item.Meeting,
+                TitleColor = Item.TitleColor
             };
             public override MeetingPointVM SelectedItem
             {
@@ -86,7 +117,7 @@ namespace AsystentZOOM.VM.ViewModel
             set => SetValue(ref _sorter, value, nameof(Sorter));
         }
         private SortableMeetingPointProvider _sorter;
-        
+
         ISortableItemProvider ISortableItemVM.Sorter => Sorter;
 
         private bool CanNext(ILayerVM content)
@@ -125,7 +156,7 @@ namespace AsystentZOOM.VM.ViewModel
                 string destDirectory = v?.MediaLocalFileRepository.RootDirectory;
 
                 if (!string.IsNullOrEmpty(destDirectory))
-                {                   
+                {
                     if (!Directory.Exists(destDirectory))
                         Directory.CreateDirectory(destDirectory);
                     string fullFileName = Path.Combine(destDirectory, $"{Guid.NewGuid()}.{v.Extension}");
@@ -155,7 +186,7 @@ namespace AsystentZOOM.VM.ViewModel
         private bool _continueOnNext;
 
         private string _pointTitle = "Nowy punkt";
-        public string PointTitle 
+        public string PointTitle
         {
             get => _pointTitle;
             set
@@ -195,7 +226,7 @@ namespace AsystentZOOM.VM.ViewModel
             {
                 SetValue(ref _position, value, nameof(Position));
                 RaisePropertyChanged(nameof(Timeout));
-                RaisePropertyChanged(nameof(BeforeTimeout)); 
+                RaisePropertyChanged(nameof(BeforeTimeout));
             }
         }
 
@@ -263,10 +294,8 @@ namespace AsystentZOOM.VM.ViewModel
             }
         }
 
-        public override void ChangeFromChild(BaseVM child)
-        {
-            Meeting?.ChangeFromChild(this);
-        }
+        public override void ChangeFromChild(IBaseVM child)
+            => Meeting?.ChangeFromChild(this);
 
         [XmlIgnore]
         public BaseMediaFileInfo Source
@@ -334,7 +363,7 @@ namespace AsystentZOOM.VM.ViewModel
                 UseShellExecute = true,
                 FileName = WebAddress
             });
-        }        
+        }
 
         private RelayCommand _changeExpandedCommand;
         public RelayCommand ChangeExpandedCommand
@@ -345,8 +374,8 @@ namespace AsystentZOOM.VM.ViewModel
 
         private RelayCommand _addIndentCommand;
         public RelayCommand AddIndentCommand
-            => _addIndentCommand ??= new RelayCommand(()=> Indent = Indent + 1);
-        
+            => _addIndentCommand ??= new RelayCommand(() => Indent = Indent + 1);
+
         private RelayCommand _RemoveIndentCommand;
         public RelayCommand RemoveIndentCommand
             => _RemoveIndentCommand ??= new RelayCommand(() => Indent = Indent - 1, () => Indent > 0);
@@ -406,7 +435,7 @@ namespace AsystentZOOM.VM.ViewModel
             if (fileNames?.Any() != true) return;
             if (clearSources)
                 Sources.Clear();
-            
+
             GetSourcesFromLocal(fileNames)
                 .ForEach(s => Sources.Add(s));
             SetOrder();
@@ -493,5 +522,49 @@ namespace AsystentZOOM.VM.ViewModel
             AudioRecording?.Dispose();
             ParameterList?.Dispose();
         }
+
+        #region IMeetingPointVM
+
+        IRelayCommand IMeetingPointVM.AddIndentCommand => AddIndentCommand;
+        IRelayCommand IMeetingPointVM.ChangeExpandedCommand => ChangeExpandedCommand;
+        IRelayCommand IMeetingPointVM.ClearCurrentCommand => ClearCurrentCommand;
+        IRelayCommand IMeetingPointVM.ClearSourcesCommand => ClearSourcesCommand;
+        IRelayCommand IMeetingPointVM.OpenWwwCommand => OpenWwwCommand;
+        IRelayCommand IMeetingPointVM.PlayAllCommand => PlayAllCommand;
+        IRelayCommand IMeetingPointVM.RemoveIndentCommand => RemoveIndentCommand;
+        IRelayCommand IMeetingPointVM.SetAsCurrentCommand => SetAsCurrentCommand;
+        IRelayCommand<bool> IMeetingPointVM.AddSourcesCommand => AddSourcesCommand;
+
+        IAudioRecordingProvider IMeetingPointVM.AudioRecording
+        {
+            get => AudioRecording;
+            set => AudioRecording = (MeetingPointAudioRecordingProvider)value;
+        }
+
+        IMeetingVM IMeetingPointVM.Meeting
+        {
+            get => Meeting;
+            set => Meeting = (MeetingVM)value;
+        }
+
+        IParametersCollectionVM IMeetingPointVM.ParameterList
+        {
+            get => ParameterList;
+            set => ParameterList = (ParametersCollectionVM)value;
+        }
+
+        IBaseMediaFileInfo IMeetingPointVM.Source
+        {
+            get => Source;
+            set => Source = (BaseMediaFileInfo)value;
+        }
+
+        ObservableCollection<IBaseMediaFileInfo> IMeetingPointVM.Sources
+        {
+            get => Sources?.Convert<BaseMediaFileInfo, IBaseMediaFileInfo>();
+            set => Sources = value.Convert<IBaseMediaFileInfo, BaseMediaFileInfo>();
+        }
+
+        #endregion IMeetingPointVM
     }
 }

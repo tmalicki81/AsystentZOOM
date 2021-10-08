@@ -19,10 +19,8 @@ namespace AsystentZOOM.VM.Model
     [Serializable]
     public class BookmarkVM : BaseVM, IBookmarkVM
     {
-        public override void ChangeFromChild(BaseVM child)
-        {
-            (FileInfo as BaseVM)?.ChangeFromChild(child);
-        }
+        public override void ChangeFromChild(IBaseVM child)
+            => (FileInfo as BaseVM)?.ChangeFromChild(child);
 
         [XmlIgnore]
         public IMovable FileInfo

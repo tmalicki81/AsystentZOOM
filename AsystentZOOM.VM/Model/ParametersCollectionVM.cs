@@ -1,4 +1,5 @@
 ﻿using AsystentZOOM.VM.Common;
+using AsystentZOOM.VM.Interfaces;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -6,8 +7,16 @@ using System.Xml.Serialization;
 
 namespace AsystentZOOM.VM.Model
 {
+    public interface IParametersCollectionVM : IBaseVM
+    {
+        IRelayCommand AddParameterCommand { get; }
+        IBaseVM Owner { get; set; }
+        ObservableCollection<IParameterVM> Parameters { get; set; }
+        bool Trim();
+    }
+
     [Serializable]
-    public class ParametersCollectionVM : BaseVM, IDisposable
+    public class ParametersCollectionVM : BaseVM, IDisposable, IParametersCollectionVM
     {
         #region Parameters
 
@@ -27,19 +36,19 @@ namespace AsystentZOOM.VM.Model
         #region Owner
 
         [XmlIgnore]
-        public BaseVM Owner
+        public IBaseVM Owner
         {
             get => _owner;
             set => SetValue(ref _owner, value, nameof(Owner));
         }
-        private BaseVM _owner;
+        private IBaseVM _owner;
 
         #endregion Owner
 
         #region AddParameterCommand
 
-        private RelayCommand _addParameterCommand;
-        public RelayCommand AddParameterCommand
+        private IRelayCommand _addParameterCommand;
+        public IRelayCommand AddParameterCommand
             => _addParameterCommand ??= new RelayCommand(AddParameter);
 
         private void AddParameter()
@@ -77,7 +86,7 @@ namespace AsystentZOOM.VM.Model
                     hasChanged = true;
                 }
             }
-            if(hasChanged)
+            if (hasChanged)
                 ChangeFromChild(this);
             return hasChanged;
         }
@@ -89,13 +98,17 @@ namespace AsystentZOOM.VM.Model
                 p.ParametersCollection = this;
         }
 
-        public override void ChangeFromChild(BaseVM child)
-        {
-            Owner?.ChangeFromChild(child);
-        }
+        public override void ChangeFromChild(IBaseVM child)
+            => Owner?.ChangeFromChild(this);
 
         public void Dispose()
         {
+        }
+
+        ObservableCollection<IParameterVM> IParametersCollectionVM.Parameters 
+        {
+            get => Parameters.Convert<ParameterVM, IParameterVM>();
+            set => Parameters = value.Convert<IParameterVM, ParameterVM>();
         }
 
 #if(DEBUG)

@@ -3,6 +3,7 @@ using AsystentZOOM.VM.Common.AudioRecording;
 using AsystentZOOM.VM.Common.Dialog;
 using AsystentZOOM.VM.Enums;
 using AsystentZOOM.VM.FileRepositories;
+using AsystentZOOM.VM.Interfaces;
 using AsystentZOOM.VM.Model;
 using FileService.Common;
 using FileService.EventArgs;
@@ -10,10 +11,8 @@ using FileService.FileRepositories;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Media;
@@ -21,8 +20,37 @@ using System.Xml.Serialization;
 
 namespace AsystentZOOM.VM.ViewModel
 {
+    public interface IMeetingVM : IBaseVM, ICloneable, IDisposable
+    {
+        IRelayCommand AddNewMeetingPointCommand { get; }
+        IAudioRecordingProvider AudioRecording { get; set; }
+        IRelayCommand ColapseAllMeetingPointsCommand { get; }
+        IRelayCommand ExpandAllMeetingPointsCommand { get; }
+        string HeaderImage { get; set; }
+        bool IsEditing { get; set; }
+        DateTime MeetingBegin { get; set; }
+        string MeetingDescription { get; set; }
+        ObservableCollection<IMeetingPointVM> MeetingPointList { get; set; }
+        string MeetingTitle { get; set; }
+        IRelayCommand OpenFromLocalCommand { get; }
+        IParametersCollectionVM ParameterList { get; set; }
+        IRelayCommand RedoCommand { get; }
+        IRelayCommand SaveToLocalCommand { get; }
+        IRelayCommand<bool> StopAllCommand { get; }
+        IRelayCommand SyncAllMeetingsCommand { get; }
+        IRelayCommand SyncAllRecordingsCommand { get; }
+        IRelayCommand UndoCommand { get; }
+        string WebAddress { get; set; }
+        void ClearLocalFileName();
+        void DownloadAndFillMetadata(IProgressInfoVM progress);
+        void OpenFromLocal(string fileName);
+        void SaveLocalFile();
+        void SaveLocalFile(bool force);
+        void SaveTempFile();
+    }
+
     [Serializable]
-    public class MeetingVM : SingletonBaseVM, ICloneable
+    public class MeetingVM : SingletonBaseVM, IMeetingVM
     {
         private class IoConsts
         {
@@ -66,10 +94,8 @@ namespace AsystentZOOM.VM.ViewModel
             ParameterList = new ParametersCollectionVM { Owner = this };
         }
 
-        public override void ChangeFromChild(BaseVM child)
-        {
-            TryRegisterSnapshot();
-        }
+        public override void ChangeFromChild(IBaseVM child)
+            => TryRegisterSnapshot();
 
         private List<string> _timePiecesToDeleteWhenExitWithoutSave = new List<string>();
 
@@ -84,13 +110,13 @@ namespace AsystentZOOM.VM.ViewModel
                 {
                     MeetingTitle = "Nowe spotkanie",
                     MeetingBegin = DateTime.Now.Add(meetingBeginTimespan),
-                    MeetingDescription = "Opis spotkania", 
+                    MeetingDescription = "Opis spotkania",
                     MeetingPointList = new ObservableCollection<MeetingPointVM>()
                 };
                 var parameters = new ParametersCollectionVM { Owner = meeting };
                 meeting.ParameterList = parameters;
-                parameters.Parameters = new ObservableCollection<ParameterVM> 
-                { 
+                parameters.Parameters = new ObservableCollection<ParameterVM>
+                {
                     new ParameterVM{ ParametersCollection = parameters, Key = "Parametr 1", Value = "Wartość parametru 1" },
                     new ParameterVM{ ParametersCollection = parameters, Key = "Parametr 2", Value = "Wartość parametru 2" },
                     new ParameterVM{ ParametersCollection = parameters, Key = "Parametr 3", Value = "Wartość parametru 3" },
@@ -98,7 +124,7 @@ namespace AsystentZOOM.VM.ViewModel
                 // Dodaj zegar
                 var timePieceVM = new TimePieceVM
                 {
-                    AlertMinTime = TimeSpan.FromSeconds(10), 
+                    AlertMinTime = TimeSpan.FromSeconds(10),
                     TimerFormat = @"hh\:mm\:ss",
                     BreakTime = TimeSpan.FromSeconds(20),
                     Direction = TimePieceDirectionEnum.Back,
@@ -124,14 +150,14 @@ namespace AsystentZOOM.VM.ViewModel
                     IsExpanded = true,
                     Meeting = meeting,
                     PointTitle = "Punkt pierwszy",
-                    TitleColor = Colors.DarkGray, 
+                    TitleColor = Colors.DarkGray,
                     Sources = new ObservableCollection<BaseMediaFileInfo>()
                 };
                 meeting.MeetingPointList.Add(firstPoint);
                 var timePieceFileInfo = BaseMediaFileInfo.Factory.Create(firstPoint, timePieceFileName, string.Empty);
                 timePieceFileInfo.Title = $"Spotkanie o {meetingBeginTimespan.ToString(timePieceVM.TimerFormat)}";
                 firstPoint.Sources.Add(timePieceFileInfo);
-                
+
                 var pointParemeters = new ParametersCollectionVM { Owner = firstPoint };
                 firstPoint.ParameterList = pointParemeters;
                 pointParemeters.Parameters = new ObservableCollection<ParameterVM>
@@ -257,7 +283,7 @@ namespace AsystentZOOM.VM.ViewModel
         }
 
         private RelayCommand<bool> _stopAllCommand;
-        public RelayCommand<bool> StopAllCommand
+        public IRelayCommand<bool> StopAllCommand
             => _stopAllCommand ??= new RelayCommand<bool>(StopAll);
 
         private void StopAll(bool resetOutputWindow)
@@ -279,7 +305,7 @@ namespace AsystentZOOM.VM.ViewModel
                     }
                 }
             }
-            if(resetOutputWindow)
+            if (resetOutputWindow)
                 EventAggregator.Publish(nameof(MainVM) + "_Reset");
         }
 
@@ -301,7 +327,7 @@ namespace AsystentZOOM.VM.ViewModel
             AudioRecording.OnCommandExecuted += AudioRecording_OnCommandExecuted;
         }
 
-        internal void AudioRecording_OnCommandExecuted(object sender, EventArgs<RelayCommand> e)
+        internal void AudioRecording_OnCommandExecuted(object sender, EventArgs<IRelayCommand> e)
         {
             if (!string.IsNullOrEmpty(LocalFileName))
             {
@@ -320,7 +346,7 @@ namespace AsystentZOOM.VM.ViewModel
             }
 
             _watcher_Dispose();
-            AudioRecording.OnCommandExecuted -= AudioRecording_OnCommandExecuted; 
+            AudioRecording.OnCommandExecuted -= AudioRecording_OnCommandExecuted;
             AudioRecording?.Dispose();
             ParameterList?.Dispose();
 
@@ -346,21 +372,21 @@ namespace AsystentZOOM.VM.ViewModel
             base.Dispose();
         }
 
-        private RelayCommand _syncAllMeetingsCommand;
-        public RelayCommand SyncAllMeetingsCommand
+        private IRelayCommand _syncAllMeetingsCommand;
+        public IRelayCommand SyncAllMeetingsCommand
             => _syncAllMeetingsCommand ??= new RelayCommand(SyncAllMeetings);
-        
+
         private void SyncAllMeetings()
             => DialogHelper.RunAsync(
-                null, false, null, 
+                null, false, null,
                 (p) =>
                 {
                     SyncAll(p, "Synchronizacja spotkań", MediaFtpFileRepositoryFactory.Meetings, MediaLocalFileRepositoryFactory.Meetings);
                     SyncAll(p, "Synchronizacja zegarów", MediaFtpFileRepositoryFactory.TimePiece, MediaLocalFileRepositoryFactory.TimePiece);
                 });
 
-        private RelayCommand _syncAllRecordingsCommand;
-        public RelayCommand SyncAllRecordingsCommand
+        private IRelayCommand _syncAllRecordingsCommand;
+        public IRelayCommand SyncAllRecordingsCommand
             => _syncAllRecordingsCommand ??= new RelayCommand(SyncAllRecordings);
 
         private void SyncAllRecordings()
@@ -372,26 +398,26 @@ namespace AsystentZOOM.VM.ViewModel
         {
             p.OperationName = operationName;
             cloud.OnFileException += Sync_OnFileException;
-            cloud.OnPushedFile += Sync_OnPushedFile; 
+            cloud.OnPushedFile += Sync_OnPushedFile;
             local.OnFileException += Sync_OnFileException;
-            local.OnPushedFile += Sync_OnPushedFile;            
+            local.OnPushedFile += Sync_OnPushedFile;
 
             try
             {
                 p.TaskName = "Z chmury na dysk";
                 p.PercentCompletted = 0;
-                cloud.PushToTarget(local, null); 
-                
+                cloud.PushToTarget(local, null);
+
                 p.TaskName = "Z dysku do chmury";
                 p.PercentCompletted = 0;
-                local.PushToTarget(cloud, null);                
+                local.PushToTarget(cloud, null);
             }
             finally
             {
                 cloud.OnFileException -= Sync_OnFileException;
-                cloud.OnPushedFile -= Sync_OnPushedFile; 
+                cloud.OnPushedFile -= Sync_OnPushedFile;
                 local.OnFileException -= Sync_OnFileException;
-                local.OnPushedFile -= Sync_OnPushedFile;                
+                local.OnPushedFile -= Sync_OnPushedFile;
             }
         }
 
@@ -404,21 +430,21 @@ namespace AsystentZOOM.VM.ViewModel
         private void Sync_OnFileException(object sender, FileExceptionEventArgs e)
             => DialogHelper.ShowMessageBar($"Błąd synchronizacji pliku {e.FileName}: {e.Exception.Message}");
 
-        private RelayCommand _colapseAllMeetingPointsCommand;
-        public RelayCommand ColapseAllMeetingPointsCommand
+        private IRelayCommand _colapseAllMeetingPointsCommand;
+        public IRelayCommand ColapseAllMeetingPointsCommand
             => _colapseAllMeetingPointsCommand ??= new RelayCommand(
-                ColapseAllMeetingPoints, 
+                ColapseAllMeetingPoints,
                 () => MeetingPointList?.Any(mp => mp.IsExpanded) == true);
 
         private void ColapseAllMeetingPoints()
         {
             MeetingPointList.Where(mp => mp.IsExpanded).ToList().ForEach(mp => mp.IsExpanded = false);
-            TryRegisterSnapshot(); 
+            TryRegisterSnapshot();
             RaiseCanExecuteChanged4All();
         }
 
-        private RelayCommand _expandAllMeetingPointsCommand;
-        public RelayCommand ExpandAllMeetingPointsCommand
+        private IRelayCommand _expandAllMeetingPointsCommand;
+        public IRelayCommand ExpandAllMeetingPointsCommand
             => _expandAllMeetingPointsCommand ??= new RelayCommand(
                 ExpandAllMeetingPoints,
                 () => MeetingPointList?.Any(mp => !mp.IsExpanded) == true);
@@ -426,12 +452,12 @@ namespace AsystentZOOM.VM.ViewModel
         private void ExpandAllMeetingPoints()
         {
             MeetingPointList.Where(mp => !mp.IsExpanded).ToList().ForEach(mp => mp.IsExpanded = true);
-            TryRegisterSnapshot(); 
+            TryRegisterSnapshot();
             RaiseCanExecuteChanged4All();
         }
 
-        private RelayCommand _addNewMeetingPointCommand;
-        public RelayCommand AddNewMeetingPointCommand
+        private IRelayCommand _addNewMeetingPointCommand;
+        public IRelayCommand AddNewMeetingPointCommand
             => _addNewMeetingPointCommand ??= new RelayCommand(AddNewMeetingPoint);
 
         private void AddNewMeetingPoint()
@@ -442,11 +468,11 @@ namespace AsystentZOOM.VM.ViewModel
             TryRegisterSnapshot();
         }
 
-        private RelayCommand _openFromLocalCommand;
-        public RelayCommand OpenFromLocalCommand
+        private IRelayCommand _openFromLocalCommand;
+        public IRelayCommand OpenFromLocalCommand
             => _openFromLocalCommand ??= new RelayCommand(OpenFromLocal);
 
-        public void DownloadAndFillMetadata(ProgressInfoVM progress)
+        public void DownloadAndFillMetadata(IProgressInfoVM progress)
         {
             _bytesDownloaded = 0;
             _bytesToDownload = MeetingPointList.Sum(x => x.Sources.Sum(u => u.GetBytesToDownload()));
@@ -491,7 +517,7 @@ namespace AsystentZOOM.VM.ViewModel
         {
             long notSavedBytesDownloaded = _bytesDownloaded + e.BytesDownloaded;
             var mediaFileInfo = sender as BaseMediaFileInfo;
-            
+
             var progress = DialogHelper.GetProgressInfo();
             progress.TaskName = $"Pobieranie pliku {mediaFileInfo.FileName}...";
             progress.PercentCompletted = (int)(100 * notSavedBytesDownloaded / _bytesToDownload);
@@ -567,13 +593,13 @@ namespace AsystentZOOM.VM.ViewModel
             });
         }
 
-        private void _watcher_Dispose() 
+        private void _watcher_Dispose()
         {
             if (_watcher == null)
                 return;
 
-            _watcher.Changed -= _watcher_Changed; 
-            _watcher.Dispose();            
+            _watcher.Changed -= _watcher_Changed;
+            _watcher.Dispose();
         }
 
         private void _warcher_Create()
@@ -599,8 +625,8 @@ namespace AsystentZOOM.VM.ViewModel
                 });
         }
 
-        private RelayCommand _saveToLocalCommand;
-        public RelayCommand SaveToLocalCommand
+        private IRelayCommand _saveToLocalCommand;
+        public IRelayCommand SaveToLocalCommand
             => _saveToLocalCommand ??= new RelayCommand(SaveToLocal);
 
         private void SaveToLocal()
@@ -620,12 +646,12 @@ namespace AsystentZOOM.VM.ViewModel
             {
                 fileName = LocalFileName;
             }
-            var sourcesToSend = new List<BaseMediaFileInfo>();
+            var sourcesToSend = new List<IBaseMediaFileInfo>();
             foreach (var meetingPoint in MeetingPointList)
                 sourcesToSend.AddRange(meetingPoint.Sources.Where(source => string.IsNullOrEmpty(source.WebAddress)));
 
             DialogHelper.RunAsync("Zapisywanie spotkania", false, string.Empty, (p) =>
-            {                
+            {
                 if (sourcesToSend.Any())
                 {
                     p.ProgressBarVisibility = false;
@@ -637,7 +663,7 @@ namespace AsystentZOOM.VM.ViewModel
 
                     if (dr == MessageBoxResult.Yes)
                     {
-                        foreach (BaseMediaFileInfo d in sourcesToSend)
+                        foreach (IBaseMediaFileInfo d in sourcesToSend)
                         {
                             string shortFileName = d.FileName.Split('\\').Last();
                             var v = BaseMediaFileInfo.GetFileExtensionConfig(shortFileName);
@@ -744,8 +770,8 @@ namespace AsystentZOOM.VM.ViewModel
             return true;
         }
 
-        private RelayCommand _undoCommand;
-        public RelayCommand UndoCommand
+        private IRelayCommand _undoCommand;
+        public IRelayCommand UndoCommand
             => _undoCommand ??= new RelayCommand(UndoExecute, () => _undoRedoManager.CanUndo);
 
         private void UndoExecute()
@@ -756,8 +782,8 @@ namespace AsystentZOOM.VM.ViewModel
             RaiseCanExecuteChanged4All();
         }
 
-        private RelayCommand _redoCommand;
-        public RelayCommand RedoCommand
+        private IRelayCommand _redoCommand;
+        public IRelayCommand RedoCommand
             => _redoCommand ??= new RelayCommand(RedoExecute, () => _undoRedoManager.CanRedo);
 
         private void RedoExecute()
@@ -778,5 +804,27 @@ namespace AsystentZOOM.VM.ViewModel
                 return serializer.Deserialize(ms);
             }
         }
+
+        #region IMeetingVM
+
+        ObservableCollection<IMeetingPointVM> IMeetingVM.MeetingPointList
+        {
+            get => MeetingPointList?.Convert<MeetingPointVM, IMeetingPointVM>();
+            set => MeetingPointList = value?.Convert<IMeetingPointVM, MeetingPointVM>();
+        }
+
+        IParametersCollectionVM IMeetingVM.ParameterList
+        {
+            get => ParameterList;
+            set => ParameterList = (ParametersCollectionVM)value;
+        }
+
+        IAudioRecordingProvider IMeetingVM.AudioRecording
+        {
+            get => AudioRecording;
+            set => AudioRecording = (MeetingAudioRecordingProvider)value;
+        }
+
+        #endregion IMeetingVM
     }
 }

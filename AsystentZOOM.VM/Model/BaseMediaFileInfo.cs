@@ -20,16 +20,32 @@ using System.Xml.Serialization;
 
 namespace AsystentZOOM.VM.Model
 {
-    [Serializable]
-    public abstract class BaseMediaFileInfo<TContent> : BaseMediaFileInfo
-        where TContent : class, ILayerVM
+    public interface IBaseMediaFileInfo : IBaseVM, ISortableItemVM
     {
-        [XmlIgnore]
-        public TContent Content
-        {
-            get => (TContent)GetContent();
-            set => SetValue(ref _content, value, nameof(Content));
-        }
+        BitmapSource Bitmap { get; set; }
+        string Description { get; set; }
+        FileExtensionEnum FileExtension { get; set; }
+        string FileName { get; set; }
+        bool FileNotFound { get; set; }
+        bool IsPlaying { get; set; }
+        IMeetingPointVM MeetingPoint { get; set; }
+        bool MetadataCompleted { get; set; }
+        IParametersCollectionVM ParameterList { get; set; }
+        int PercentCompletted { get; set; }
+        IRelayCommand PlayCommand { get; }
+        bool ProgressBarVisibility { get; set; }
+        IRelayCommand RefreshCommand { get; }
+        string Title { get; set; }
+        string WebAddress { get; set; }
+
+        event EventHandler<LoadingFileEventArgs> OnLoadMediaFile;
+
+        void CheckFileExist();
+        ILayerVM CreateContent(string fileName);
+        void FillMetadata();
+        long GetBytesToDownload();
+        ILayerVM GetContent();
+        void SetContent(ILayerVM content);
     }
 
     [Serializable]
@@ -38,7 +54,7 @@ namespace AsystentZOOM.VM.Model
     [XmlInclude(typeof(AudioFileInfo))]
     [XmlInclude(typeof(ImageFileInfo))]
     [XmlInclude(typeof(BackgroundFileInfo))]
-    public abstract class BaseMediaFileInfo : BaseVM, ISortableItemVM
+    public abstract class BaseMediaFileInfo : BaseVM, IBaseMediaFileInfo
     {
         public class Factory
         {
@@ -59,26 +75,27 @@ namespace AsystentZOOM.VM.Model
         }
 
         [Serializable]
-        public class SortableMediaFileInfoProvider : SortableItemProvider<BaseMediaFileInfo>
+        public class SortableMediaFileInfoProvider : SortableItemProvider<IBaseMediaFileInfo>
         {
-            public SortableMediaFileInfoProvider(BaseMediaFileInfo parameter) : base(parameter) { }
+            public SortableMediaFileInfoProvider(IBaseMediaFileInfo parameter) : base(parameter) { }
             public override string ItemCategory => "Plik";
             public override string ItemName => !string.IsNullOrEmpty(Item.Title) ? Item.Title : Item.FileName?.Split('\\').Last();
             public override bool CanCreateNewItem => false;
-            public override ObservableCollection<BaseMediaFileInfo> ContainerItemsSource => Item.MeetingPoint.Sources;
-            public override BaseMediaFileInfo NewItem() => null;
-            public override BaseMediaFileInfo SelectedItem
+            public override ObservableCollection<IBaseMediaFileInfo> ContainerItemsSource => Item.MeetingPoint.Sources;
+            public override IBaseMediaFileInfo NewItem() => null;
+            public override IBaseMediaFileInfo SelectedItem
             {
                 get => Item.MeetingPoint?.Source;
                 set
                 {
-                    if (Item.MeetingPoint != null) Item.MeetingPoint.Source = value;
+                    if (Item.MeetingPoint != null) 
+                        Item.MeetingPoint.Source = value;
                 }
             }
-            public override object Container 
+            public override object Container
             {
                 get => Item.MeetingPoint;
-                set => Item.MeetingPoint = (MeetingPointVM)value;
+                set => Item.MeetingPoint = (IMeetingPointVM)value;
             }
         }
 
@@ -227,7 +244,7 @@ namespace AsystentZOOM.VM.Model
             {
                 FileNotFound = true;
             }
-            
+
             try
             {
                 Description = FilePropertiesRoot.GetString(fullFileName, nameof(Description));
@@ -342,13 +359,11 @@ namespace AsystentZOOM.VM.Model
             set => SetValue(ref _parameterList, value, nameof(ParameterList));
         }
 
-        public override void ChangeFromChild(BaseVM child)
-        {
-            MeetingPoint?.ChangeFromChild(child);
-        }
+        public override void ChangeFromChild(IBaseVM child)
+            => MeetingPoint?.ChangeFromChild(child);
 
         [XmlIgnore]
-        public MeetingPointVM MeetingPoint
+        public IMeetingPointVM MeetingPoint
         {
             get => _meetingPoint;
             set
@@ -358,7 +373,7 @@ namespace AsystentZOOM.VM.Model
                     Title = _titleFromFileSystem;
             }
         }
-        private MeetingPointVM _meetingPoint;
+        private IMeetingPointVM _meetingPoint;
 
         [XmlIgnore]
         public BitmapSource Bitmap
@@ -414,7 +429,7 @@ namespace AsystentZOOM.VM.Model
                     var singletonValue = (ILayerVM)SingletonVMFactory.SetSingletonValues(newLayer);
                     singletonValue.FileInfo = this;
                     SetContent(singletonValue);
-                    
+
                     layer.PlayCommand.Execute();
                     IsPlaying = true;
                 }
@@ -428,5 +443,25 @@ namespace AsystentZOOM.VM.Model
 
         public override string ToString()
             => FileName;
+
+        IRelayCommand IBaseMediaFileInfo.PlayCommand => PlayCommand;
+        IRelayCommand IBaseMediaFileInfo.RefreshCommand => RefreshCommand; 
+        IParametersCollectionVM IBaseMediaFileInfo.ParameterList
+        {
+            get => ParameterList;
+            set => ParameterList = (ParametersCollectionVM)value;
+        }        
+    }
+
+    [Serializable]
+    public abstract class BaseMediaFileInfo<TContent> : BaseMediaFileInfo
+        where TContent : class, ILayerVM
+    {
+        [XmlIgnore]
+        public TContent Content
+        {
+            get => (TContent)GetContent();
+            set => SetValue(ref _content, value, nameof(Content));
+        }
     }
 }
