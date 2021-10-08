@@ -6,7 +6,20 @@ using System.Xml.Serialization;
 
 namespace AsystentZOOM.VM.Model
 {
-    public abstract class PlayerFileInfo<TContent> : BaseMediaFileInfo<TContent>, IMovable
+    public interface IPlayerFileInfo : IMovable
+    {
+        ObservableCollection<BookmarkVM> Bookmarks { get; set; }
+        TimeSpan Duration { get; set; }
+        TimeSpan FinishBefore { get; set; }
+        int PercentComplette { get; }
+        TimeSpan Position { get; set; }
+        BookmarkVM SelectedBookmark { get; set; }
+
+        void OnDeserialized(object sender);
+        string ToString();
+    }
+
+    public abstract class PlayerFileInfo<TContent> : BaseMediaFileInfo<TContent>, IPlayerFileInfo 
         where TContent : class, ILayerVM
     {
         private TimeSpan _duration;

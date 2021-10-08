@@ -45,7 +45,9 @@
     <None Remove="Images\icons8-play-black-32.png" />
     <None Remove="Images\icons8-push-pin-32.png" />
     <None Remove="Images\icons8-record-32.png" />
+    <None Remove="Images\icons8-redo-32.png" />
     <None Remove="Images\icons8-restart-32.png" />
+    <None Remove="Images\icons8-restore-32.png" />
     <None Remove="Images\icons8-rewind-32.png" />
     <None Remove="Images\icons8-save-close-32.png" />
     <None Remove="Images\icons8-slide-up-32.png" />
@@ -55,6 +57,7 @@
     <None Remove="Images\icons8-stop-32.png" />
     <None Remove="Images\icons8-take-screenshot-32.png" />
     <None Remove="Images\icons8-text-color-32.png" />
+    <None Remove="Images\icons8-undo-32.png" />
     <None Remove="Images\icons8-unpin-32.png" />
     <None Remove="Images\icons8-upload-to-cloud-32.png" />
     <None Remove="Images\icons8-upward-arrow-32.png" />
@@ -190,7 +193,13 @@
     <Resource Include="Images\icons8-record-32.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Images\icons8-redo-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Images\icons8-restart-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-restore-32.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Images\icons8-rewind-32.png">
@@ -218,6 +227,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Images\icons8-text-color-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-undo-32.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Images\icons8-unpin-32.png">
