@@ -75,17 +75,17 @@ namespace AsystentZOOM.VM.Model
         }
 
         [Serializable]
-        public class SortableMediaFileInfoProvider : SortableItemProvider<IBaseMediaFileInfo>
+        public class SortableMediaFileInfoProvider : SortableItemProvider<BaseMediaFileInfo>
         {
-            public SortableMediaFileInfoProvider(IBaseMediaFileInfo parameter) : base(parameter) { }
+            public SortableMediaFileInfoProvider(BaseMediaFileInfo parameter) : base(parameter) { }
             public override string ItemCategory => "Plik";
             public override string ItemName => !string.IsNullOrEmpty(Item.Title) ? Item.Title : Item.FileName?.Split('\\').Last();
             public override bool CanCreateNewItem => false;
-            public override ObservableCollection<IBaseMediaFileInfo> ContainerItemsSource => Item.MeetingPoint.Sources;
-            public override IBaseMediaFileInfo NewItem() => null;
-            public override IBaseMediaFileInfo SelectedItem
+            public override ObservableCollection<BaseMediaFileInfo> ContainerItemsSource => (Item.MeetingPoint as MeetingPointVM)?.Sources;
+            public override BaseMediaFileInfo NewItem() => null;
+            public override BaseMediaFileInfo SelectedItem
             {
-                get => Item.MeetingPoint?.Source;
+                get => (BaseMediaFileInfo)Item.MeetingPoint?.Source;
                 set
                 {
                     if (Item.MeetingPoint != null) 

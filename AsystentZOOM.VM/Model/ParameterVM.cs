@@ -13,7 +13,6 @@ namespace AsystentZOOM.VM.Model
         string Key { get; set; }
         string Value { get; set; }
         IParametersCollectionVM ParametersCollection { get; set; }
-        void ChangeFromChild(IBaseVM child);
     }
 
     [Serializable]
