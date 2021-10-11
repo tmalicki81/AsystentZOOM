@@ -1,4 +1,5 @@
-﻿using AsystentZOOM.VM.Common;
+﻿using AsystentZOOM.VM.Attributes;
+using AsystentZOOM.VM.Common;
 using AsystentZOOM.VM.Interfaces;
 using System;
 using System.Windows.Media;
@@ -19,10 +20,7 @@ namespace AsystentZOOM.VM.Model
     [Serializable]
     public class BookmarkVM : BaseVM, IBookmarkVM
     {
-        //public override void CallChangeToParent(IBaseVM child)
-        //    => (FileInfo as BaseVM)?.CallChangeToParent(child);
-
-        [XmlIgnore]
+        [Parent(typeof(IMovable))]
         public IMovable FileInfo
         {
             get => _fileInfo;
