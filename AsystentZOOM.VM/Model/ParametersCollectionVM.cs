@@ -37,6 +37,7 @@ namespace AsystentZOOM.VM.Model
 
         #region Owner
 
+        [XmlIgnore]
         [Parent(typeof(IMeetingVM), typeof(IMeetingPointVM))]
         public IBaseVM Owner
         {

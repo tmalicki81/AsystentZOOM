@@ -9,10 +9,9 @@ using System.Xml.Serialization;
 
 namespace AsystentZOOM.VM.Common
 {
-    public interface IBaseVM : IXmlDeserializationCallback
+    public interface IBaseVM : IXmlDeserializationCallback, INotifyPropertyChanged
     {
         string InstanceId { get; set; }
-        event PropertyChangedEventHandler PropertyChanged;
         void ChangeFromChild(IBaseVM child);
         void RaiseCanExecuteChanged4All();
         void RaisePropertyChanged(string propertyName);
@@ -39,7 +38,7 @@ namespace AsystentZOOM.VM.Common
         /// Czy dane są juz kompletne (po serializacji lub po kopiowaniu wartosci z innego VM)
         /// </summary>
         [XmlIgnore]
-        public bool IsDataReady { get; set; }
+        public virtual bool IsDataReady { get; set; }
 
         /// <summary>
         /// Sygnał o zmianie stanu dziecka przekazywany rodzicowi

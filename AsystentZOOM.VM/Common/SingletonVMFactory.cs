@@ -132,7 +132,7 @@ namespace AsystentZOOM.VM.Common
         }
 
         public static bool CopyValuesWhenDifferent<T>(T source, ref T target)
-            where T : BaseVM
+            where T : class, IBaseVM
         {
             if (source == null)
             {
@@ -150,104 +150,110 @@ namespace AsystentZOOM.VM.Common
             if (EqualsVM(source, target))
                 return false;
 
-            var properties = sourceType.GetProperties()
-                .Where(p => p.SetMethod != null && p.GetMethod != null)
-                .Where(p => !p.GetCustomAttributes(typeof(XmlIgnoreAttribute), false).Any())
-                .ToList();
-
             source.IsDataReady = false;
             target.IsDataReady = false;
 
-            foreach (var pi in properties)
+            try
             {
-                object sourcePropertyValue = pi.GetValue(source);
-                object targetPropertyValue = pi.GetValue(target);
+                var properties = sourceType.GetProperties()
+                    .Where(p => p.SetMethod != null && p.GetMethod != null)
+                    .Where(p => !p.GetCustomAttributes(typeof(XmlIgnoreAttribute), true).Any())
+                    .ToList();
 
-                // Kolekcje obiektów
-                if (sourcePropertyValue is IEnumerable<BaseVM> sourceEnumerable &&
-                    targetPropertyValue is IEnumerable<BaseVM> targetEnumerable)
+                foreach (var pi in properties)
                 {
-                    // Jeśli kolekcja lub jej elementy uległy zmianie
-                    if (!EqualsCollections(sourceEnumerable, targetEnumerable))
+                    object sourcePropertyValue = pi.GetValue(source);
+                    object targetPropertyValue = pi.GetValue(target);
+
+                    // Kolekcje obiektów
+                    if (sourcePropertyValue is IEnumerable<IBaseVM> sourceEnumerable &&
+                        targetPropertyValue is IEnumerable<IBaseVM> targetEnumerable)
                     {
-                        var sourceList = sourceEnumerable as IList;
-                        var targetList = targetEnumerable as IList;
-
-                        // Usuń elementy z oryginału, których nie ma 
-                        IList toRemoveFromTarget = targetEnumerable
-                            .Where(s => !sourceEnumerable.Any(t => s.InstanceId == t.InstanceId))
-                            .ToList();
-                        foreach (BaseVM itemToRemove in toRemoveFromTarget)
+                        // Jeśli kolekcja lub jej elementy uległy zmianie
+                        if (!EqualsCollections(sourceEnumerable, targetEnumerable))
                         {
-                            targetList.Remove(itemToRemove);
-                        }
+                            var sourceList = sourceEnumerable as IList;
+                            var targetList = targetEnumerable as IList;
 
-                        // Zmień wartości pozycji lub dodaj nowe pozycje do listy
-                        int sourceItemIndex = 0;
-                        foreach (BaseVM sourceItem in sourceList)
-                        {
-                            if (targetList.Count - 1 >= sourceItemIndex &&
-                                targetList[sourceItemIndex] is BaseVM targetItem2 &&
-                                sourceItem.InstanceId == targetItem2?.InstanceId)
+                            // Usuń elementy z oryginału, których nie ma 
+                            IList toRemoveFromTarget = targetEnumerable
+                                .Where(s => !sourceEnumerable.Any(t => s.InstanceId == t.InstanceId))
+                                .ToList();
+                            foreach (IBaseVM itemToRemove in toRemoveFromTarget)
                             {
-                                CopyValuesWhenDifferent(sourceItem, ref targetItem2);
+                                targetList.Remove(itemToRemove);
                             }
-                            else if (targetEnumerable.FirstOrDefault(t => t.InstanceId == sourceItem.InstanceId) is BaseVM targetItem &&
-                                     targetItem != null)
-                            {
-                                CopyValuesWhenDifferent(sourceItem, ref targetItem);
 
-                                // TODO: Dopracować
-                                targetList.Remove(targetItem);
-                                targetList.Insert(sourceItemIndex, targetItem);
-                            }
-                            else
+                            // Zmień wartości pozycji lub dodaj nowe pozycje do listy
+                            int sourceItemIndex = 0;
+                            foreach (IBaseVM sourceItem in sourceList)
                             {
-                                sourceItem.OnDeserialized(null);
-                                targetList.Insert(sourceItemIndex, sourceItem);
+                                if (targetList.Count - 1 >= sourceItemIndex &&
+                                    targetList[sourceItemIndex] is IBaseVM targetItem2 &&
+                                    sourceItem.InstanceId == targetItem2?.InstanceId)
+                                {
+                                    CopyValuesWhenDifferent(sourceItem, ref targetItem2);
+                                }
+                                else if (targetEnumerable.FirstOrDefault(t => t.InstanceId == sourceItem.InstanceId) is IBaseVM targetItem &&
+                                         targetItem != null)
+                                {
+                                    CopyValuesWhenDifferent(sourceItem, ref targetItem);
+
+                                    // TODO: Dopracować
+                                    targetList.Remove(targetItem);
+                                    targetList.Insert(sourceItemIndex, targetItem);
+                                }
+                                else
+                                {
+                                    sourceItem.OnDeserialized(null);
+                                    targetList.Insert(sourceItemIndex, sourceItem);
+                                }
+                                sourceItemIndex++;
                             }
-                            sourceItemIndex++;
                         }
                     }
-                }
 
-                // Kolekcje wartości skalarnych
-                else if (sourcePropertyValue is IEnumerable &&
-                         targetPropertyValue is IEnumerable)
-                {
-                    pi.SetValue(target, sourcePropertyValue);
-                }
+                    // Kolekcje wartości skalarnych
+                    else if (sourcePropertyValue is IEnumerable &&
+                             targetPropertyValue is IEnumerable)
+                    {
+                        pi.SetValue(target, sourcePropertyValue);
+                    }
 
-                // Wartości obiektowe
-                else if (sourcePropertyValue is BaseVM sourcePropertyVM &&
-                         targetPropertyValue is BaseVM targetPropertyVM)
-                {
-                    if (sourcePropertyVM.InstanceId == targetPropertyVM.InstanceId)
-                        // Jeśli jest to modyfikacja obiektu => zmień wartości właściwości
-                        CopyValuesWhenDifferent(sourcePropertyVM, ref targetPropertyVM);
+                    // Wartości obiektowe
+                    else if (sourcePropertyValue is IBaseVM sourcePropertyVM &&
+                             targetPropertyValue is IBaseVM targetPropertyVM)
+                    {
+                        if (sourcePropertyVM.InstanceId == targetPropertyVM.InstanceId)
+                            // Jeśli jest to modyfikacja obiektu => zmień wartości właściwości
+                            CopyValuesWhenDifferent(sourcePropertyVM, ref targetPropertyVM);
+                        else
+                            // Jeśli jest to nowy obiekt => Kopiuj wszystko
+                            pi.SetValue(target, sourcePropertyValue);
+                    }
+
+                    // Wartości skalarne
                     else
-                        // Jeśli jest to nowy obiekt => Kopiuj wszystko
-                        pi.SetValue(target, sourcePropertyValue);
-                }
-
-                // Wartości skalarne
-                else
-                {
-                    if (sourcePropertyValue == null && targetPropertyValue != null ||
-                        sourcePropertyValue != null && targetPropertyValue == null ||
-                        sourcePropertyValue != null && !sourcePropertyValue.Equals(targetPropertyValue))
                     {
-                        // Jeśli wartość jest inna niż oryginalna
-                        pi.SetValue(target, sourcePropertyValue);
+                        if (sourcePropertyValue == null && targetPropertyValue != null ||
+                            sourcePropertyValue != null && targetPropertyValue == null ||
+                            sourcePropertyValue != null && !sourcePropertyValue.Equals(targetPropertyValue))
+                        {
+                            // Jeśli wartość jest inna niż oryginalna
+                            pi.SetValue(target, sourcePropertyValue);
+                        }
                     }
+                    // Wywołaj
+                    if(targetPropertyValue is IXmlDeserializationCallback ddd)
+                        ddd.OnDeserialized(targetPropertyValue);
                 }
-
-                // Wywołaj
-                (targetPropertyValue as IXmlDeserializationCallback)?.OnDeserialized(null);
+                target.OnDeserialized(target);
             }
-            target.OnDeserialized(null);
-            source.IsDataReady = true;
-            target.IsDataReady = true;
+            finally
+            {
+                source.IsDataReady = true;
+                target.IsDataReady = true;
+            }
             return true;
         }
 

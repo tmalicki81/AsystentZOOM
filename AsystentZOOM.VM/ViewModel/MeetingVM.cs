@@ -83,6 +83,13 @@ namespace AsystentZOOM.VM.ViewModel
 
         private static readonly Timer _timer;
 
+        private static bool _isDataReady;
+        public override bool IsDataReady
+        {
+            get => _isDataReady;
+            set => _isDataReady = value;
+        }
+
         static MeetingVM()
         {
             _timer = new Timer(TimeSpan.FromSeconds(5).TotalMilliseconds);
@@ -93,7 +100,7 @@ namespace AsystentZOOM.VM.ViewModel
         public override void ChangeFromChild(IBaseVM child)
             => TryRegisterSnapshot();
 
-        private List<string> _timePiecesToDeleteWhenExitWithoutSave = new List<string>();
+        private List<string> _timePiecesToDeleteWhenExitWithoutSave = new();
 
         public static string StartupFileName;
 
@@ -749,6 +756,7 @@ namespace AsystentZOOM.VM.ViewModel
             _undoRedoManager.ClearSnapshots();
         }
 
+
         private bool TryRegisterSnapshot()
         {
             if (!IsDataReady)
@@ -765,6 +773,8 @@ namespace AsystentZOOM.VM.ViewModel
 
         private void UndoExecute()
         {
+            //ParameterList.Owner = null;  // Usunąć
+
             var undoMeeting = _undoRedoManager.GetUndo();
             var target = this;
             SingletonVMFactory.CopyValuesWhenDifferent(undoMeeting, ref target);
@@ -785,7 +795,7 @@ namespace AsystentZOOM.VM.ViewModel
 
         public object Clone()
         {
-            var serializer = new CustomXmlSerializer(GetType());
+            var serializer = new XmlSerializer(GetType());
             using (var ms = new MemoryStream())
             {
                 serializer.Serialize(ms, this);
