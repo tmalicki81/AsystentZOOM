@@ -19,8 +19,8 @@ namespace AsystentZOOM.VM.Model
     [Serializable]
     public class BookmarkVM : BaseVM, IBookmarkVM
     {
-        public override void ChangeFromChild(IBaseVM child)
-            => (FileInfo as BaseVM)?.ChangeFromChild(child);
+        //public override void CallChangeToParent(IBaseVM child)
+        //    => (FileInfo as BaseVM)?.CallChangeToParent(child);
 
         [XmlIgnore]
         public IMovable FileInfo
@@ -37,7 +37,7 @@ namespace AsystentZOOM.VM.Model
             set
             {
                 SetValue(ref _position, value, nameof(Position));
-                ChangeFromChild(this);
+                CallChangeToParent(this);
             }
         }
 
@@ -50,7 +50,7 @@ namespace AsystentZOOM.VM.Model
             set
             {
                 SetValue(ref _name, value, nameof(Name));
-                ChangeFromChild(this);
+                CallChangeToParent(this);
             }
         }
 
@@ -61,7 +61,7 @@ namespace AsystentZOOM.VM.Model
             set
             {
                 SetValue(ref _color, value, nameof(Color));
-                ChangeFromChild(this);
+                CallChangeToParent(this);
             }
         }
 

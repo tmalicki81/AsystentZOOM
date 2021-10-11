@@ -29,7 +29,7 @@ namespace AsystentZOOM.VM.Model
             set
             {
                 SetValue(ref _parameters, value, nameof(Parameters));
-                ChangeFromChild(this);
+                CallChangeToParent(this);
             }
         }
 
@@ -61,7 +61,7 @@ namespace AsystentZOOM.VM.Model
                 ParametersCollection = this,
             };
             newParameter.Sorter.MoveToEnd();
-            ChangeFromChild(newParameter);
+            CallChangeToParent(newParameter);
         }
 
         #endregion AddParameterCommand
@@ -90,12 +90,15 @@ namespace AsystentZOOM.VM.Model
                 }
             }
             if (hasChanged)
-                ChangeFromChild(this);
+                CallChangeToParent(this);
             return hasChanged;
         }
 
-        public override void ChangeFromChild(IBaseVM child)
-            => Owner?.ChangeFromChild(this);
+        //public override void CallChangeToParent(IBaseVM child)
+        //{
+        //    base.CallChangeToParent(this);
+        //    Owner?.CallChangeToParent(this);
+        //}
 
         ObservableCollection<IParameterVM> IParametersCollectionVM.Parameters 
         {

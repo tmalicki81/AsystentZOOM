@@ -159,7 +159,7 @@ namespace AsystentZOOM.VM.Common.Sortable
             ContainerItemsSource.Insert(Item.Sorter.Lp - 2, Item);
             Sort();
             RaiseCanExecuteChanged4All();
-            Item.ChangeFromChild(this);
+            Item.CallChangeToParent(this);
         }
 
         /// <summary>
@@ -176,7 +176,7 @@ namespace AsystentZOOM.VM.Common.Sortable
             ContainerItemsSource.Insert(Item.Sorter.Lp, Item);
             Sort();
             RaiseCanExecuteChanged4All();
-            Item.ChangeFromChild(this);
+            Item.CallChangeToParent(this);
         }
 
         /// <summary>
@@ -192,7 +192,7 @@ namespace AsystentZOOM.VM.Common.Sortable
             Sort();
             ContainerItemsSource.Insert(Item.Sorter.Lp - 1, newParameter);
             Sort();
-            Item.ChangeFromChild(this);
+            Item.CallChangeToParent(this);
         }
 
         /// <summary>
@@ -225,7 +225,7 @@ namespace AsystentZOOM.VM.Common.Sortable
                 if (result == MessageBoxResult.Yes)
                 {
                     ContainerItemsSource.Remove(Item);
-                    Item.ChangeFromChild(this);
+                    Item.CallChangeToParent(this);
                 }
             }
             finally
@@ -298,7 +298,7 @@ namespace AsystentZOOM.VM.Common.Sortable
             else
             { 
             }
-            Item.ChangeFromChild(this);
+            Item.CallChangeToParent(this);
         }
 
         #region Niejawna implementacja interfejsu ISortableItemProvider

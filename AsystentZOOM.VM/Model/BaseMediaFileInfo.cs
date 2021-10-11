@@ -296,7 +296,7 @@ namespace AsystentZOOM.VM.Model
             set
             {
                 SetValue(ref _title, value, nameof(Title));
-                ChangeFromChild(this);
+                CallChangeToParent(this);
             }
         }
 
@@ -359,8 +359,8 @@ namespace AsystentZOOM.VM.Model
             set => SetValue(ref _parameterList, value, nameof(ParameterList));
         }
 
-        public override void ChangeFromChild(IBaseVM child)
-            => MeetingPoint?.ChangeFromChild(child);
+        public override void CallChangeToParent(IBaseVM child)
+            => MeetingPoint?.CallChangeToParent(child);
 
         [XmlIgnore]
         public IMeetingPointVM MeetingPoint

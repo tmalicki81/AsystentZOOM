@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Xml.Serialization;
 
 namespace AsystentZOOM.VM.Common
@@ -12,7 +13,7 @@ namespace AsystentZOOM.VM.Common
     public interface IBaseVM : IXmlDeserializationCallback, INotifyPropertyChanged
     {
         string InstanceId { get; set; }
-        void ChangeFromChild(IBaseVM child);
+        void CallChangeToParent(IBaseVM child);
         void RaiseCanExecuteChanged4All();
         void RaisePropertyChanged(string propertyName);
     }
@@ -39,13 +40,6 @@ namespace AsystentZOOM.VM.Common
         /// </summary>
         [XmlIgnore]
         public virtual bool IsDataReady { get; set; }
-
-        /// <summary>
-        /// Sygnał o zmianie stanu dziecka przekazywany rodzicowi
-        /// </summary>
-        public virtual void ChangeFromChild(IBaseVM child)
-        {
-        }
 
         /// <summary>
         /// Odświeżenie możliwości wykonania wszystkich poleceń
@@ -148,17 +142,45 @@ namespace AsystentZOOM.VM.Common
             if (!parentTypeInterfaces.Any())
                 return;
 
-            var parentProperties = childType.GetProperties().Where(p =>
+            var parentProperties = GetParentProperties(childType, parentTypeInterfaces);
+
+            foreach (var parentProperty in parentProperties)
+                parentProperty.SetValue(childValue, parentValue);
+        }
+
+        private PropertyInfo[] GetParentProperties(Type childType, Type[] parentTypeInterfaces)
+        {
+            return childType.GetProperties().Where(p =>
                 p.DeclaringType == childType &&
                 p.GetMethod != null &&
                 p.SetMethod != null &&
                 (p
                     .GetCustomAttributes(typeof(ParentAttribute), false)
                     .FirstOrDefault() as ParentAttribute
-                )?.Interfaces?.Any(itemInterface => parentTypeInterfaces.Any(i => i == itemInterface)) == true)
+                )?.Interfaces?.Any(itemInterface => parentTypeInterfaces == null ||
+                                                    parentTypeInterfaces.Any(i => i == itemInterface)
+                                  ) == true)
                 .ToArray();
-            foreach (var parentProperty in parentProperties)
-                parentProperty.SetValue(childValue, parentValue);
+        }
+
+        private PropertyInfo[] GetParentProperties()
+            => GetParentProperties(GetType(), null);
+
+        /// <summary>
+        /// Sygnał o zmianie stanu dziecka przekazywany rodzicowi
+        /// </summary>
+        public virtual void CallChangeToParent(IBaseVM child)
+        {
+            var parentProperties = GetParentProperties();
+            foreach (PropertyInfo p in parentProperties)
+            {
+                var parentPropertyValue = p.GetValue(this);
+                if (parentPropertyValue != null)
+                {
+                    MethodInfo method = parentPropertyValue.GetType().GetMethod(nameof(CallChangeToParent));
+                    method.Invoke(parentPropertyValue, new object[] { this });
+                }
+            }
         }
     }
 }

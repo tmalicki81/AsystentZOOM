@@ -74,7 +74,7 @@ namespace AsystentZOOM.VM.Model
                 SetValue(ref _key, value, nameof(Key));
                 Sorter.IsNew = false;
                 if (ParametersCollection?.Trim() == false)
-                    ChangeFromChild(this);
+                    CallChangeToParent(this);
             }
         }
 
@@ -88,7 +88,7 @@ namespace AsystentZOOM.VM.Model
                 SetValue(ref _value, value, nameof(Value));
                 Sorter.IsNew = false;
                 if (ParametersCollection?.Trim() == false)
-                    ChangeFromChild(this);
+                    CallChangeToParent(this);
             }
         }
 
@@ -98,7 +98,7 @@ namespace AsystentZOOM.VM.Model
             set => ParametersCollection = (ParametersCollectionVM)value;
         }
 
-        public void ChangeFromChild(IBaseVM child)
-            => ParametersCollection?.ChangeFromChild(this);
+        //public void CallChangeToParent(IBaseVM child)
+        //    => ParametersCollection?.CallChangeToParent(this);
     }
 }

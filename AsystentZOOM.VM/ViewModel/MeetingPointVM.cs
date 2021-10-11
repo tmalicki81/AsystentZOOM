@@ -195,7 +195,7 @@ namespace AsystentZOOM.VM.ViewModel
             set
             {
                 SetValue(ref _pointTitle, value, nameof(PointTitle));
-                ChangeFromChild(this);
+                CallChangeToParent(this);
             }
         }
 
@@ -206,7 +206,7 @@ namespace AsystentZOOM.VM.ViewModel
             set
             {
                 SetValue(ref _indent, value, nameof(Indent));
-                ChangeFromChild(this);
+                CallChangeToParent(this);
             }
         }
 
@@ -217,7 +217,7 @@ namespace AsystentZOOM.VM.ViewModel
             set
             {
                 SetValue(ref _duration, value, nameof(Duration));
-                ChangeFromChild(this);
+                CallChangeToParent(this);
             }
         }
 
@@ -240,7 +240,7 @@ namespace AsystentZOOM.VM.ViewModel
             set
             {
                 SetValue(ref _titleColor, value, nameof(TitleColor));
-                ChangeFromChild(this);
+                CallChangeToParent(this);
             }
         }
 
@@ -251,7 +251,7 @@ namespace AsystentZOOM.VM.ViewModel
             set
             {
                 SetValue(ref _webAddress, value, nameof(WebAddress));
-                ChangeFromChild(this);
+                CallChangeToParent(this);
             }
         }
 
@@ -293,12 +293,12 @@ namespace AsystentZOOM.VM.ViewModel
             set
             {
                 SetValue(ref _isExpanded, value, nameof(IsExpanded));
-                ChangeFromChild(this);
+                CallChangeToParent(this);
             }
         }
 
-        public override void ChangeFromChild(IBaseVM child)
-            => Meeting?.ChangeFromChild(this);
+        //public override void CallChangeToParent(IBaseVM child)
+        //    => Meeting?.CallChangeToParent(this);
 
         [XmlIgnore]
         public BaseMediaFileInfo Source
@@ -442,7 +442,7 @@ namespace AsystentZOOM.VM.ViewModel
             GetSourcesFromLocal(fileNames)
                 .ForEach(s => Sources.Add(s));
             SetOrder();
-            ChangeFromChild(this);
+            CallChangeToParent(this);
         }
 
         private bool _isCurrent;

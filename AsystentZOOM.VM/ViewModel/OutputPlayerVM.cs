@@ -13,7 +13,7 @@ using System.Xml.Serialization;
 namespace AsystentZOOM.VM.ViewModel
 {
     [Serializable]
-    public abstract class PlayerVM : SingletonBaseVM
+    public abstract class OutputPlayerVM : SingletonBaseVM
     {
         public override void CallChangeToParent(IBaseVM child)
             => (FileInfo as IBaseMediaFileInfo)?.MeetingPoint?.CallChangeToParent(child);
