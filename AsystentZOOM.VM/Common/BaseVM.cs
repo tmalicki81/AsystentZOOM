@@ -151,7 +151,7 @@ namespace AsystentZOOM.VM.Common
         private PropertyInfo[] GetParentProperties(Type childType, Type[] parentTypeInterfaces)
         {
             return childType.GetProperties().Where(p =>
-                p.DeclaringType == childType &&
+                //p.DeclaringType == childType &&
                 p.GetMethod != null &&
                 p.SetMethod != null &&
                 (p
@@ -163,6 +163,8 @@ namespace AsystentZOOM.VM.Common
                 .ToArray();
         }
 
+        private PropertyInfo[] _parentProperties;
+
         private PropertyInfo[] GetParentProperties()
             => GetParentProperties(GetType(), null);
 
@@ -171,8 +173,9 @@ namespace AsystentZOOM.VM.Common
         /// </summary>
         public virtual void CallChangeToParent(IBaseVM child)
         {
-            var parentProperties = GetParentProperties();
-            foreach (PropertyInfo p in parentProperties)
+            if(_parentProperties == null)
+                _parentProperties = GetParentProperties();
+            foreach (PropertyInfo p in _parentProperties)
             {
                 var parentPropertyValue = p.GetValue(this);
                 if (parentPropertyValue != null)

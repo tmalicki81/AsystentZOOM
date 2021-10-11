@@ -359,10 +359,7 @@ namespace AsystentZOOM.VM.Model
             set => SetValue(ref _parameterList, value, nameof(ParameterList));
         }
 
-        public override void CallChangeToParent(IBaseVM child)
-            => MeetingPoint?.CallChangeToParent(child);
-
-        [XmlIgnore]
+        [Parent(typeof(IMeetingPointVM))]
         public IMeetingPointVM MeetingPoint
         {
             get => _meetingPoint;

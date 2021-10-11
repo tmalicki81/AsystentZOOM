@@ -98,7 +98,10 @@ namespace AsystentZOOM.VM.ViewModel
         }
 
         public override void CallChangeToParent(IBaseVM child)
-            => TryRegisterSnapshot();
+        {
+            base.CallChangeToParent(child);
+            TryRegisterSnapshot();
+        }
 
         private List<string> _timePiecesToDeleteWhenExitWithoutSave = new();
 

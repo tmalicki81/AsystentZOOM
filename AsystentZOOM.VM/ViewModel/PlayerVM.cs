@@ -1,4 +1,5 @@
-﻿using AsystentZOOM.VM.Common;
+﻿using AsystentZOOM.VM.Attributes;
+using AsystentZOOM.VM.Common;
 using AsystentZOOM.VM.Common.Dialog;
 using AsystentZOOM.VM.Enums;
 using AsystentZOOM.VM.Interfaces;
@@ -15,9 +16,6 @@ namespace AsystentZOOM.VM.ViewModel
     [Serializable]
     public abstract class PlayerVM : SingletonBaseVM
     {
-        public override void CallChangeToParent(IBaseVM child)
-            => (FileInfo as IBaseMediaFileInfo)?.MeetingPoint?.CallChangeToParent(child);
-
         private bool _isEnabled;
         public bool IsEnabled
         {
@@ -189,7 +187,7 @@ namespace AsystentZOOM.VM.ViewModel
             set => SetValue(ref _source, value, nameof(Source));
         }
 
-        [XmlIgnore]
+        [Parent(typeof(IBaseMediaFileInfo), typeof(IMovable))]
         public IMovable FileInfo
         {
             get => _fileInfo;

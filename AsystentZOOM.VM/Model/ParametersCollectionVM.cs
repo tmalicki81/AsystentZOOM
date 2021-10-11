@@ -94,12 +94,6 @@ namespace AsystentZOOM.VM.Model
             return hasChanged;
         }
 
-        //public override void CallChangeToParent(IBaseVM child)
-        //{
-        //    base.CallChangeToParent(this);
-        //    Owner?.CallChangeToParent(this);
-        //}
-
         ObservableCollection<IParameterVM> IParametersCollectionVM.Parameters 
         {
             get => Parameters.Convert<ParameterVM, IParameterVM>();
