@@ -1,4 +1,5 @@
-﻿using AsystentZOOM.VM.Common;
+﻿using AsystentZOOM.VM.Attributes;
+using AsystentZOOM.VM.Common;
 using AsystentZOOM.VM.Common.AudioRecording;
 using AsystentZOOM.VM.Common.Dialog;
 using AsystentZOOM.VM.Enums;
@@ -40,6 +41,7 @@ namespace AsystentZOOM.VM.ViewModel
         IRelayCommand SyncAllMeetingsCommand { get; }
         IRelayCommand SyncAllRecordingsCommand { get; }
         IRelayCommand UndoCommand { get; }
+        void AudioRecording_OnCommandExecuted(object sender, EventArgs<IRelayCommand> e);
         string WebAddress { get; set; }
         void ClearLocalFileName();
         void DownloadAndFillMetadata(IProgressInfoVM progress);
@@ -62,13 +64,14 @@ namespace AsystentZOOM.VM.ViewModel
         [Serializable]
         public class MeetingAudioRecordingProvider : AudioRecordingProvider
         {
-            internal MeetingVM _meeting;
+            [Parent(typeof(MeetingVM))]
+            public IMeetingVM Meeting { get; set; }
 
             public override bool IsReady
-                => _meeting != null;
+                => Meeting != null;
 
             public override string Title
-                => _meeting.MeetingTitle;
+                => Meeting.MeetingTitle;
         }
 
         public MeetingAudioRecordingProvider AudioRecording
@@ -76,7 +79,7 @@ namespace AsystentZOOM.VM.ViewModel
             get => _audioRecording;
             set => SetValue(ref _audioRecording, value, nameof(AudioRecording));
         }
-        private MeetingAudioRecordingProvider _audioRecording;
+        private MeetingAudioRecordingProvider _audioRecording = new();
 
         private static readonly Timer _timer;
 
@@ -87,13 +90,6 @@ namespace AsystentZOOM.VM.ViewModel
             _timer.Start();
         }
 
-        public MeetingVM()
-        {
-            AudioRecording = new MeetingAudioRecordingProvider();
-            MeetingPointList = new ObservableCollection<MeetingPointVM>();
-            ParameterList = new ParametersCollectionVM { Owner = this };
-        }
-
         public override void ChangeFromChild(IBaseVM child)
             => TryRegisterSnapshot();
 
@@ -101,7 +97,7 @@ namespace AsystentZOOM.VM.ViewModel
 
         public static string StartupFileName;
 
-        public static MeetingVM Empty
+        public static IMeetingVM Empty
         {
             get
             {
@@ -268,14 +264,14 @@ namespace AsystentZOOM.VM.ViewModel
             set => SetValue(ref _meetingDescription, value, nameof(MeetingDescription));
         }
 
-        private ParametersCollectionVM _parameterList;
+        private ParametersCollectionVM _parameterList = new();
         public ParametersCollectionVM ParameterList
         {
             get => _parameterList;
             set => SetValue(ref _parameterList, value, nameof(ParameterList));
         }
 
-        private ObservableCollection<MeetingPointVM> _meetingPointList;
+        private ObservableCollection<MeetingPointVM> _meetingPointList = new();
         public ObservableCollection<MeetingPointVM> MeetingPointList
         {
             get => _meetingPointList;
@@ -311,23 +307,17 @@ namespace AsystentZOOM.VM.ViewModel
 
         public override void OnDeserialized(object sender)
         {
-            foreach (var meetingPoint in MeetingPointList)
-                meetingPoint.Meeting = this;
-            if (ParameterList == null)
-                ParameterList = new ParametersCollectionVM();
-            ParameterList.Owner = this;
-
+            base.OnDeserialized(sender);
             ConfigureAudioRecording();
         }
 
         private void ConfigureAudioRecording()
         {
-            AudioRecording._meeting = this;
             AudioRecording.OnCommandExecuted -= AudioRecording_OnCommandExecuted;
             AudioRecording.OnCommandExecuted += AudioRecording_OnCommandExecuted;
         }
 
-        internal void AudioRecording_OnCommandExecuted(object sender, EventArgs<IRelayCommand> e)
+        public void AudioRecording_OnCommandExecuted(object sender, EventArgs<IRelayCommand> e)
         {
             if (!string.IsNullOrEmpty(LocalFileName))
             {

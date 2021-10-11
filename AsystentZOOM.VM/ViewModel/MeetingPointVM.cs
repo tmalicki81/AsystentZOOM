@@ -1,4 +1,5 @@
-﻿using AsystentZOOM.VM.Common;
+﻿using AsystentZOOM.VM.Attributes;
+using AsystentZOOM.VM.Common;
 using AsystentZOOM.VM.Common.AudioRecording;
 using AsystentZOOM.VM.Common.Dialog;
 using AsystentZOOM.VM.Common.Sortable;
@@ -6,12 +7,14 @@ using AsystentZOOM.VM.Interfaces;
 using AsystentZOOM.VM.Interfaces.Sortable;
 using AsystentZOOM.VM.Model;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Timers;
 using System.Windows;
 using System.Windows.Media;
@@ -59,7 +62,7 @@ namespace AsystentZOOM.VM.ViewModel
             public override string ItemCategory => "Punkt";
             public override string ItemName => Item.PointTitle;
             public override bool CanCreateNewItem => true;
-            public override ObservableCollection<MeetingPointVM> ContainerItemsSource => Item.Meeting.MeetingPointList;
+            public override ObservableCollection<MeetingPointVM> ContainerItemsSource => (Item.Meeting as MeetingVM)?.MeetingPointList;
             public override MeetingPointVM NewItem() => new MeetingPointVM
             {
                 Meeting = Item.Meeting,
@@ -253,7 +256,8 @@ namespace AsystentZOOM.VM.ViewModel
         }
 
         [XmlIgnore]
-        public MeetingVM Meeting
+        [Parent(typeof(MeetingVM))]
+        public IMeetingVM Meeting
         {
             get => _meeting;
             set
@@ -274,9 +278,9 @@ namespace AsystentZOOM.VM.ViewModel
                 AudioRecording.OnCommandExecuted += Meeting.AudioRecording_OnCommandExecuted;
             }
         }
-        private MeetingVM _meeting;
+        private IMeetingVM _meeting;
 
-        private ParametersCollectionVM _parameterList;
+        private ParametersCollectionVM _parameterList = new();
         public ParametersCollectionVM ParameterList
         {
             get => _parameterList;
@@ -311,7 +315,7 @@ namespace AsystentZOOM.VM.ViewModel
         }
         private BaseMediaFileInfo _source = null;
 
-        private ObservableCollection<BaseMediaFileInfo> _sources = new ObservableCollection<BaseMediaFileInfo>();
+        private ObservableCollection<BaseMediaFileInfo> _sources = new();
         public ObservableCollection<BaseMediaFileInfo> Sources
         {
             get => _sources;
@@ -505,15 +509,6 @@ namespace AsystentZOOM.VM.ViewModel
         private void _changePositionTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             MainVM.Dispatcher.Invoke(() => Position = DateTime.Now - BeginTime);
-        }
-
-        public override void OnDeserialized(object sender)
-        {
-            if (ParameterList == null)
-                ParameterList = new ParametersCollectionVM();
-            ParameterList.Owner = this;
-
-            base.OnDeserialized(sender);
         }
 
         public void Dispose()

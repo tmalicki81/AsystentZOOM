@@ -1,5 +1,7 @@
-﻿using AsystentZOOM.VM.Common;
+﻿using AsystentZOOM.VM.Attributes;
+using AsystentZOOM.VM.Common;
 using AsystentZOOM.VM.Interfaces;
+using AsystentZOOM.VM.ViewModel;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -36,6 +38,7 @@ namespace AsystentZOOM.VM.Model
         #region Owner
 
         [XmlIgnore]
+        [Parent(typeof(MeetingVM), typeof(MeetingPointVM))]
         public IBaseVM Owner
         {
             get => _owner;

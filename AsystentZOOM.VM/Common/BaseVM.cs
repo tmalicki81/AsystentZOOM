@@ -1,5 +1,7 @@
-﻿using AsystentZOOM.VM.Interfaces;
+﻿using AsystentZOOM.VM.Attributes;
+using AsystentZOOM.VM.Interfaces;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -109,6 +111,51 @@ namespace AsystentZOOM.VM.Common
         /// <param name="sender"></param>
         public virtual void OnDeserialized(object sender)
         {
+            SetParentValuesInChild(sender);
+        }
+
+        private void SetParentValuesInChild(object parentValue)
+        {
+            if (parentValue == null)
+                return;
+
+            Type parentType = parentValue.GetType();
+            var properties = parentType.GetProperties().Where(p =>
+                    p.DeclaringType == parentType &&
+                    p.GetMethod != null &&
+                    p.SetMethod != null)
+                .ToArray();
+
+            foreach (var p in properties)
+            {
+                object value = p.GetValue(this);
+                if (value is ICollection collection)
+                    foreach (var item in collection)
+                        SetParentValuesInChild(parentValue, item);
+                else
+                    SetParentValuesInChild(parentValue, p.GetValue(parentValue));
+            }
+        }
+
+        private void SetParentValuesInChild(object parentValue, object childValue)
+        {
+            if (parentValue == null || childValue == null)
+                return;
+
+            Type parentType = parentValue.GetType();
+            Type childType = childValue.GetType();
+
+            var parentProperties = childType.GetProperties().Where(p =>
+                p.DeclaringType == childType &&
+                p.GetMethod != null &&
+                p.SetMethod != null &&
+                (p
+                    .GetCustomAttributes(typeof(ParentAttribute), false)
+                    .FirstOrDefault() as ParentAttribute
+                )?.Type?.Any(parType => parType == parentType) == true)
+                .ToArray();
+            foreach (var parentProperty in parentProperties)
+                parentProperty.SetValue(childValue, parentValue);
         }
     }
 }
