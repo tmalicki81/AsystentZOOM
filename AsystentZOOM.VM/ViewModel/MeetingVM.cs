@@ -64,7 +64,7 @@ namespace AsystentZOOM.VM.ViewModel
         [Serializable]
         public class MeetingAudioRecordingProvider : AudioRecordingProvider
         {
-            [Parent(typeof(MeetingVM))]
+            [Parent(typeof(IMeetingVM))]
             public IMeetingVM Meeting { get; set; }
 
             public override bool IsReady
@@ -338,7 +338,6 @@ namespace AsystentZOOM.VM.ViewModel
             _watcher_Dispose();
             AudioRecording.OnCommandExecuted -= AudioRecording_OnCommandExecuted;
             AudioRecording?.Dispose();
-            ParameterList?.Dispose();
 
             foreach (var meetingPoint in MeetingPointList)
                 meetingPoint.Dispose();
@@ -778,9 +777,9 @@ namespace AsystentZOOM.VM.ViewModel
 
         private void RedoExecute()
         {
-            var RedoMeeting = _undoRedoManager.GetRedo();
+            var redoMeeting = _undoRedoManager.GetRedo();
             var target = this;
-            SingletonVMFactory.CopyValuesWhenDifferent(RedoMeeting, ref target);
+            SingletonVMFactory.CopyValuesWhenDifferent(redoMeeting, ref target);
             RaiseCanExecuteChanged4All();
         }
 

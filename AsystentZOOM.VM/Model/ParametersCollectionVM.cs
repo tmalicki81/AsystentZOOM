@@ -18,7 +18,7 @@ namespace AsystentZOOM.VM.Model
     }
 
     [Serializable]
-    public class ParametersCollectionVM : BaseVM, IDisposable, IParametersCollectionVM
+    public class ParametersCollectionVM : BaseVM, IParametersCollectionVM
     {
         #region Parameters
 
@@ -37,8 +37,7 @@ namespace AsystentZOOM.VM.Model
 
         #region Owner
 
-        [XmlIgnore]
-        [Parent(typeof(MeetingVM), typeof(MeetingPointVM))]
+        [Parent(typeof(IMeetingVM), typeof(IMeetingPointVM))]
         public IBaseVM Owner
         {
             get => _owner;
@@ -94,19 +93,8 @@ namespace AsystentZOOM.VM.Model
             return hasChanged;
         }
 
-        public override void OnDeserialized(object sender)
-        {
-            if (Parameters == null) return;
-            foreach (var p in Parameters)
-                p.ParametersCollection = this;
-        }
-
         public override void ChangeFromChild(IBaseVM child)
             => Owner?.ChangeFromChild(this);
-
-        public void Dispose()
-        {
-        }
 
         ObservableCollection<IParameterVM> IParametersCollectionVM.Parameters 
         {

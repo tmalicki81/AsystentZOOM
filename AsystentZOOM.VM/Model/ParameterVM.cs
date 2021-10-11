@@ -1,4 +1,5 @@
-﻿using AsystentZOOM.VM.Common;
+﻿using AsystentZOOM.VM.Attributes;
+using AsystentZOOM.VM.Common;
 using AsystentZOOM.VM.Common.Sortable;
 using AsystentZOOM.VM.Interfaces.Sortable;
 using System;
@@ -55,7 +56,7 @@ namespace AsystentZOOM.VM.Model
 
         ISortableItemProvider ISortableItemVM.Sorter => Sorter;
 
-        [XmlIgnore]
+        [Parent(typeof(IParametersCollectionVM))]
         public ParametersCollectionVM ParametersCollection
         {
             get => _parametersCollection;

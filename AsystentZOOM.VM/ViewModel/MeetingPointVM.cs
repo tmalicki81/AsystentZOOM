@@ -255,8 +255,7 @@ namespace AsystentZOOM.VM.ViewModel
             }
         }
 
-        [XmlIgnore]
-        [Parent(typeof(MeetingVM))]
+        [Parent(typeof(IMeetingVM))]
         public IMeetingVM Meeting
         {
             get => _meeting;
@@ -515,7 +514,6 @@ namespace AsystentZOOM.VM.ViewModel
         {
             _changePositionTimer?.Dispose();
             AudioRecording?.Dispose();
-            ParameterList?.Dispose();
         }
 
         #region IMeetingPointVM

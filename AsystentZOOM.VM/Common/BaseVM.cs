@@ -145,6 +145,10 @@ namespace AsystentZOOM.VM.Common
             Type parentType = parentValue.GetType();
             Type childType = childValue.GetType();
 
+            var parentTypeInterfaces = parentType.GetInterfaces();
+            if (!parentTypeInterfaces.Any())
+                return;
+
             var parentProperties = childType.GetProperties().Where(p =>
                 p.DeclaringType == childType &&
                 p.GetMethod != null &&
@@ -152,7 +156,7 @@ namespace AsystentZOOM.VM.Common
                 (p
                     .GetCustomAttributes(typeof(ParentAttribute), false)
                     .FirstOrDefault() as ParentAttribute
-                )?.Type?.Any(parType => parType == parentType) == true)
+                )?.Interfaces?.Any(itemInterface => parentTypeInterfaces.Any(i => i == itemInterface)) == true)
                 .ToArray();
             foreach (var parentProperty in parentProperties)
                 parentProperty.SetValue(childValue, parentValue);
