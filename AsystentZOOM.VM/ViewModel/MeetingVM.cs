@@ -460,7 +460,7 @@ namespace AsystentZOOM.VM.ViewModel
 
         private void AddNewMeetingPoint()
         {
-            var newMeetingPoint = new MeetingPointVM { Meeting = this };
+            var newMeetingPoint = new MeetingPointVM();
             MeetingPointList.Add(newMeetingPoint);
             newMeetingPoint.Sorter.Sort();
             TryRegisterSnapshot();

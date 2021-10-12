@@ -31,8 +31,8 @@ namespace AsystentZOOM.VM.Model
                 get => ContainerItemsSource?.FirstOrDefault(x => x.Sorter.IsSelected);
                 set
                 {
-                        foreach (var d in ContainerItemsSource)
-                            d.Sorter.IsSelected = d == value;
+                    foreach (var d in ContainerItemsSource)
+                        d.Sorter.IsSelected = d == value;
                 }
             }
             public override object Container
@@ -96,8 +96,5 @@ namespace AsystentZOOM.VM.Model
             get => ParametersCollection;
             set => ParametersCollection = (ParametersCollectionVM)value;
         }
-
-        //public void CallChangeToParent(IBaseVM child)
-        //    => ParametersCollection?.CallChangeToParent(this);
     }
 }

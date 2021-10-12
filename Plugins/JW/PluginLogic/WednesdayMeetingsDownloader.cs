@@ -341,7 +341,6 @@ namespace JW
                 WebAddress = webAddress,
                 Duration = GetDuration(pointHtmlNode),
                 IsExpanded = true,
-                Meeting = meeting,
                 TitleColor = titleColor, 
                 Indent = 1
             };
@@ -409,7 +408,6 @@ namespace JW
                 {
                     PointTitle = GetPointHeaderTitle(section),
                     IsExpanded = false,
-                    Meeting = meeting,
                     TitleColor = sectionConfig.TitleColor
                 };
                 meeting.MeetingPointList.Add(headerMeetingPoint);

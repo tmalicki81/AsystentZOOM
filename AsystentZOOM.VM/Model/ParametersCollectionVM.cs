@@ -58,11 +58,9 @@ namespace AsystentZOOM.VM.Model
 
         private void AddParameter()
         {
-            var newParameter = new ParameterVM
-            {
-                ParametersCollection = this,
-            };
-            newParameter.Sorter.MoveToEnd();
+            var newParameter = new ParameterVM();
+            Parameters.Add(newParameter);
+            newParameter.Sorter.Sort();
             CallChangeToParent(newParameter);
         }
 
