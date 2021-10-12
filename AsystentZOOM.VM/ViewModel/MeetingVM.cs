@@ -123,9 +123,9 @@ namespace AsystentZOOM.VM.ViewModel
                 meeting.ParameterList = parameters;
                 parameters.Parameters = new ObservableCollection<ParameterVM>
                 {
-                    new ParameterVM{ ParametersCollection = parameters, Key = "Parametr 1", Value = "Wartość parametru 1" },
-                    new ParameterVM{ ParametersCollection = parameters, Key = "Parametr 2", Value = "Wartość parametru 2" },
-                    new ParameterVM{ ParametersCollection = parameters, Key = "Parametr 3", Value = "Wartość parametru 3" },
+                    new ParameterVM { Key = "Parametr 1", Value = "Wartość parametru 1" },
+                    new ParameterVM { Key = "Parametr 2", Value = "Wartość parametru 2" },
+                    new ParameterVM { Key = "Parametr 3", Value = "Wartość parametru 3" },
                 };
                 // Dodaj zegar
                 var timePieceVM = new TimePieceVM
@@ -156,8 +156,7 @@ namespace AsystentZOOM.VM.ViewModel
                     IsExpanded = true,
                     Meeting = meeting,
                     PointTitle = "Punkt pierwszy",
-                    TitleColor = Colors.DarkGray,
-                    Sources = new ObservableCollection<BaseMediaFileInfo>()
+                    TitleColor = Colors.DarkGray
                 };
                 meeting.MeetingPointList.Add(firstPoint);
                 var timePieceFileInfo = BaseMediaFileInfo.Factory.Create(firstPoint, timePieceFileName, string.Empty);
@@ -168,9 +167,9 @@ namespace AsystentZOOM.VM.ViewModel
                 firstPoint.ParameterList = pointParemeters;
                 pointParemeters.Parameters = new ObservableCollection<ParameterVM>
                 {
-                    new ParameterVM{ ParametersCollection = pointParemeters, Key = "Parametr A", Value = "Wartość parametru A" },
-                    new ParameterVM{ ParametersCollection = pointParemeters, Key = "Parametr B", Value = "Wartość parametru B" },
-                    new ParameterVM{ ParametersCollection = pointParemeters, Key = "Parametr C", Value = "Wartość parametru C" },
+                    new ParameterVM { Key = "Parametr A", Value = "Wartość parametru A" },
+                    new ParameterVM { Key = "Parametr B", Value = "Wartość parametru B" },
+                    new ParameterVM { Key = "Parametr C", Value = "Wartość parametru C" },
                 };
 
                 meeting.ConfigureAudioRecording();
@@ -776,8 +775,6 @@ namespace AsystentZOOM.VM.ViewModel
 
         private void UndoExecute()
         {
-            //ParameterList.Owner = null;  // Usunąć
-
             var undoMeeting = _undoRedoManager.GetUndo();
             var target = this;
             SingletonVMFactory.CopyValuesWhenDifferent(undoMeeting, ref target);

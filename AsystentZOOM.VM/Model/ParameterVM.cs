@@ -26,7 +26,6 @@ namespace AsystentZOOM.VM.Model
             public override string ItemName => Item.Key;
             public override bool CanCreateNewItem => true;
             public override ObservableCollection<ParameterVM> ContainerItemsSource => Item.ParametersCollection.Parameters;
-            public override ParameterVM NewItem() => new ParameterVM { ParametersCollection = Item.ParametersCollection };
             public override ParameterVM SelectedItem
             {
                 get => ContainerItemsSource?.FirstOrDefault(x => x.Sorter.IsSelected);

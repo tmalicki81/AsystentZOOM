@@ -34,7 +34,7 @@ namespace AsystentZOOM.VM.Common.Sortable
         /// Tworzenie nowego elementu
         /// </summary>
         /// <returns></returns>
-        public abstract TItem NewItem();
+        public virtual TItem NewItem() => (TItem)Activator.CreateInstance(typeof(TItem));
 
         /// <summary>
         /// Wybrany element

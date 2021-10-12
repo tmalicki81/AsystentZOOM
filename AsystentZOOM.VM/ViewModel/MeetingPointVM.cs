@@ -65,7 +65,6 @@ namespace AsystentZOOM.VM.ViewModel
             public override ObservableCollection<MeetingPointVM> ContainerItemsSource => (Item.Meeting as MeetingVM)?.MeetingPointList;
             public override MeetingPointVM NewItem() => new MeetingPointVM
             {
-                Meeting = Item.Meeting,
                 TitleColor = Item.TitleColor
             };
             public override MeetingPointVM SelectedItem
