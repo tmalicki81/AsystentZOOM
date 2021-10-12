@@ -117,9 +117,8 @@ namespace AsystentZOOM.VM.ViewModel
                     MeetingTitle = "Nowe spotkanie",
                     MeetingBegin = DateTime.Now.Add(meetingBeginTimespan),
                     MeetingDescription = "Opis spotkania",
-                    MeetingPointList = new ObservableCollection<MeetingPointVM>()
                 };
-                var parameters = new ParametersCollectionVM { Owner = meeting };
+                var parameters = new ParametersCollectionVM();
                 meeting.ParameterList = parameters;
                 parameters.Parameters = new ObservableCollection<ParameterVM>
                 {
@@ -154,7 +153,6 @@ namespace AsystentZOOM.VM.ViewModel
                 {
                     Duration = TimeSpan.FromMinutes(30),
                     IsExpanded = true,
-                    Meeting = meeting,
                     PointTitle = "Punkt pierwszy",
                     TitleColor = Colors.DarkGray
                 };
@@ -163,7 +161,7 @@ namespace AsystentZOOM.VM.ViewModel
                 timePieceFileInfo.Title = $"Spotkanie o {meetingBeginTimespan.ToString(timePieceVM.TimerFormat)}";
                 firstPoint.Sources.Add(timePieceFileInfo);
 
-                var pointParemeters = new ParametersCollectionVM { Owner = firstPoint };
+                var pointParemeters = new ParametersCollectionVM();
                 firstPoint.ParameterList = pointParemeters;
                 pointParemeters.Parameters = new ObservableCollection<ParameterVM>
                 {
