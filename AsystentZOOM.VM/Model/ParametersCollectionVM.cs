@@ -1,9 +1,11 @@
 ﻿using AsystentZOOM.VM.Attributes;
 using AsystentZOOM.VM.Common;
+using AsystentZOOM.VM.Common.Dialog;
 using AsystentZOOM.VM.Interfaces;
 using AsystentZOOM.VM.ViewModel;
 using System;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Xml.Serialization;
 

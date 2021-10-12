@@ -29,11 +29,11 @@ namespace AsystentZOOM.VM.Model
             public override ParameterVM NewItem() => new ParameterVM { ParametersCollection = Item.ParametersCollection };
             public override ParameterVM SelectedItem
             {
-                get => ContainerItemsSource.FirstOrDefault(x => x.Sorter.IsSelected);
+                get => ContainerItemsSource?.FirstOrDefault(x => x.Sorter.IsSelected);
                 set
                 {
-                    foreach (var d in ContainerItemsSource)
-                        d.Sorter.IsSelected = d == value;
+                        foreach (var d in ContainerItemsSource)
+                            d.Sorter.IsSelected = d == value;
                 }
             }
             public override object Container

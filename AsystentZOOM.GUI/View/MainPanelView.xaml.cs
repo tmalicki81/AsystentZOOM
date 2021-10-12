@@ -157,7 +157,7 @@ namespace AsystentZOOM.GUI.View
         {
             _alertSequenceFlag = !_alertSequenceFlag;
             var color = isAlert ? (_alertSequenceFlag ? Colors.Red : Colors.Orange) : Colors.Transparent;
-            Background = new SolidColorBrush(color);
+            Dispatcher.Invoke(()=> Background = new SolidColorBrush(color));
         }
 
         private void DragDropPopup_DragEnter(object sender, DragEventArgs e)
