@@ -59,7 +59,7 @@ namespace AsystentZOOM.VM.Model
             set
             {
                 SetValue(ref _color, value, nameof(Color));
-                CallChangeToParent(this, $"Zmieniono kolor zakładki {Name} na {value}");
+                CallChangeToParent(this, $"Zmieniono kolor zakładki {Name} na {ColorsHelper.ColorsDictionary[value]}");
             }
         }
 

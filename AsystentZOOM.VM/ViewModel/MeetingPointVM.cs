@@ -240,7 +240,7 @@ namespace AsystentZOOM.VM.ViewModel
             set
             {
                 SetValue(ref _titleColor, value, nameof(TitleColor));
-                CallChangeToParent(this, $"Zmieniono kolor punktu {PointTitle} na {value}");
+                CallChangeToParent(this, $"Zmieniono kolor punktu {PointTitle} na {ColorsHelper.ColorsDictionary[value]}");
             }
         }
 
