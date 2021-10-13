@@ -74,7 +74,7 @@ namespace AsystentZOOM.GUI.View
                 EventAggregator.Subscribe($"{dataContextName}_Pause", Pause, () => true),
                 EventAggregator.Subscribe($"{dataContextName}_Restart", Restart, () => true),
                 EventAggregator.Subscribe<double>($"{dataContextName}_PositionChanged", PositionChanged, (p) => true),
-                EventAggregator.Subscribe<bool>(nameof(MainVM) + "_Close", (x) => CloseMainOutputWindow(), (p) => true),
+                //EventAggregator.Subscribe<bool>(nameof(MainVM) + "_Close", (x) => CloseMainOutputWindow(), (p) => true),
                 EventAggregator.Subscribe(nameof(MainVM) + "_Reset", CloseMainOutputWindow, () => true)
             };
             _timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
@@ -85,7 +85,7 @@ namespace AsystentZOOM.GUI.View
         {
             _timer.Stop();
             _meMain.Close();
-            _subscribesList?.ForEach(si => EventAggregator.UnSubscribe(si.MessageCode));
+            _subscribesList?.ForEach(si => EventAggregator.UnSubscribe(si));
             _isRestarting = true;
         }
 

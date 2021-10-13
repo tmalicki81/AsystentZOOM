@@ -37,7 +37,7 @@ namespace AsystentZOOM.GUI
             _mainBorderWindow = new MainBorderWindow();
             _mainOutputWindow = new MainOutputWindow();
 
-            EventAggregator.Subscribe<bool>(nameof(MainVM) + "_Close", CloseMainOutputWindow, (p) => true);
+            //EventAggregator.Subscribe<bool>(nameof(MainVM) + "_Close", CloseMainOutputWindow, (p) => true);
             EventAggregator.Subscribe(nameof(MainVM) + "_Open", OpenMainOutputWindow, () => true);
             EventAggregator.Subscribe(nameof(MainVM) + "_Reset", ResetMainOutputWindow, () => true);
             EventAggregator.Subscribe(nameof(MainVM) + "_ActivatePanel", () => Activate(), () => true);
@@ -108,12 +108,14 @@ namespace AsystentZOOM.GUI
         {
             CloseMainOutputWindow(false);
             OpenMainOutputWindow();
+            DialogHelper.ShowMessageBar("Zresetowano okno prezentacji");
         }
 
         private void OpenMainOutputWindow()
         {
             _mainOutputWindow = new MainOutputWindow();
             _mainOutputWindow.Show();
+            _mainOutputWindow.Owner = _mainBorderWindow;
         }
 
         protected override void OnClosing(CancelEventArgs e)

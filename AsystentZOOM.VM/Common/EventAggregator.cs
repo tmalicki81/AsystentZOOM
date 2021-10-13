@@ -83,6 +83,14 @@ namespace AsystentZOOM.VM.Common
             return RegisterSubscription(messageCode, noTypedAction, noTypedPredicate, typeof(TArgs));
         }
 
+        public static void UnSubscribe(SubscribeInfo subscribeInfo)
+        {
+            lock (_locker)
+            {
+                _subscribeInfoList = _subscribeInfoList.Where(x => x != subscribeInfo).ToList();
+            }
+        }
+
         public static void UnSubscribe(string messageCode)
         {
             lock (_locker)
