@@ -31,7 +31,7 @@ namespace AsystentZOOM.VM.Model
             set
             {
                 SetValue(ref _parameters, value, nameof(Parameters));
-                CallChangeToParent(this);
+                CallChangeToParent(this, $"Zmieniono kolekcję parametrów");
             }
         }
 
@@ -61,7 +61,7 @@ namespace AsystentZOOM.VM.Model
             var newParameter = new ParameterVM();
             Parameters.Add(newParameter);
             newParameter.Sorter.Sort();
-            CallChangeToParent(newParameter);
+            CallChangeToParent(this, $"Dodano parametr");
         }
 
         #endregion AddParameterCommand
@@ -90,7 +90,7 @@ namespace AsystentZOOM.VM.Model
                 }
             }
             if (hasChanged)
-                CallChangeToParent(this);
+                CallChangeToParent(this, "Dostosowano kolekcje parametrów");
             return hasChanged;
         }
 

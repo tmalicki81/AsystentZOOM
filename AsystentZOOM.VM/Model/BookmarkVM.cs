@@ -35,7 +35,7 @@ namespace AsystentZOOM.VM.Model
             set
             {
                 SetValue(ref _position, value, nameof(Position));
-                CallChangeToParent(this);
+                CallChangeToParent(this, $"Zmieniono pozycję zakładki {Name} na {value}");
             }
         }
 
@@ -48,7 +48,7 @@ namespace AsystentZOOM.VM.Model
             set
             {
                 SetValue(ref _name, value, nameof(Name));
-                CallChangeToParent(this);
+                CallChangeToParent(this, $"Zmieniono nazwę zakładki na {Name}");
             }
         }
 
@@ -59,7 +59,7 @@ namespace AsystentZOOM.VM.Model
             set
             {
                 SetValue(ref _color, value, nameof(Color));
-                CallChangeToParent(this);
+                CallChangeToParent(this, $"Zmieniono kolor zakładki {Name} na {value}");
             }
         }
 

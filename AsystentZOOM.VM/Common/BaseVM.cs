@@ -15,7 +15,7 @@ namespace AsystentZOOM.VM.Common
     public interface IBaseVM : IXmlDeserializationCallback, INotifyPropertyChanged
     {
         string InstanceId { get; set; }
-        void CallChangeToParent(IBaseVM child);
+        void CallChangeToParent(IBaseVM child, string description);
         void RaiseCanExecuteChanged4All();
         void RaisePropertyChanged(string propertyName);
     }
@@ -249,7 +249,7 @@ namespace AsystentZOOM.VM.Common
         /// <summary>
         /// Sygnał o zmianie stanu dziecka przekazywany rodzicowi
         /// </summary>
-        public virtual void CallChangeToParent(IBaseVM child)
+        public virtual void CallChangeToParent(IBaseVM child, string description)
         {
             if (_parentProperties == null)
                 _parentProperties = GetParentProperties();
@@ -259,7 +259,7 @@ namespace AsystentZOOM.VM.Common
                 if (parentPropertyValue != null)
                 {
                     MethodInfo method = parentPropertyValue.GetType().GetMethod(nameof(CallChangeToParent));
-                    method.Invoke(parentPropertyValue, new object[] { this });
+                    method.Invoke(parentPropertyValue, new object[] { child, description });
                 }
             }
         }

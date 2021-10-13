@@ -296,7 +296,7 @@ namespace AsystentZOOM.VM.Model
             set
             {
                 SetValue(ref _title, value, nameof(Title));
-                CallChangeToParent(this);
+                CallChangeToParent(this, $"Zmieniono tytuł na pliku {value}");
             }
         }
 

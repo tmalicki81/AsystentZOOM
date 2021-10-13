@@ -159,7 +159,7 @@ namespace AsystentZOOM.VM.Common.Sortable
             ContainerItemsSource.Insert(Item.Sorter.Lp - 2, Item);
             Sort();
             RaiseCanExecuteChanged4All();
-            Item.CallChangeToParent(this);
+            Item.CallChangeToParent(this, $"Przeniesiono {ItemCategory} {ItemName} pozycję wyżej");
         }
 
         /// <summary>
@@ -176,7 +176,7 @@ namespace AsystentZOOM.VM.Common.Sortable
             ContainerItemsSource.Insert(Item.Sorter.Lp, Item);
             Sort();
             RaiseCanExecuteChanged4All();
-            Item.CallChangeToParent(this);
+            Item.CallChangeToParent(this, $"Przeniesiono {ItemCategory} {ItemName} pozycję niżej");
         }
 
         /// <summary>
@@ -192,7 +192,7 @@ namespace AsystentZOOM.VM.Common.Sortable
             Sort();
             ContainerItemsSource.Insert(Item.Sorter.Lp - 1, newParameter);
             Sort();
-            Item.CallChangeToParent(this);
+            Item.CallChangeToParent(this, $"Dodano {ItemCategory}");
         }
 
         /// <summary>
@@ -224,8 +224,8 @@ namespace AsystentZOOM.VM.Common.Sortable
                     MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
                 if (result == MessageBoxResult.Yes)
                 {
+                    Item.CallChangeToParent(this, $"Usunięto {ItemCategory} {ItemName}");
                     ContainerItemsSource.Remove(Item);
-                    Item.CallChangeToParent(this);
                 }
             }
             finally
@@ -298,7 +298,7 @@ namespace AsystentZOOM.VM.Common.Sortable
             else
             { 
             }
-            Item.CallChangeToParent(this);
+            Item.CallChangeToParent(this, $"Przeniesiono {ItemCategory} {ItemName}");
         }
 
         #region Niejawna implementacja interfejsu ISortableItemProvider

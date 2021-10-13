@@ -97,10 +97,10 @@ namespace AsystentZOOM.VM.ViewModel
             _timer.Start();
         }
 
-        public override void CallChangeToParent(IBaseVM child)
+        public override void CallChangeToParent(IBaseVM child, string description)
         {
-            base.CallChangeToParent(child);
-            TryRegisterSnapshot();
+            base.CallChangeToParent(child, description);
+            TryRegisterSnapshot(description);
         }
 
         private List<string> _timePiecesToDeleteWhenExitWithoutSave = new();
@@ -173,7 +173,7 @@ namespace AsystentZOOM.VM.ViewModel
                 meeting.ConfigureAudioRecording();
                 meeting.ClearSnapshots();
                 meeting.IsDataReady = true;
-                meeting.TryRegisterSnapshot();
+                meeting.TryRegisterSnapshot("Utworzono nowy dokument");
                 meeting._isChanged = false;
                 return meeting;
             }
@@ -260,7 +260,7 @@ namespace AsystentZOOM.VM.ViewModel
             set
             {
                 SetValue(ref _meetingTitle, value, nameof(MeetingTitle));
-                TryRegisterSnapshot();
+                TryRegisterSnapshot($"Zmieniono tytuł spotkania na {value}");
             }
         }
 
@@ -435,7 +435,6 @@ namespace AsystentZOOM.VM.ViewModel
         private void ColapseAllMeetingPoints()
         {
             MeetingPointList.Where(mp => mp.IsExpanded).ToList().ForEach(mp => mp.IsExpanded = false);
-            TryRegisterSnapshot();
             RaiseCanExecuteChanged4All();
         }
 
@@ -448,7 +447,6 @@ namespace AsystentZOOM.VM.ViewModel
         private void ExpandAllMeetingPoints()
         {
             MeetingPointList.Where(mp => !mp.IsExpanded).ToList().ForEach(mp => mp.IsExpanded = true);
-            TryRegisterSnapshot();
             RaiseCanExecuteChanged4All();
         }
 
@@ -461,7 +459,7 @@ namespace AsystentZOOM.VM.ViewModel
             var newMeetingPoint = new MeetingPointVM();
             MeetingPointList.Add(newMeetingPoint);
             newMeetingPoint.Sorter.Sort();
-            TryRegisterSnapshot();
+            TryRegisterSnapshot("Dodano nowy punkt");
         }
 
         private IRelayCommand _openFromLocalCommand;
@@ -584,7 +582,7 @@ namespace AsystentZOOM.VM.ViewModel
                 p.TaskName = "Pobieranie metadanych";
                 DownloadAndFillMetadata(p);
                 ClearSnapshots();
-                TryRegisterSnapshot();
+                TryRegisterSnapshot($"Załadowano dokument {shortFileName}");
                 _isChanged = false;
             });
         }
@@ -757,13 +755,18 @@ namespace AsystentZOOM.VM.ViewModel
         }
 
 
-        private bool TryRegisterSnapshot()
+        private bool TryRegisterSnapshot(string description)
         {
             if (!IsDataReady)
                 return false;
-            if (!_undoRedoManager.AddSnapshot(this))
+            if (!_undoRedoManager.AddSnapshot(this, description))
                 return false;
             _isChanged = true;
+            MainVM.Dispatcher.Invoke(() =>
+            {
+                if (SingletonVMFactory.Main.IsShowChangesEnabled)
+                    DialogHelper.ShowMessageBar(description);
+            });
             return true;
         }
 
@@ -775,8 +778,13 @@ namespace AsystentZOOM.VM.ViewModel
         {
             var undoMeeting = _undoRedoManager.GetUndo();
             var target = this;
-            SingletonVMFactory.CopyValuesWhenDifferent(undoMeeting, ref target);
+            SingletonVMFactory.CopyValuesWhenDifferent(undoMeeting.Value, ref target);
             RaiseCanExecuteChanged4All();
+            MainVM.Dispatcher.Invoke(() =>
+            {
+                if (SingletonVMFactory.Main.IsShowChangesEnabled)
+                    DialogHelper.ShowMessageBar($"Przywrócono stan do: {undoMeeting.Description}");
+            });
         }
 
         private IRelayCommand _redoCommand;
@@ -787,8 +795,13 @@ namespace AsystentZOOM.VM.ViewModel
         {
             var redoMeeting = _undoRedoManager.GetRedo();
             var target = this;
-            SingletonVMFactory.CopyValuesWhenDifferent(redoMeeting, ref target);
+            SingletonVMFactory.CopyValuesWhenDifferent(redoMeeting.Value, ref target);
             RaiseCanExecuteChanged4All();
+            MainVM.Dispatcher.Invoke(() =>
+            {
+                if (SingletonVMFactory.Main.IsShowChangesEnabled)
+                    DialogHelper.ShowMessageBar($"Przywrócono stan do: {redoMeeting.Description}");
+            });
         }
 
         public object Clone()

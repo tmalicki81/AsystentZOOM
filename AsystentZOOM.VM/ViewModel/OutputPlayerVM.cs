@@ -30,7 +30,7 @@ namespace AsystentZOOM.VM.ViewModel
             set
             {
                 SetValue(ref _afterEndBookmark, value, nameof(AfterEndBookmark));
-                CallChangeToParent(this);
+                CallChangeToParent(this, $"Zmieniono czas skrócenia pliku multimedialnego na {value}");
             }
         }
 
@@ -288,7 +288,7 @@ namespace AsystentZOOM.VM.ViewModel
             if (!bookmarks.Any())
                 IsSelectionRangeEnabled = false;
             SetBookmarks(bookmarks);
-            CallChangeToParent(this);
+            CallChangeToParent(this, $"Usnieto zakładkę {selectedBookmark.Name}");
         }
 
         private TimeSpan TrimPosition()
@@ -306,7 +306,7 @@ namespace AsystentZOOM.VM.ViewModel
             selectedBookmark.Position = TrimPosition();
             SetBookmarks(bookmarks.OrderBy(b => b.Position));
             SetSelectedBookmark(selectedBookmark);
-            CallChangeToParent(this);
+            CallChangeToParent(this, $"Zaktualizowano pozycję zakładki {selectedBookmark.Name} na {selectedBookmark.Position}");
         }
 
         private RelayCommand _addBookmarkCommand;
@@ -323,7 +323,7 @@ namespace AsystentZOOM.VM.ViewModel
 
             SetBookmarks(bookmarks.OrderBy(b => b.Position));
             SetSelectedBookmark(newBookmark);
-            CallChangeToParent(this);
+            CallChangeToParent(this, "Dodano zakładkę");
         }
     }
 }

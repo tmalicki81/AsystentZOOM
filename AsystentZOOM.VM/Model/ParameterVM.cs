@@ -73,7 +73,7 @@ namespace AsystentZOOM.VM.Model
                 SetValue(ref _key, value, nameof(Key));
                 Sorter.IsNew = false;
                 if (ParametersCollection?.Trim() == false)
-                    CallChangeToParent(this);
+                    CallChangeToParent(this, $"Zmieniono klucz parametru na {value}");
             }
         }
 
@@ -87,7 +87,7 @@ namespace AsystentZOOM.VM.Model
                 SetValue(ref _value, value, nameof(Value));
                 Sorter.IsNew = false;
                 if (ParametersCollection?.Trim() == false)
-                    CallChangeToParent(this);
+                    CallChangeToParent(this, $"Zmieniono wartość parametru {Key} na {value}");
             }
         }
 

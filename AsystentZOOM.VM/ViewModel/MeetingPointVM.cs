@@ -6,6 +6,7 @@ using AsystentZOOM.VM.Common.Sortable;
 using AsystentZOOM.VM.Interfaces;
 using AsystentZOOM.VM.Interfaces.Sortable;
 using AsystentZOOM.VM.Model;
+using FileService.Common;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -194,7 +195,7 @@ namespace AsystentZOOM.VM.ViewModel
             set
             {
                 SetValue(ref _pointTitle, value, nameof(PointTitle));
-                CallChangeToParent(this);
+                CallChangeToParent(this, $"Zmieniono tytuł punktu na {value}");
             }
         }
 
@@ -205,7 +206,7 @@ namespace AsystentZOOM.VM.ViewModel
             set
             {
                 SetValue(ref _indent, value, nameof(Indent));
-                CallChangeToParent(this);
+                CallChangeToParent(this, $"Zmieniono wcięcie punktu {PointTitle} na {value}");
             }
         }
 
@@ -216,7 +217,7 @@ namespace AsystentZOOM.VM.ViewModel
             set
             {
                 SetValue(ref _duration, value, nameof(Duration));
-                CallChangeToParent(this);
+                CallChangeToParent(this, $"Zmieniono długość punktu {PointTitle} na {value}");
             }
         }
 
@@ -239,7 +240,7 @@ namespace AsystentZOOM.VM.ViewModel
             set
             {
                 SetValue(ref _titleColor, value, nameof(TitleColor));
-                CallChangeToParent(this);
+                CallChangeToParent(this, $"Zmieniono kolor punktu {PointTitle} na {value}");
             }
         }
 
@@ -250,7 +251,7 @@ namespace AsystentZOOM.VM.ViewModel
             set
             {
                 SetValue(ref _webAddress, value, nameof(WebAddress));
-                CallChangeToParent(this);
+                CallChangeToParent(this, $"Zmieniono adres www punktu {PointTitle} na {value}");
             }
         }
 
@@ -292,7 +293,7 @@ namespace AsystentZOOM.VM.ViewModel
             set
             {
                 SetValue(ref _isExpanded, value, nameof(IsExpanded));
-                CallChangeToParent(this);
+                CallChangeToParent(this, $"{(value ? "Otworzono" : "Zamknięto")} punkt {PointTitle}");
             }
         }
 
@@ -441,7 +442,11 @@ namespace AsystentZOOM.VM.ViewModel
             GetSourcesFromLocal(fileNames)
                 .ForEach(s => Sources.Add(s));
             SetOrder();
-            CallChangeToParent(this);
+
+            string whatAdded = fileNames.Count() == 1 ? "plik" : "pliki"; 
+            string friendlyFileNames = fileNames.Select(x => PathHelper.GetShortFileName(x, '\\')).Aggregate((a, b) => a + ", " + b);
+            
+            CallChangeToParent(this, $"Dodano {whatAdded} {friendlyFileNames}");
         }
 
         private bool _isCurrent;

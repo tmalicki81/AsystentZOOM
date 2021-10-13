@@ -249,6 +249,13 @@ namespace AsystentZOOM.VM.ViewModel
         }
         private bool _toolButtonsVisible = true;
 
+        public bool IsShowChangesEnabled
+        {
+            get => _isShowChangesEnabled;
+            set => SetValue(ref _isShowChangesEnabled, value, nameof(IsShowChangesEnabled));
+        }
+        private bool _isShowChangesEnabled = true;
+
         private RelayCommand _resetApplicationCommand;
         public RelayCommand ResetApplicationCommand
             => _resetApplicationCommand ?? (_resetApplicationCommand = new RelayCommand(ResetApplicationExecute));
