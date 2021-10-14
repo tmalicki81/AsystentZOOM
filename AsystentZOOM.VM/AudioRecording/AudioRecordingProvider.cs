@@ -103,6 +103,7 @@ namespace AsystentZOOM.VM.Common.AudioRecording
         /// <summary>
         /// Czy nagrywać dźwięk
         /// </summary>
+        [XmlIgnore]
         public bool IsEnabledInThisMachine
         {
             get => _isEnabledInThisMachine;
