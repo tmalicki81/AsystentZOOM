@@ -1,6 +1,7 @@
 ﻿using AsystentZOOM.VM.Model;
 using AsystentZOOM.VM.ViewModel;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -176,7 +177,8 @@ namespace AsystentZOOM.VM.Common.Dialog
                         exception(ex);
                     else
                     {
-                        ShowMessageBox(ex.Message, "Błąd", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
+                        //Clipboard.SetText(ex.ToString());
+                        ShowMessageBox(ex.ToString(), "Błąd ", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
                     }
                 }
             });

@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace AsystentZOOM.GUI
 {
@@ -54,6 +55,8 @@ namespace AsystentZOOM.GUI
             _mainOutputWindow.Show();
             _mainBorderWindow.Owner = this;
             _mainOutputWindow.Owner = _mainBorderWindow;
+
+            ((UIElement)Content).Focus();
         }
 
         private void MessageBox_Show(MessageBoxParameters p)

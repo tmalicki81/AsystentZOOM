@@ -1,4 +1,5 @@
 ﻿using AsystentZOOM.VM.Common;
+using AsystentZOOM.VM.Common.Dialog;
 using AsystentZOOM.VM.Interfaces;
 using AsystentZOOM.VM.Model;
 using System;
@@ -306,6 +307,19 @@ namespace AsystentZOOM.VM.ViewModel
         {
             SingletonVMFactory.TimePiece.IsEnabled = true;
             SingletonVMFactory.Background.IsEnabled = true;
+        }
+
+        private RelayCommand _newMeetingDocumentCommand;
+        public RelayCommand NewMeetingDocumentCommand
+            => _newMeetingDocumentCommand ??= new RelayCommand(NewMeetingDocumentExecute);
+
+        private void NewMeetingDocumentExecute()
+        {
+            var dr = DialogHelper.ShowMessageBox("Czy utworzyć nowy dokument spotkania", "Nowy dokument", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
+            if (dr == MessageBoxResult.No)
+                return;
+            SingletonVMFactory.Meeting.Dispose();
+            SingletonVMFactory.SetSingletonValues(MeetingVM.Empty);
         }
 
         private RelayCommand _quitApplicationCommand;

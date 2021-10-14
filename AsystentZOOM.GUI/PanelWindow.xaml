@@ -15,7 +15,7 @@
         CurrentHeight="{Binding Path=PanelWindowHeight, Mode=TwoWay}"
         
         DataContext="{x:Static factory:SingletonVMFactory.Main}">
-    <Grid>
-        <view:MainPanelView/>
-    </Grid>
+
+    <view:MainPanelView Focusable="True"/>
+
 </local:FlexibleWindow>
