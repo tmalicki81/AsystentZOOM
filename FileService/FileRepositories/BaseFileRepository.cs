@@ -139,9 +139,10 @@ namespace FileService.FileRepositories
         {
             using (var hasher = HashAlgorithm.Create(Enum.GetName(typeof(HashingAlgoritmTypes), hashingAlgoritmType)))
             using (Stream fileStream = LoadFile(filePath))
+            using (MemoryStream memoryStream = StreamHelper.GetMemoryStream(fileStream))
             {
                 fileStream.Position = 0;
-                var hash = hasher.ComputeHash(fileStream);
+                var hash = hasher.ComputeHash(memoryStream);
                 return BitConverter.ToString(hash).Replace("-", "");
             }
         }

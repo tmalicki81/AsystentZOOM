@@ -44,6 +44,8 @@ namespace AsystentZOOM.VM.FileRepositories
 
     public class MeetingsMediaLocalFileRepository : BaseMediaLocalFileRepository
     {
+        public override bool VerifyCheckSumBeforePullFile => true;
+        public override bool PullOnlyNewerFiles => false;
         public override bool CreateBackupBeforePullFile => true;
         public override Environment.SpecialFolder DestinationInLocal => Environment.SpecialFolder.MyDocuments;
         public override string[] FileExtensions => new string[] { "MEETING" };

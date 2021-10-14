@@ -39,6 +39,8 @@
 
     public class MeetingsMediaFtpFileService : BaseMediaFtpFileRepository
     {
+        public override bool VerifyCheckSumBeforePullFile => true;
+        public override bool PullOnlyNewerFiles => false;
         public override bool CreateBackupBeforePullFile => true;
         public override string RemoteDirectory => "Meetings";
         public override string[] FileExtensions => new string[] { "MEETING" };

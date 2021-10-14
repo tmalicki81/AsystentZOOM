@@ -87,13 +87,14 @@ namespace AsystentZOOM.VM.ViewModel
         [Serializable]
         public class MeetingPointAudioRecordingProvider : AudioRecordingProvider
         {
-            internal MeetingPointVM _meetingPoint;
+            [Parent(typeof(IMeetingPointVM))]
+            public MeetingPointVM MeetingPoint { get; set; }
 
             public override bool IsReady
-                => _meetingPoint != null;
+                => MeetingPoint != null;
 
             public override string Title
-                => _meetingPoint.PointTitle;
+                => MeetingPoint.PointTitle;
         }
 
         public MeetingPointAudioRecordingProvider AudioRecording
@@ -272,7 +273,6 @@ namespace AsystentZOOM.VM.ViewModel
                 if (ParameterList == null)
                     ParameterList = new ParametersCollectionVM { Owner = value };
 
-                AudioRecording._meetingPoint = this;
                 AudioRecording.OnCommandExecuted -= Meeting.AudioRecording_OnCommandExecuted;
                 AudioRecording.OnCommandExecuted += Meeting.AudioRecording_OnCommandExecuted;
             }

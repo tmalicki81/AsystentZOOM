@@ -8,8 +8,10 @@ namespace AsystentZOOM.VM.FileRepositories
     {
         public abstract Environment.SpecialFolder DestinationInLocal { get; }
 
-        public override string RootDirectory 
-            => Path.Combine(Environment.GetFolderPath(DestinationInLocal), "Asystent ZOOM");
+        public override string RootDirectory
+            => $"C:\\Asystent ZOOM";
+
+        //=> Path.Combine(Environment.GetFolderPath(DestinationInLocal), "Asystent ZOOM");
 
         public override bool PullOnlyNewerFiles => true;
         public override bool CreateBackupBeforePullFile => false;

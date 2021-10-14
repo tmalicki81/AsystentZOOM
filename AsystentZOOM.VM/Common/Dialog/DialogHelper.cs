@@ -1,4 +1,5 @@
 ﻿using AsystentZOOM.VM.Model;
+using AsystentZOOM.VM.ViewModel;
 using System;
 using System.Threading.Tasks;
 using System.Windows;
@@ -125,10 +126,13 @@ namespace AsystentZOOM.VM.Common.Dialog
         {
             lock (_locker)
             {
-                var main = SingletonVMFactory.Main;
-                main.MessageBarIsNew = false;
-                main.MessageBarText = message;
-                main.MessageBarIsNew = true;
+                MainVM.Dispatcher.Invoke(() =>
+                {
+                    var main = SingletonVMFactory.Main;
+                    main.MessageBarIsNew = false;
+                    main.MessageBarText = message;
+                    main.MessageBarIsNew = true;
+                });
             }
         }
 

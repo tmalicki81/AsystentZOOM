@@ -95,6 +95,9 @@ namespace AsystentZOOM.VM.Common.AudioRecording
                 _requestStartRecording = false;
                 _requestStopRecording = false;
             }
+            else
+            { 
+            }
         }
 
         /// <summary>
@@ -336,7 +339,7 @@ namespace AsystentZOOM.VM.Common.AudioRecording
         /// </summary>
         /// <returns></returns>
         private string GetRecordingFolder()
-            => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyMusic), "Asystent ZOOM", AudioRecording);
+            => MediaLocalFileRepositoryFactory.AudioRecording.RootDirectory;
 
         #endregion OpenRecordingFolderCommand
 

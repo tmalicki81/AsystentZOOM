@@ -79,22 +79,28 @@ namespace AsystentZOOM.VM.ViewModel
             get => _audioRecording;
             set => SetValue(ref _audioRecording, value, nameof(AudioRecording));
         }
-        private MeetingAudioRecordingProvider _audioRecording = new();
+        private MeetingAudioRecordingProvider _audioRecording;
 
         private static readonly Timer _timer;
 
-        private static bool _isDataReady;
+        [XmlIgnore]
         public override bool IsDataReady
         {
             get => _isDataReady;
             set => _isDataReady = value;
         }
+        private static bool _isDataReady;
 
         static MeetingVM()
         {
             _timer = new Timer(TimeSpan.FromSeconds(5).TotalMilliseconds);
             _timer.Elapsed += _timer_Elapsed;
             _timer.Start();
+        }
+
+        public MeetingVM()
+        {
+            AudioRecording = new MeetingAudioRecordingProvider();
         }
 
         public override void CallChangeToParent(IBaseVM child, string description)
@@ -213,7 +219,8 @@ namespace AsystentZOOM.VM.ViewModel
                 var filePath = new string[] { PathHelper.GetShortFileName(LocalFileName, '\\') };
                 lock (_meetingsSyncLocker)
                 {
-                    local.Synchronize(remote, filePath);
+                    remote.PushToTarget(local, filePath);
+                    //local.Synchronize(remote, filePath);
                 }
             }
             finally
@@ -573,10 +580,7 @@ namespace AsystentZOOM.VM.ViewModel
                     finally
                     {
                         _timer.Start();
-                        MainVM.Dispatcher.Invoke(() =>
-                        {
-                            DialogHelper.ShowMessageBar($"Załadowano dokument {shortFileName}");
-                        });
+                        DialogHelper.ShowMessageBar($"Załadowano dokument {shortFileName}");
                     }
                 }
                 p.TaskName = "Pobieranie metadanych";
@@ -612,11 +616,8 @@ namespace AsystentZOOM.VM.ViewModel
         private void _watcher_Changed(object sender, FileSystemEventArgs e)
         {
             string shortFileName = PathHelper.GetShortFileName(LocalFileName, '\\');
-            MainVM.Dispatcher.Invoke(() =>
-                {
-                    DialogHelper.ShowMessageBar($"Wykryto modyfikację dokumentu {shortFileName}.");
-                    OpenFromLocal(e.FullPath);
-                });
+            DialogHelper.ShowMessageBar($"Wykryto modyfikację dokumentu {shortFileName}.");
+            MainVM.Dispatcher.Invoke(() => OpenFromLocal(e.FullPath));
         }
 
         private IRelayCommand _saveToLocalCommand;
@@ -707,6 +708,7 @@ namespace AsystentZOOM.VM.ViewModel
             {
                 _watcher_Dispose();
 
+                // Zapisz plik lokalnie
                 var xmlSerializer = new CustomXmlSerializer(GetType());
                 if (File.Exists(fileName))
                     File.Delete(fileName);
@@ -714,6 +716,13 @@ namespace AsystentZOOM.VM.ViewModel
                 {
                     xmlSerializer.Serialize(fileStream, this);
                 }
+
+                // Zapisz plik w chmurze
+                var local = MediaLocalFileRepositoryFactory.Meetings;
+                var remote = MediaFtpFileRepositoryFactory.Meetings;
+                var filePath = new string[] { PathHelper.GetShortFileName(fileName, '\\') };
+                local.PushToTarget(remote, filePath);
+
                 LocalFileName = fileName;
                 _warcher_Create();
             }
