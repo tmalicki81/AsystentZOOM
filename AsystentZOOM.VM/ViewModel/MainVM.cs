@@ -76,7 +76,7 @@ namespace AsystentZOOM.VM.ViewModel
             set => _dispatcher = value;
         }
 
-        public const string Version = "L-1.0.0";
+        public static string Version = "L-1.0.0";
 
         public MeetingVM Meeting
             => SingletonVMFactory.Meeting;
@@ -263,11 +263,11 @@ namespace AsystentZOOM.VM.ViewModel
 
         private void ResetApplicationExecute()
         {
-            if (string.IsNullOrEmpty(MeetingVM.LocalFileName))
+            if (string.IsNullOrEmpty(SingletonVMFactory.Meeting.LocalFileName))
                 Meeting.SaveTempFile();
             else
                 Meeting.SaveLocalFile(true);
-            Process.Start("AsystentZOOM.GUI.exe", $@"""{MeetingVM.LocalFileName}""");
+            Process.Start("AsystentZOOM.GUI.exe", $@"""{SingletonVMFactory.Meeting.LocalFileName}""");
             Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
             Application.Current.Shutdown();
         }

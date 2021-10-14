@@ -203,13 +203,13 @@ namespace AsystentZOOM.VM.ViewModel
                 if (dr != MessageBoxResult.Yes)
                     return;
             }
-            SaveFile(LocalFileName);
+            SaveMeetingDocument(LocalFileName);
         }
 
         private static readonly object _meetingsSyncLocker = new object();
         private static void _timer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            if (string.IsNullOrEmpty(LocalFileName))
+            if (string.IsNullOrEmpty(SingletonVMFactory.Meeting.LocalFileName))
                 return;
 
             _timer.Stop();
@@ -219,7 +219,7 @@ namespace AsystentZOOM.VM.ViewModel
                 {
                     var local = MediaLocalFileRepositoryFactory.Meetings;
                     var remote = MediaFtpFileRepositoryFactory.Meetings;
-                    var filePath = new string[] { PathHelper.GetShortFileName(LocalFileName, '\\') };
+                    var filePath = new string[] { PathHelper.GetShortFileName(SingletonVMFactory.Meeting.LocalFileName, '\\') };
                     lock (_meetingsSyncLocker)
                     {
                         remote.PushToTarget(local, filePath);
@@ -248,7 +248,13 @@ namespace AsystentZOOM.VM.ViewModel
         }
         private bool _isEditing;
 
-        public static string LocalFileName;
+        [XmlIgnore]
+        public string LocalFileName
+        {
+            get => _localFileName;
+            set => SetValue(ref _localFileName, value, nameof(LocalFileName));
+        }
+        private string _localFileName;
 
         private DateTime _meetingBegin;
         public DateTime MeetingBegin
@@ -339,7 +345,7 @@ namespace AsystentZOOM.VM.ViewModel
         {
             if (!string.IsNullOrEmpty(LocalFileName))
             {
-                SaveFile(LocalFileName);
+                SaveMeetingDocument(LocalFileName);
                 SendFileToCloud(LocalFileName);
             }
         }
@@ -350,7 +356,7 @@ namespace AsystentZOOM.VM.ViewModel
             {
                 var dr = DialogHelper.ShowMessageBox($"Czy zapisać plik przed zamknięciem aplikacji?", "Zapisywanie pliku", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
                 if (dr == MessageBoxResult.Yes)
-                    SaveToLocal();
+                    SaveToLocal(Save);
             }
 
             _watcher_Dispose();
@@ -626,17 +632,25 @@ namespace AsystentZOOM.VM.ViewModel
 
         private IRelayCommand _saveToLocalCommand;
         public IRelayCommand SaveToLocalCommand
-            => _saveToLocalCommand ??= new RelayCommand(SaveToLocal);
+            => _saveToLocalCommand ??= new RelayCommand<bool>(SaveToLocal);
 
-        private void SaveToLocal()
+        public static bool SaveAs = true;
+        public static bool Save = false;
+
+        private void SaveToLocal(bool saveAs)
         {
             if (!Directory.Exists(IoConsts.InitialDirectory))
                 Directory.CreateDirectory(IoConsts.InitialDirectory);
 
             string fileName;
-            if (string.IsNullOrEmpty(LocalFileName))
+            if (string.IsNullOrEmpty(LocalFileName) || saveAs)
             {
-                bool? result = DialogHelper.ShowSaveFile("Zapisanie dokumentu ze spotkaniem", IoConsts.Filter, true, IoConsts.DefaultExt, IoConsts.InitialDirectory, out string[] fileNames);
+                var fileNames = !string.IsNullOrEmpty(LocalFileName)
+                    ? new string[] { LocalFileName }
+                    : new string[] { };
+
+                string dialogTitle = "Zapisanie dokumentu ze spotkaniem" + (saveAs ? " jako..." : null);
+                bool? result = DialogHelper.ShowSaveFile(dialogTitle, IoConsts.Filter, true, IoConsts.DefaultExt, IoConsts.InitialDirectory, ref fileNames);
                 fileName = fileNames?.FirstOrDefault();
                 if (result != true || string.IsNullOrEmpty(fileName))
                     return;
@@ -686,10 +700,7 @@ namespace AsystentZOOM.VM.ViewModel
                         }
                     }
                 }
-
-                SaveFile(fileName);
-                p.TaskName = "Wysyłanie dokumentu spotkania do chmury";
-                SendFileToCloud(fileName);
+                SaveMeetingDocument(fileName);
             });
         }
 
@@ -698,7 +709,7 @@ namespace AsystentZOOM.VM.ViewModel
             if (SingletonVMFactory.Main.IsAutoSaveEnabled &&
                 !string.IsNullOrEmpty(LocalFileName))
             {
-                SaveFile(LocalFileName);
+                SaveMeetingDocument(LocalFileName);
             }
         }
 
@@ -708,14 +719,14 @@ namespace AsystentZOOM.VM.ViewModel
         public void SaveTempFile()
         {
             string tmpMeetingFile = Path.Combine(MediaLocalFileRepositoryFactory.Meetings.RootDirectory, $"{InstanceId}.meeting");
-            SaveFile(tmpMeetingFile);
+            SaveMeetingDocument(tmpMeetingFile);
         }
 
         /// <summary>
-        /// Zapisanie pliku na dysk lokalny
+        /// Zapisanie dokumentu na dysk lokalny
         /// </summary>
         /// <param name="fileName">Pełna nazwa zapisywanego pliku</param>
-        private void SaveFile(string fileName)
+        private void SaveMeetingDocument(string fileName)
         {
             lock (_meetingsSyncLocker)
             {
@@ -729,16 +740,21 @@ namespace AsystentZOOM.VM.ViewModel
                 {
                     xmlSerializer.Serialize(fileStream, this);
                 }
-
-                // Zapisz plik w chmurze
-                var local = MediaLocalFileRepositoryFactory.Meetings;
-                var remote = MediaFtpFileRepositoryFactory.Meetings;
-                var filePath = new string[] { PathHelper.GetShortFileName(fileName, '\\') };
-                local.PushToTarget(remote, filePath);
+               
+                //var local = MediaLocalFileRepositoryFactory.Meetings;
+                //var remote = MediaFtpFileRepositoryFactory.Meetings;
+                //var filePath = new string[] { PathHelper.GetShortFileName(fileName, '\\') };
+                //local.PushToTarget(remote, filePath);
 
                 LocalFileName = fileName;
                 _warcher_Create();
             }
+
+            // Zapisz plik w chmurze
+            string shortFileName = PathHelper.GetShortFileName(fileName, '\\');
+            SendFileToCloud(shortFileName);
+
+            // Resetuj zmiany
             _isChanged = false;
         }
 

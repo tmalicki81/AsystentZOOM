@@ -31,8 +31,6 @@ namespace AsystentZOOM.GUI
 
             MainVM.Dispatcher = Dispatcher;
 
-            if (Environment.UserDomainName.ToUpper().Contains("KAMSOFT"))
-                Title = "Entrypoint";//Process.GetCurrentProcess().MainModule.ModuleName;
             Title = Title + $"   ( wersja: {App.Version} / {MainVM.Version})";
 
             _mainBorderWindow = new MainBorderWindow();
@@ -87,12 +85,20 @@ namespace AsystentZOOM.GUI
                 Filter = p.Filter,
                 AddExtension = p.AddExtension,
                 DefaultExt = p.DefaultExt,
-                InitialDirectory = p.InitialDirectory
+                InitialDirectory = p.InitialDirectory,
+                FileName = p.FileName
             };
             p.Result = fileDialog.ShowDialog();
-            if (p.Result != true) return;
-            p.FileName = fileDialog.FileName;
-            p.FileNames = fileDialog.FileNames;
+            if (p.Result != true)
+            {
+                p.FileName = null;
+                p.FileNames = null;
+            }
+            else
+            {
+                p.FileName = fileDialog.FileName;
+                p.FileNames = fileDialog.FileNames;
+            }
         }
 
         private void CloseMainOutputWindow(bool warnBeforeStoppingSharing)

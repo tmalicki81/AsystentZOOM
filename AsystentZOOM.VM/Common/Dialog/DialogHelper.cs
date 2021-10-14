@@ -2,6 +2,7 @@
 using AsystentZOOM.VM.ViewModel;
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -84,9 +85,9 @@ namespace AsystentZOOM.VM.Common.Dialog
         /// <param name="filter">Filtr</param>
         /// <param name="fileNames">Wybrane pliki</param>
         /// <returns>Czy zapisano plik</returns>
-        public static bool? ShowSaveFile(string title, string filter, out string[] fileNames)
+        public static bool? ShowSaveFile(string title, string filter, ref string[] fileNames)
         {
-            return ShowSaveFile(title, filter, false, null, null, out fileNames);
+            return ShowSaveFile(title, filter, false, null, null, ref fileNames);
         }
 
         /// <summary>
@@ -101,7 +102,7 @@ namespace AsystentZOOM.VM.Common.Dialog
         /// <returns>Czy zapisano plik</returns>
         public static bool? ShowSaveFile(string title, string filter,
             bool AddExtension, string DefaultExt, string InitialDirectory,
-            out string[] fileNames)
+            ref string[] fileNames)
         {
             var arg = new SaveFileDialogParameters
             {
@@ -109,7 +110,9 @@ namespace AsystentZOOM.VM.Common.Dialog
                 Filter = filter,
                 AddExtension = AddExtension,
                 DefaultExt = DefaultExt,
-                InitialDirectory = InitialDirectory
+                InitialDirectory = InitialDirectory,
+                FileName = fileNames.FirstOrDefault(),
+                FileNames = fileNames, 
             };
             EventAggregator.Publish("SaveFile_Show", arg);
             fileNames = arg.FileNames;

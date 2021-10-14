@@ -12,7 +12,9 @@
              d:DesignHeight="450" d:DesignWidth="800"
              DataContext="{x:Static factory:SingletonVMFactory.Main}">
     <UserControl.InputBindings>
-        <KeyBinding Modifiers="Ctrl" Key="S" Command="{Binding Path=Meeting.SaveToLocalCommand}"/>
+        <KeyBinding Modifiers="Ctrl" Key="S" Command="{Binding Path=Meeting.SaveToLocalCommand}" CommandParameter="{x:Static viewmodel:MeetingVM.Save}"/>
+        <KeyBinding Gesture="Ctrl+Alt+S" Command="{Binding Path=Meeting.SaveToLocalCommand}" CommandParameter="{x:Static viewmodel:MeetingVM.SaveAs}"/>
+        <KeyBinding Gesture="Ctrl+Alt+N" Command="{Binding Path=NewTimePieceCommand}"/>
         <KeyBinding Modifiers="Ctrl" Key="O" Command="{Binding Path=Meeting.OpenFromLocalCommand}"/>
         <KeyBinding Modifiers="Ctrl" Key="Z" Command="{Binding Path=Meeting.UndoCommand}"/>
         <KeyBinding Modifiers="Ctrl" Key="Y" Command="{Binding Path=Meeting.RedoCommand}"/>
@@ -34,8 +36,8 @@
                 <MenuItem Header="Nowe spotkanie"    InputGestureText="Ctrl+N"     Command="{Binding Path=NewMeetingDocumentCommand}"/>
                 <MenuItem Header="Nowy pomiar czasu" InputGestureText="Ctrl+Alt+N" Command="{Binding Path=NewTimePieceCommand}"/>
                 <MenuItem Header="Otwórz..."         InputGestureText="Ctrl+O"     Command="{Binding Path=Meeting.OpenFromLocalCommand}"/>
-                <MenuItem Header="Zapisz"            InputGestureText="Ctrl+S"     Command="{Binding Path=Meeting.SaveToLocalCommand}"/>
-                <MenuItem Header="Zapisz jako..."    InputGestureText="Ctrl+Alt+S"/>
+                <MenuItem Header="Zapisz"            InputGestureText="Ctrl+S"     Command="{Binding Path=Meeting.SaveToLocalCommand}" CommandParameter="{x:Static viewmodel:MeetingVM.Save}"/>
+                <MenuItem Header="Zapisz jako..."    InputGestureText="Ctrl+Alt+S" Command="{Binding Path=Meeting.SaveToLocalCommand}" CommandParameter="{x:Static viewmodel:MeetingVM.SaveAs}"/>
                 <MenuItem Header="Automatyczne zapisywanie"    IsCheckable="True" IsChecked="{Binding Path=IsAutoSaveEnabled, Mode=TwoWay}"/>
                 <Separator/>
                 <MenuItem Header="Restart aplikacji" Command="{Binding Path=ResetApplicationCommand}"/>

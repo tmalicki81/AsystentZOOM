@@ -6,8 +6,7 @@
         xmlns:view="clr-namespace:AsystentZOOM.GUI.View"
         xmlns:local="clr-namespace:AsystentZOOM.GUI.View" 
         xmlns:factory="clr-namespace:AsystentZOOM.VM.Common;assembly=AsystentZOOM.VM"
-        mc:Ignorable="d"
-        Title="Asystent ZOOM" Height="450" Width="800"
+        mc:Ignorable="d" Height="450" Width="800"
         
         Top="{Binding Path=PanelWindowTop, Mode=TwoWay}"
         Left="{Binding Path=PanelWindowLeft, Mode=TwoWay}"
@@ -15,6 +14,9 @@
         CurrentHeight="{Binding Path=PanelWindowHeight, Mode=TwoWay}"
         
         DataContext="{x:Static factory:SingletonVMFactory.Main}">
+    <local:FlexibleWindow.Title>
+        Asystent ZOOM
+    </local:FlexibleWindow.Title>
 
     <view:MainPanelView Focusable="True"/>
 

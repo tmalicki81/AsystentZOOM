@@ -108,10 +108,11 @@ namespace AsystentZOOM.GUI.View
                 if (!Directory.Exists(IoConsts.InitialDirectory))
                     Directory.CreateDirectory(IoConsts.InitialDirectory);
 
+                var fileNames = new string[] { };
                 bool? result = DialogHelper.ShowSaveFile(
                     "Zapisz ustawienia minutnika lub stopera", 
                     IoConsts.Filter, true, IoConsts.DefaultExt, IoConsts.InitialDirectory, 
-                    out string[] fileNames);
+                    ref fileNames);
                 string fileName = fileNames?.FirstOrDefault();
                 if (result != true || string.IsNullOrEmpty(fileName))
                     return;

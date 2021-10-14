@@ -31,6 +31,8 @@ namespace AsystentZOOM.VM.Common
 
     public class RelayCommand<T> : IRelayCommand<T>
     {
+        private static bool AlwaysTrue(T obj) => true;
+
         public event EventHandler CanExecuteChanged;
 
         private readonly Action<T> _execute;
@@ -39,7 +41,7 @@ namespace AsystentZOOM.VM.Common
         public RelayCommand(Action<T> execute, Predicate<T> canExecute = null)
         {
             _execute = execute;
-            _canExecute = canExecute;
+            _canExecute = canExecute ?? AlwaysTrue;
         }
 
         public void Execute(object parameter)
