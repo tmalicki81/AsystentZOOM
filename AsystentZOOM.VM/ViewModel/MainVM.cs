@@ -315,11 +315,25 @@ namespace AsystentZOOM.VM.ViewModel
 
         private void NewMeetingDocumentExecute()
         {
-            var dr = DialogHelper.ShowMessageBox("Czy utworzyć nowy dokument spotkania", "Nowy dokument", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
+            var dr = DialogHelper.ShowMessageBox("Czy utworzyć nowy dokument spotkania?", "Nowy dokument", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
             if (dr == MessageBoxResult.No)
                 return;
             SingletonVMFactory.Meeting.Dispose();
             SingletonVMFactory.SetSingletonValues(MeetingVM.Empty);
+        }
+
+        private bool _isAutoSaveEnabled;
+        public bool IsAutoSaveEnabled
+        {
+            get => _isAutoSaveEnabled;
+            set => SetValue(ref _isAutoSaveEnabled, value, nameof(IsAutoSaveEnabled));
+        }
+
+        private bool _isAutoSyncEnabled = true;
+        public bool IsAutoSyncEnabled
+        {
+            get => _isAutoSyncEnabled;
+            set => SetValue(ref _isAutoSyncEnabled, value, nameof(IsAutoSyncEnabled));
         }
 
         private RelayCommand _quitApplicationCommand;

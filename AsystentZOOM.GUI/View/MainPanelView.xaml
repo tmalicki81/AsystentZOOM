@@ -36,20 +36,20 @@
                 <MenuItem Header="Otwórz..."         InputGestureText="Ctrl+O"     Command="{Binding Path=Meeting.OpenFromLocalCommand}"/>
                 <MenuItem Header="Zapisz"            InputGestureText="Ctrl+S"     Command="{Binding Path=Meeting.SaveToLocalCommand}"/>
                 <MenuItem Header="Zapisz jako..."    InputGestureText="Ctrl+Alt+S"/>
-                <MenuItem Header="Automatyczne zapisywanie"    />
+                <MenuItem Header="Automatyczne zapisywanie"    IsCheckable="True" IsChecked="{Binding Path=IsAutoSaveEnabled, Mode=TwoWay}"/>
                 <Separator/>
                 <MenuItem Header="Restart aplikacji" Command="{Binding Path=ResetApplicationCommand}"/>
                 <MenuItem Header="Wyjdź"             InputGestureText="Alt+F4" Command="{Binding Path=QuitApplicationCommand}"/>
             </MenuItem>
 
             <MenuItem Header="_Chmura" IsSubmenuOpen="{Binding Path=IsMenuOpened, Mode=OneWayToSource}">
-                <MenuItem Header="Zaloguj"/>
-                <MenuItem Header="Wyloguj"/>
+                <MenuItem Header="Zaloguj" IsEnabled="False"/>
+                <MenuItem Header="Wyloguj" IsEnabled="False"/>
                 <Separator/>
                 <MenuItem Header="Synchronizuj pliki spotkań"/>
                 <MenuItem Header="Synchronizuj nagrania"/>
                 <Separator/>
-                <MenuItem Header="Automatyczna synchronizacja otwartego spotkania"/>
+                <MenuItem Header="Automatyczna synchronizacja dokumentu" IsCheckable="True" IsChecked="{Binding Path=IsAutoSyncEnabled, Mode=TwoWay}"/>
             </MenuItem>
 
             <MenuItem Header="_Edycja" IsSubmenuOpen="{Binding Path=IsMenuOpened, Mode=OneWayToSource}">
@@ -63,12 +63,12 @@
             <MenuItem Header="_Widok" IsSubmenuOpen="{Binding Path=IsMenuOpened, Mode=OneWayToSource}">
                 <MenuItem Header="Zwiń punkty">
                     <MenuItem.Icon>
-                        <Image Source="../Images/icons8-upward-arrow-32.png"/>
+                        <Image Source="../Images/icons8-upward-arrow-32.png" Opacity=".5"/>
                     </MenuItem.Icon>
                 </MenuItem>
                 <MenuItem Header="Rozwiń punkty">
                     <MenuItem.Icon>
-                        <Image Source="../Images/icons8-below-32.png"/>
+                        <Image Source="../Images/icons8-below-32.png" Opacity=".5"/>
                     </MenuItem.Icon>
                 </MenuItem>
                 <Separator/>

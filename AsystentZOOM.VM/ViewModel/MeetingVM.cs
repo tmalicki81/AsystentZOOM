@@ -101,12 +101,13 @@ namespace AsystentZOOM.VM.ViewModel
         public MeetingVM()
         {
             AudioRecording = new MeetingAudioRecordingProvider();
+            IsDataReady = false;
         }
 
         public override void CallChangeToParent(IBaseVM child, string description)
         {
             base.CallChangeToParent(child, description);
-            TryRegisterSnapshot(description);
+            TryRegisterSnapshot(description, false);
         }
 
         private List<string> _timePiecesToDeleteWhenExitWithoutSave = new();
@@ -179,7 +180,7 @@ namespace AsystentZOOM.VM.ViewModel
                 meeting.ConfigureAudioRecording();
                 meeting.ClearSnapshots();
                 meeting.IsDataReady = true;
-                meeting.TryRegisterSnapshot("Utworzono nowy dokument");
+                meeting.TryRegisterSnapshot("Utworzono nowy dokument", true);
                 meeting._isChanged = false;
                 return meeting;
             }
@@ -214,13 +215,16 @@ namespace AsystentZOOM.VM.ViewModel
             _timer.Stop();
             try
             {
-                var local = MediaLocalFileRepositoryFactory.Meetings;
-                var remote = MediaFtpFileRepositoryFactory.Meetings;
-                var filePath = new string[] { PathHelper.GetShortFileName(LocalFileName, '\\') };
-                lock (_meetingsSyncLocker)
+                if (SingletonVMFactory.Main.IsAutoSyncEnabled)
                 {
-                    remote.PushToTarget(local, filePath);
-                    //local.Synchronize(remote, filePath);
+                    var local = MediaLocalFileRepositoryFactory.Meetings;
+                    var remote = MediaFtpFileRepositoryFactory.Meetings;
+                    var filePath = new string[] { PathHelper.GetShortFileName(LocalFileName, '\\') };
+                    lock (_meetingsSyncLocker)
+                    {
+                        remote.PushToTarget(local, filePath);
+                        //local.Synchronize(remote, filePath);
+                    }
                 }
             }
             finally
@@ -267,7 +271,7 @@ namespace AsystentZOOM.VM.ViewModel
             set
             {
                 SetValue(ref _meetingTitle, value, nameof(MeetingTitle));
-                TryRegisterSnapshot($"Zmieniono tytuł spotkania na {value}");
+                TryRegisterSnapshot($"Zmieniono tytuł spotkania na {value}", false);
             }
         }
 
@@ -466,7 +470,7 @@ namespace AsystentZOOM.VM.ViewModel
             var newMeetingPoint = new MeetingPointVM();
             MeetingPointList.Add(newMeetingPoint);
             newMeetingPoint.Sorter.Sort();
-            TryRegisterSnapshot("Dodano nowy punkt");
+            TryRegisterSnapshot("Dodano nowy punkt", false);
         }
 
         private IRelayCommand _openFromLocalCommand;
@@ -586,7 +590,7 @@ namespace AsystentZOOM.VM.ViewModel
                 p.TaskName = "Pobieranie metadanych";
                 DownloadAndFillMetadata(p);
                 ClearSnapshots();
-                TryRegisterSnapshot($"Załadowano dokument {shortFileName}");
+                TryRegisterSnapshot($"Załadowano dokument {shortFileName}", true);
                 _isChanged = false;
             });
         }
@@ -689,6 +693,15 @@ namespace AsystentZOOM.VM.ViewModel
             });
         }
 
+        private void AutoSave()
+        {
+            if (SingletonVMFactory.Main.IsAutoSaveEnabled &&
+                !string.IsNullOrEmpty(LocalFileName))
+            {
+                SaveFile(LocalFileName);
+            }
+        }
+
         /// <summary>
         /// Zapisanie pliku tymczasowego na dysk lokalny
         /// </summary>
@@ -763,14 +776,17 @@ namespace AsystentZOOM.VM.ViewModel
             _undoRedoManager.ClearSnapshots();
         }
 
-
-        private bool TryRegisterSnapshot(string description)
+        private bool TryRegisterSnapshot(string description, bool isFirstUse)
         {
             if (!IsDataReady)
                 return false;
             if (!_undoRedoManager.AddSnapshot(this, description))
                 return false;
             _isChanged = true;
+
+            if (!isFirstUse)
+                AutoSave();
+
             MainVM.Dispatcher.Invoke(() =>
             {
                 if (SingletonVMFactory.Main.IsShowChangesEnabled)
@@ -788,6 +804,7 @@ namespace AsystentZOOM.VM.ViewModel
             var undoMeeting = _undoRedoManager.GetUndo();
             var target = this;
             SingletonVMFactory.CopyValuesWhenDifferent(undoMeeting.Value, ref target);
+            AutoSave();
             RaiseCanExecuteChanged4All();
             MainVM.Dispatcher.Invoke(() =>
             {
@@ -805,6 +822,7 @@ namespace AsystentZOOM.VM.ViewModel
             var redoMeeting = _undoRedoManager.GetRedo();
             var target = this;
             SingletonVMFactory.CopyValuesWhenDifferent(redoMeeting.Value, ref target);
+            AutoSave();
             RaiseCanExecuteChanged4All();
             MainVM.Dispatcher.Invoke(() =>
             {
