@@ -12,11 +12,11 @@
         Left="{Binding Path=PanelWindowLeft, Mode=TwoWay}"
         CurrentWidth="{Binding Path=PanelWindowWidth, Mode=TwoWay}"
         CurrentHeight="{Binding Path=PanelWindowHeight, Mode=TwoWay}"
-        
+        Title="Asystent ZOOM"
         DataContext="{x:Static factory:SingletonVMFactory.Main}">
-    <local:FlexibleWindow.Title>
+    <!--<local:FlexibleWindow.Title>
         Asystent ZOOM
-    </local:FlexibleWindow.Title>
+    </local:FlexibleWindow.Title>-->
 
     <view:MainPanelView Focusable="True"/>
 
