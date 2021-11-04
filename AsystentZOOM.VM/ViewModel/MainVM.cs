@@ -4,7 +4,9 @@ using AsystentZOOM.VM.Interfaces;
 using AsystentZOOM.VM.Model;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using System.Xml.Serialization;
@@ -77,6 +79,14 @@ namespace AsystentZOOM.VM.ViewModel
         }
 
         public static string Version = "L-1.0.0";
+
+        [XmlIgnore]
+        public ObservableCollection<IMsgBoxVM> MsgBoxList
+        {
+            get => _msgBoxList;
+            set => SetValue(ref _msgBoxList, value, nameof(MsgBoxList));
+        }
+        private ObservableCollection<IMsgBoxVM> _msgBoxList = new();
 
         public MeetingVM Meeting
             => SingletonVMFactory.Meeting;
@@ -315,11 +325,27 @@ namespace AsystentZOOM.VM.ViewModel
 
         private void NewMeetingDocumentExecute()
         {
-            var dr = DialogHelper.ShowMessageBox("Czy utworzyć nowy dokument spotkania?", "Nowy dokument", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
-            if (dr == MessageBoxResult.No)
-                return;
-            SingletonVMFactory.Meeting.Dispose();
-            SingletonVMFactory.SetSingletonValues(MeetingVM.Empty);
+            Task.Run(() =>
+            {
+                var result = DialogHelper.ShowMessagePanel(
+                    "Czy utworzyć nowy dokument spotkania?",
+                    "Nowy dokument",
+                    ImageEnum.Question,
+                    1,
+                    new MsgBoxButtonVM<int>[]
+                    {
+                        new (1, "Utwórz", ImageEnum.Ok),
+                        new (2, "Anuluj", ImageEnum.Cancel),
+                    });
+                Dispatcher.Invoke(()=> MessageBox.Show(result.ToString()));
+            });
+            
+
+            //var dr = DialogHelper.ShowMessageBox("Czy utworzyć nowy dokument spotkania?", "Nowy dokument", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
+            //if (dr == MessageBoxResult.No)
+            //    return;
+            //SingletonVMFactory.Meeting.Dispose();
+            //SingletonVMFactory.SetSingletonValues(MeetingVM.Empty);
         }
 
         private bool _isAutoSaveEnabled;

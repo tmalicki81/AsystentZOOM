@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -41,6 +42,7 @@ namespace AsystentZOOM.GUI
             EventAggregator.Subscribe(nameof(MainVM) + "_Reset", ResetMainOutputWindow, () => true);
             EventAggregator.Subscribe(nameof(MainVM) + "_ActivatePanel", () => Activate(), () => true);
             EventAggregator.Subscribe<MessageBoxParameters>("MessageBox_Show", MessageBox_Show, (x) => true);
+            EventAggregator.Subscribe<MsgBoxVM>("MessagePanel_Show", MessagePanel_Show, (x) => true);
             EventAggregator.Subscribe<OpenFileDialogParameters>("OpenFile_Show", OpenFile_Show, (x) => true);
             EventAggregator.Subscribe<SaveFileDialogParameters>("SaveFile_Show", SaveFile_Show, (x) => true);
 
@@ -59,6 +61,16 @@ namespace AsystentZOOM.GUI
 
         private void MessageBox_Show(MessageBoxParameters p)
             => p.Result = MessageBox.Show(p.MessageBoxText, p.Caption, p.Button, p.Icon, p.DefaultResult);
+
+        private void MessagePanel_Show(MsgBoxVM p)
+        {
+            MainVM.Dispatcher.Invoke(()=> ViewModel.MsgBoxList.Add(p));
+            while (!p.ToClose)
+            {
+                Task.Delay(200).Wait();
+            }
+            MainVM.Dispatcher.Invoke(() => ViewModel.MsgBoxList.Remove(p));
+        }
 
         private void OpenFile_Show(OpenFileDialogParameters p)
         {

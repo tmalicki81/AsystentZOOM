@@ -1,6 +1,7 @@
 ﻿using AsystentZOOM.VM.Model;
 using AsystentZOOM.VM.ViewModel;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,6 +14,30 @@ namespace AsystentZOOM.VM.Common.Dialog
     /// </summary>
     public static class DialogHelper
     {
+        /// <summary>
+        /// Wyświetlenie panelu z wiadomością
+        /// </summary>
+        /// <param name="messageBoxText">Treść wiadomości</param>
+        /// <param name="caption">Temat wiaddomości</param>
+        /// <param name="button">Przyciski z odpowiedziami</param>
+        /// <param name="icon">Ikona</param>
+        /// <param name="defaultResult">Domyślna odpowiedź</param>
+        /// <returns>Odpowiedź uzytkownika</returns>
+        public static T ShowMessagePanel<T>(
+            string messageBoxText, string caption, ImageEnum icon,
+            T defaultButton, IEnumerable<MsgBoxButtonVM<T>> buttons)
+        {
+            var arg = new MsgBoxVM<T>(
+                messageBoxText,
+                caption,
+                icon,
+                defaultButton,
+                buttons);
+
+            EventAggregator.Publish("MessagePanel_Show", arg);
+            return arg.Result;
+        }
+
         /// <summary>
         /// Wyświetlenie okna z wiadomością
         /// </summary>

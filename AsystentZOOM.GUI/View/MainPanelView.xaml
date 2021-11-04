@@ -190,5 +190,21 @@
         
         <controls:ProgressInfoControl DataContext="{Binding Path=ProgressInfo}" Grid.Row="0" Grid.RowSpan="3" 
                                       Visibility="{Binding Path=ProgressBarVisibility, Mode=TwoWay, Converter={StaticResource ResourceKey=BoolToVisibilityConverter}}" />
+
+        <ItemsControl Grid.Row="0" Grid.RowSpan="3" 
+                      ItemsSource="{Binding Path=MsgBoxList, Mode=OneWay}"
+                      HorizontalAlignment="Center" VerticalAlignment="Center">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <controls:MsgBoxControl/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
     </Grid>
 </UserControl>
