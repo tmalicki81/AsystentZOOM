@@ -39,6 +39,18 @@ namespace AsystentZOOM.VM.Common.Dialog
         }
 
         /// <summary>
+        /// Wyświetlenie panelu z wiadomością
+        /// </summary>
+        /// <param name="messageBoxText">Treść wiadomości</param>
+        /// <param name="caption">Temat wiaddomości</param>
+        /// <param name="icon">Ikona</param>
+        public static void ShowMessagePanel(string messageBoxText, string caption, ImageEnum icon)
+        {
+            ShowMessagePanel<bool>(messageBoxText, caption, icon, true,
+                new MsgBoxButtonVM<bool>[] { new(true, "OK", ImageEnum.Ok) });
+        }
+
+        /// <summary>
         /// Wyświetlenie okna z wiadomością
         /// </summary>
         /// <param name="messageBoxText">Treść wiadomości</param>
@@ -204,10 +216,7 @@ namespace AsystentZOOM.VM.Common.Dialog
                     if (exception != null)
                         exception(ex);
                     else
-                    {
-                        //Clipboard.SetText(ex.ToString());
-                        ShowMessageBox(ex.ToString(), "Błąd ", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
-                    }
+                        ShowMessagePanel(ex.ToString(), "Błąd", ImageEnum.Error);
                 }
             });
         }

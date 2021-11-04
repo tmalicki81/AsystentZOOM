@@ -668,13 +668,19 @@ namespace AsystentZOOM.VM.ViewModel
                 if (sourcesToSend.Any())
                 {
                     p.ProgressBarVisibility = false;
-                    var dr = DialogHelper.ShowMessageBox(
+                    
+                    bool dr = DialogHelper.ShowMessagePanel(
                         $"Czy wysłać niewysłane multimedia ({sourcesToSend.Count()}) do chmury?",
                         "Wysyłanie lokalnych multimediów do chmury",
-                        MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
+                        ImageEnum.Question, false,
+                        new MsgBoxButtonVM<bool>[]
+                        {
+                            new(true,  "Tak, wyślij", ImageEnum.Yes),
+                            new(false, "Nie wysyłaj", ImageEnum.No),
+                        });
                     p.ProgressBarVisibility = true;
 
-                    if (dr == MessageBoxResult.Yes)
+                    if (dr)
                     {
                         foreach (IBaseMediaFileInfo d in sourcesToSend)
                         {

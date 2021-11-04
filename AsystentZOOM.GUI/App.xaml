@@ -9,5 +9,7 @@
         <Image x:Key="Information" Source="Images/icons8-apps-tab-32.png"/>
         <Image x:Key="Ok"          Source="Images/icons8-below-32.png"/>
         <Image x:Key="Cancel"      Source="Images/icons8-cloud-sync-32.png"/>
+        <Image x:Key="Yes"         Source="Images/icons8-below-32.png"/>
+        <Image x:Key="No"          Source="Images/icons8-cloud-sync-32.png"/>
     </Application.Resources>
 </Application>

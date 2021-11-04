@@ -1,5 +1,6 @@
 ﻿using AsystentZOOM.VM.Attributes;
 using AsystentZOOM.VM.Interfaces;
+using AsystentZOOM.VM.ViewModel;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Windows.Threading;
 using System.Xml.Serialization;
 
 namespace AsystentZOOM.VM.Common
@@ -80,6 +82,9 @@ namespace AsystentZOOM.VM.Common
                 }
             }
         }
+
+        public Dispatcher Dispatcher
+            => MainVM.Dispatcher;
 
         /// <summary>
         /// Lista poleceń

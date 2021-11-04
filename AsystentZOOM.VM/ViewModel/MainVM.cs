@@ -327,25 +327,21 @@ namespace AsystentZOOM.VM.ViewModel
         {
             Task.Run(() =>
             {
-                var result = DialogHelper.ShowMessagePanel(
+                bool result = DialogHelper.ShowMessagePanel(
                     "Czy utworzyć nowy dokument spotkania?",
                     "Nowy dokument",
                     ImageEnum.Question,
-                    1,
-                    new MsgBoxButtonVM<int>[]
+                    false,
+                    new MsgBoxButtonVM<bool>[]
                     {
-                        new (1, "Utwórz", ImageEnum.Ok),
-                        new (2, "Anuluj", ImageEnum.Cancel),
+                        new (true,  "Utwórz",  ImageEnum.Ok),
+                        new (false, "Anuluj",  ImageEnum.No),
                     });
-                Dispatcher.Invoke(()=> MessageBox.Show(result.ToString()));
+                if (!result)
+                    return;
+                SingletonVMFactory.Meeting.Dispose();
+                SingletonVMFactory.SetSingletonValues(MeetingVM.Empty);
             });
-            
-
-            //var dr = DialogHelper.ShowMessageBox("Czy utworzyć nowy dokument spotkania?", "Nowy dokument", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
-            //if (dr == MessageBoxResult.No)
-            //    return;
-            //SingletonVMFactory.Meeting.Dispose();
-            //SingletonVMFactory.SetSingletonValues(MeetingVM.Empty);
         }
 
         private bool _isAutoSaveEnabled;

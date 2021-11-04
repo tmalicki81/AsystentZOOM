@@ -7,6 +7,8 @@
         Warning,
         Information,
         Ok,
-        Cancel
+        Cancel,
+        Yes,
+        No
     }
 }

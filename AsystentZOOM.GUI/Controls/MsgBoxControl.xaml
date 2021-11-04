@@ -5,39 +5,68 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:AsystentZOOM.GUI.Controls"
              xmlns:conv="clr-namespace:AsystentZOOM.GUI.Converters"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" Background="Green">
+             mc:Ignorable="d" >
     <UserControl.Resources>
         <conv:ImageEnumConverter x:Key="ImageEnumConverter"/>
     </UserControl.Resources>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
 
-        <TextBlock Background="Red" Text="{Binding Path=Caption}" Margin="4"/>
+    <Border BorderBrush="Gray" BorderThickness="2" Background="LightGray" Padding="10" Margin="10" >
+        <Grid >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-        <!-- Przyciski -->
-        <Grid Grid.Row="1">
-            <ItemsControl ItemsSource="{Binding Path=ButtonsObj}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal"/>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
+            <TextBlock Grid.Row="0" Text="{Binding Path=Caption}" HorizontalAlignment="Center" FontWeight="Bold" />
 
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Button Background="Blue" Margin="2" Command="{Binding Path=SetResultCommand}">
-                            <StackPanel Orientation="Horizontal">
-                                <ContentControl Content="{Binding Path=Icon, Converter={StaticResource ImageEnumConverter}}" Height="16" Width="16"/>
-                                <TextBlock Text="{Binding Path=Name}"/>
-                            </StackPanel>
-                        </Button>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+            <StackPanel Grid.Row="1" Orientation="Horizontal">
+                <ContentControl Content="{Binding Path=Icon, Converter={StaticResource ImageEnumConverter}}" Height="32" Width="32"/>
+                <TextBlock Margin="10" Text="{Binding Path=MessageBoxText}" HorizontalAlignment="Left" VerticalAlignment="Center" />
+            </StackPanel>
+            
+            <!-- Przyciski -->
+            <Grid Grid.Row="2">
+                <ItemsControl ItemsSource="{Binding Path=ButtonsObj}" HorizontalAlignment="Center">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button Background="Blue" Margin="4" Command="{Binding Path=SetResultCommand}" Cursor="Hand">
+                                <Button.Template>
+                                    <ControlTemplate>
+                                        <Border>
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="Background" Value="LightGray"/>
+                                                    <Setter Property="Padding" Value="3,3,10,3"/>
+                                                    <Setter Property="BorderThickness" Value="1"/>
+                                                    <Setter Property="BorderBrush" Value="Gray"/>
+                                                    <Setter Property="CornerRadius" Value="2"/>
+                                                    <Style.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="BorderBrush" Value="Black"/>
+                                                            <Setter Property="Background"  Value="DarkGray"/>
+                                                        </Trigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                            <StackPanel Orientation="Horizontal">
+                                                <ContentControl Content="{Binding Path=Icon, Converter={StaticResource ImageEnumConverter}}" Height="16" Width="16" Margin="0,0,3,0"/>
+                                                <TextBlock Text="{Binding Path=Name}"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Button.Template>                                
+                            </Button>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
         </Grid>
-    </Grid>
+    </Border>
 </UserControl>

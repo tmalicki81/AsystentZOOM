@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Xml.Serialization;
 
@@ -279,16 +280,30 @@ namespace AsystentZOOM.VM.ViewModel
                 () => GetSelectedBookmark() != null);
         private void DeleteBookmark()
         {
-            var selectedBookmark = GetSelectedBookmark();
-            var dr = DialogHelper.ShowMessageBox($"Czy usunąć zakładkę {selectedBookmark.Name}?", "Usuwanie zakładki", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
-            if (dr != MessageBoxResult.Yes)
-                return;
-            var bookmarks = GetBookmarks();
-            bookmarks.Remove(selectedBookmark);
-            if (!bookmarks.Any())
-                IsSelectionRangeEnabled = false;
-            SetBookmarks(bookmarks);
-            CallChangeToParent(this, $"Usunieto zakładkę {selectedBookmark.Name}");
+            Task.Run(() =>
+            {
+                var selectedBookmark = GetSelectedBookmark();
+                
+                bool dr = DialogHelper.ShowMessagePanel(
+                    $"Czy usunąć zakładkę {selectedBookmark.Name}?", "Zakładki", ImageEnum.Question, false,
+                    new MsgBoxButtonVM<bool>[]
+                    {
+                        new(true,  "Tak, usuń",  ImageEnum.Yes),
+                        new(false, "Nie usuwaj", ImageEnum.No),
+                    });
+                if (!dr)
+                    return;
+
+                var bookmarks = GetBookmarks();
+                Dispatcher.Invoke(() =>
+                {
+                    bookmarks.Remove(selectedBookmark);
+                    if (!bookmarks.Any())
+                        IsSelectionRangeEnabled = false;
+                    SetBookmarks(bookmarks);
+                    CallChangeToParent(this, $"Usunieto zakładkę {selectedBookmark.Name}");
+                });
+            });
         }
 
         private TimeSpan TrimPosition()

@@ -16,6 +16,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Media;
@@ -339,12 +340,19 @@ namespace AsystentZOOM.VM.ViewModel
 
         private void ClearSources()
         {
-            var dr = DialogHelper.ShowMessageBox("Czy na pewno wyczyścić playlistę?", "Playlista",
-                MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
-            if (dr == MessageBoxResult.Yes)
+            Task.Run(() =>
             {
-                Sources = new ObservableCollection<BaseMediaFileInfo>();
-            }
+                bool dr = DialogHelper.ShowMessagePanel(
+                    "Czy na pewno wyczyścić playlistę?", "Playlista", ImageEnum.Question, false,
+                    new MsgBoxButtonVM<bool>[]
+                    {
+                        new(true,  "Wyczyść", ImageEnum.Yes),
+                        new(false, "Anuluj",  ImageEnum.No),
+                    });
+                if (!dr)
+                    return;
+                MainVM.Dispatcher.Invoke(() => Sources = new ObservableCollection<BaseMediaFileInfo>());
+            });
         }
 
         private RelayCommand _playAllCommand;

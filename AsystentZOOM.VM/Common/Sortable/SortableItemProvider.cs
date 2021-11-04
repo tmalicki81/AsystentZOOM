@@ -1,10 +1,12 @@
 ﻿using AsystentZOOM.VM.Common.Dialog;
 using AsystentZOOM.VM.Interfaces.Sortable;
+using AsystentZOOM.VM.ViewModel;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace AsystentZOOM.VM.Common.Sortable
@@ -214,25 +216,40 @@ namespace AsystentZOOM.VM.Common.Sortable
 
         private void Delete()
         {
-            HoldSelected = true;
-            try
+            Task.Run(() =>
             {
-                IsSelected = true;
-                var result = DialogHelper.ShowMessageBox(
-                    $"Czy na pewno chcesz usunąć {ItemCategory} {ItemName}?",
-                    $"Usuwanie elementu {ItemName}",
-                    MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
-                if (result == MessageBoxResult.Yes)
+                Dispatcher.Invoke(() => HoldSelected = true);
+                try
                 {
-                    Item.CallChangeToParent(this, $"Usunięto {ItemCategory} {ItemName}");
-                    ContainerItemsSource.Remove(Item);
+                    Dispatcher.Invoke(() => IsSelected = true);
+
+                    bool dr = DialogHelper.ShowMessagePanel(
+                        $"Czy na pewno chcesz usunąć {ItemCategory} {ItemName}?",
+                        $"Usuwanie elementu {ItemName}",
+                        ImageEnum.Question, false,
+                        new MsgBoxButtonVM<bool>[]
+                        {
+                            new(true,  "Tak, usuń",  ImageEnum.Yes),
+                            new(false, "Nie usuwaj", ImageEnum.No),
+                        });
+                    if (!dr)
+                        return;
+
+                    Dispatcher.Invoke(() =>
+                    {
+                        Item.CallChangeToParent(this, $"Usunięto {ItemCategory} {ItemName}");
+                        ContainerItemsSource.Remove(Item);
+                    });
                 }
-            }
-            finally
-            {
-                HoldSelected = false;
-                IsSelected = false;
-            }
+                finally
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        HoldSelected = false;
+                        IsSelected = false;
+                    });
+                }
+            });
         }
 
         /// <summary>
