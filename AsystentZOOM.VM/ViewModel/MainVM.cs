@@ -277,11 +277,20 @@ namespace AsystentZOOM.VM.ViewModel
 
         private RelayCommand _resetApplicationCommand;
         public RelayCommand ResetApplicationCommand
-            => _resetApplicationCommand ?? (_resetApplicationCommand = new RelayCommand(ResetApplicationExecute));
+            => _resetApplicationCommand ??= new RelayCommand(ResetApplicationExecute);
 
-        private void ResetApplicationExecute()
+        private async void ResetApplicationExecute()
         {
-            Task.Run(() =>
+            bool dr = await DialogHelper.ShowMessagePanelAsync(
+                "Czy zresetować aplikację?", "Reset aplikacji", ImageEnum.Question, false,
+                new MsgBoxButtonVM<bool>[]
+                {
+                    new(true,  "Tak, Resetuj", ImageEnum.Yes),
+                    new(false, "Nie resetuj",  ImageEnum.No),
+                });
+
+            if (!dr) return;
+            await Task.Run(() =>
             {
                 if (string.IsNullOrEmpty(SingletonVMFactory.Meeting.LocalFileName))
                     Meeting.SaveTempFile();
