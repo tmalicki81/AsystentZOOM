@@ -63,17 +63,30 @@ namespace AsystentZOOM.GUI
         private void MessageBox_Show(MessageBoxParameters p)
             => p.Result = MessageBox.Show(p.MessageBoxText, p.Caption, p.Button, p.Icon, p.DefaultResult);
 
+        private static readonly object _msgBoxListLocker = new();
+
         private void MessagePanel_Show(MsgBoxVM p)
         {
             if (Dispatcher.Thread == Thread.CurrentThread)
                 throw new Exception("Nie można otwierać okna powiadomień w wątku interfejsu użytkownika");
 
-            Dispatcher.Invoke(() => ViewModel.MsgBoxList.Add(p));
+            Dispatcher.Invoke(() =>
+            {
+                ViewModel.MsgBoxList.Add(p);
+                ViewModel.IsAnyMsgBox = true;
+            });
             while (!p.ToClose)
             {
                 Task.Delay(200).Wait();
             }
-            Dispatcher.Invoke(() => ViewModel.MsgBoxList.Remove(p));
+            Dispatcher.Invoke(() =>
+            {
+                ViewModel.MsgBoxList.Remove(p);
+                lock (_msgBoxListLocker)
+                {
+                    ViewModel.IsAnyMsgBox = ViewModel.MsgBoxList.Any();
+                }
+            });
         }
 
         private void OpenFile_Show(OpenFileDialogParameters p)

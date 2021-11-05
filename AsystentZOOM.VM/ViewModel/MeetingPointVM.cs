@@ -418,13 +418,7 @@ namespace AsystentZOOM.VM.ViewModel
                 {
                     if (!Directory.Exists(correctFileDir))
                         Directory.CreateDirectory(correctFileDir);
-                    var dd = DialogHelper.ShowMessageBox($"Czy przenieść plik do miejsca, w którym może się synchronizować z chmurą?", $"Przenoszenie pliku {shortFileName}", MessageBoxButton.YesNoCancel, MessageBoxImage.Question, MessageBoxResult.Yes);
-                    if (dd == MessageBoxResult.Yes)
-                        fi.MoveTo(correctFullFileName, true);
-                    else if (dd == MessageBoxResult.No)
-                        fi.CopyTo(correctFullFileName, true);
-                    else
-                        return new List<BaseMediaFileInfo>();
+                    fi.CopyTo(correctFullFileName, true);
                 }
                 try
                 {

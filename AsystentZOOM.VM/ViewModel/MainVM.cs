@@ -88,6 +88,14 @@ namespace AsystentZOOM.VM.ViewModel
         }
         private ObservableCollection<IMsgBoxVM> _msgBoxList = new();
 
+        [XmlIgnore]
+        public bool IsAnyMsgBox
+        {
+            get => _isAnyMsgBox;
+            set => SetValue(ref _isAnyMsgBox, value, nameof(IsAnyMsgBox));
+        }
+        private bool _isAnyMsgBox;
+
         public MeetingVM Meeting
             => SingletonVMFactory.Meeting;
 

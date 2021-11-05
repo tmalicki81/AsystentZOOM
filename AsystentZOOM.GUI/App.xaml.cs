@@ -1,4 +1,5 @@
-﻿using AsystentZOOM.VM.Common.Dialog;
+﻿using AsystentZOOM.VM.Common;
+using AsystentZOOM.VM.Common.Dialog;
 using AsystentZOOM.VM.ViewModel;
 using BinaryHelper;
 using BinaryHelper.FileRepositories;
@@ -82,10 +83,17 @@ namespace AsystentZOOM.GUI
                     File.AppendAllText("c:\\Log.txt", ex.ToString() + Environment.NewLine);
                 }
                 catch { }
-                var dr = DialogHelper.ShowMessageBox(
+                
+                bool dr = DialogHelper.ShowMessagePanel(
                     $"{ex.Message}{Environment.NewLine}Czy skopiować treść do schowka?", 
-                    "Nieobsłużony błąd", MessageBoxButton.YesNo, MessageBoxImage.Error, MessageBoxResult.No);
-                if (dr == MessageBoxResult.Yes)
+                    "Nieobsłużony błąd", ImageEnum.Question, true,
+                    new MsgBoxButtonVM<bool>[]
+                    {
+                        new(true,  "Tak, skopiuj do schowka", ImageEnum.Yes),
+                        new(false, "Nie kopiuj",              ImageEnum.No),
+                    });
+
+                if (dr)
                     Clipboard.SetText(ex.ToString());
             }
         }
