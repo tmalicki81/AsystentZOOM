@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -64,7 +65,7 @@ namespace AsystentZOOM.GUI
 
         private void MessagePanel_Show(MsgBoxVM p)
         {
-            MainVM.Dispatcher.Invoke(()=> ViewModel.MsgBoxList.Add(p));
+            MainVM.Dispatcher.Invoke(() => ViewModel.MsgBoxList.Add(p));
             while (!p.ToClose)
             {
                 Task.Delay(200).Wait();
@@ -125,7 +126,7 @@ namespace AsystentZOOM.GUI
             _mainOutputWindow = null;
         }
 
-        private void ResetMainOutputWindow() 
+        private void ResetMainOutputWindow()
         {
             CloseMainOutputWindow(false);
             OpenMainOutputWindow();
@@ -143,15 +144,37 @@ namespace AsystentZOOM.GUI
         {
             if (Application.Current.ShutdownMode != ShutdownMode.OnExplicitShutdown)
             {
-                MessageBoxResult dr = MessageBox.Show("Czy na pewno zamknąć aplikację?", "Asystent ZOOM",
-                    MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
-                e.Cancel = dr == MessageBoxResult.No;
+                e.Cancel = true;
+                OnClosing();
             }
-
-            if (!e.Cancel)
+            else
+            {
                 SingletonVMFactory.DisposeAllSingletons();
+                Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+                Application.Current.Shutdown();
+            }
+        }
 
-            base.OnClosing(e);
+        private void OnClosing()
+        {
+            Task.Run(() =>
+            {
+                bool dr = DialogHelper.ShowMessagePanel(
+                    "Czy na pewno zamknąć aplikację?", "Asystent ZOOM", ImageEnum.Question, false,
+                    new MsgBoxButtonVM<bool>[]
+                    {
+                        new(true, "Tak, zamknij", ImageEnum.Yes),
+                        new(false, "Nie zamykaj", ImageEnum.No),
+                    });
+                if (dr)
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+                        Close();
+                    });
+                }
+            });
         }
 
         protected override void OnClosed(EventArgs e)

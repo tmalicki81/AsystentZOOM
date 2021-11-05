@@ -34,7 +34,14 @@ namespace AsystentZOOM.VM.Common.Dialog
                 defaultButton,
                 buttons);
 
-            EventAggregator.Publish("MessagePanel_Show", arg);
+            try
+            {
+                EventAggregator.Publish("MessagePanel_Show", arg);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
             return arg.Result;
         }
 
