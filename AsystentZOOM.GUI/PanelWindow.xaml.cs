@@ -178,8 +178,8 @@ namespace AsystentZOOM.GUI
                     "Czy na pewno zamknąć aplikację?", "Asystent ZOOM", ImageEnum.Question, false,
                     new MsgBoxButtonVM<bool>[]
                     {
-                        new(true, "Tak, zamknij", ImageEnum.Yes),
-                        new(false, "Nie zamykaj", ImageEnum.No),
+                        new(true,  "Tak, zamknij", ImageEnum.Yes),
+                        new(false, "Nie zamykaj",  ImageEnum.No),
                     });
                 if (dr)
                 {

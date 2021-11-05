@@ -164,14 +164,14 @@ namespace AsystentZOOM.VM.ViewModel
                 {
                     if (!Directory.Exists(destDirectory))
                         Directory.CreateDirectory(destDirectory);
-                    string fullFileName = Path.Combine(destDirectory, $"{Guid.NewGuid()}.{v.Extension}");
+                    string fullFileName = Path.Combine(destDirectory, fileName);
                     using (var webClient = new WebClient())
                     {
                         webClient.DownloadFile(fileAddress, fullFileName);
                     }
 
                     var newMediaFileInfo = BaseMediaFileInfo.Factory.Create(this, fileName, fileAddress);
-                    newMediaFileInfo.FillMetadata();
+                    Dispatcher.Invoke(newMediaFileInfo.FillMetadata);
                     return new ISortableItemVM[] { newMediaFileInfo };
                 }
                 else

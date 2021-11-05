@@ -80,7 +80,10 @@ namespace AsystentZOOM.GUI
             {
                 try
                 {
-                    File.AppendAllText("c:\\Log.txt", ex.ToString() + Environment.NewLine);
+                    string fileName = "c:\\Log.txt";
+                    if (!File.Exists(fileName))
+                        File.Create(fileName);
+                    File.AppendAllText(fileName, ex.ToString() + Environment.NewLine);
                 }
                 catch { }
 
