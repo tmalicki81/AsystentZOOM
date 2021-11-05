@@ -149,7 +149,6 @@ namespace AsystentZOOM.GUI
             }
             else
             {
-                SingletonVMFactory.DisposeAllSingletons();
                 Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
                 Application.Current.Shutdown();
             }
@@ -168,6 +167,7 @@ namespace AsystentZOOM.GUI
                     });
                 if (dr)
                 {
+                    SingletonVMFactory.DisposeAllSingletons();
                     Dispatcher.Invoke(() =>
                     {
                         Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;

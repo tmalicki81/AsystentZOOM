@@ -354,8 +354,15 @@ namespace AsystentZOOM.VM.ViewModel
         {
             if (_isChanged)
             {
-                var dr = DialogHelper.ShowMessageBox($"Czy zapisać plik przed zamknięciem aplikacji?", "Zapisywanie pliku", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
-                if (dr == MessageBoxResult.Yes)
+                bool dr = DialogHelper.ShowMessagePanel(
+                    $"Czy zapisać plik przed zamknięciem aplikacji?", "Zapisywanie pliku", 
+                    ImageEnum.Question, false,
+                    new MsgBoxButtonVM<bool>[]
+                    {
+                        new(true,  "Tak, zapisz", ImageEnum.Yes),
+                        new(false, "Nie zapisuj", ImageEnum.No),
+                    });
+                if (dr)
                     SaveToLocal(Save);
             }
 
