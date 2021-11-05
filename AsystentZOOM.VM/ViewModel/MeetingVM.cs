@@ -199,8 +199,14 @@ namespace AsystentZOOM.VM.ViewModel
             string shortFileName = PathHelper.GetShortFileName(LocalFileName, '\\');
             if (!force)
             {
-                var dr = DialogHelper.ShowMessageBox($"Czy zapisać plik {shortFileName}?", "Zapisywanie pliku", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
-                if (dr != MessageBoxResult.Yes)
+                bool dr = DialogHelper.ShowMessagePanel(
+                    $"Czy zapisać plik {shortFileName}?", "Zapisywanie pliku", ImageEnum.Question, false,
+                    new MsgBoxButtonVM<bool>[]
+                    {
+                        new(true,  "Tak, zapisz", ImageEnum.Yes),
+                        new(false, "Nie zapisuj", ImageEnum.No),
+                    });
+                if (!dr)
                     return;
             }
             SaveMeetingDocument(LocalFileName);

@@ -273,13 +273,19 @@ namespace AsystentZOOM.VM.ViewModel
 
         private void ResetApplicationExecute()
         {
-            if (string.IsNullOrEmpty(SingletonVMFactory.Meeting.LocalFileName))
-                Meeting.SaveTempFile();
-            else
-                Meeting.SaveLocalFile(true);
-            Process.Start("AsystentZOOM.GUI.exe", $@"""{SingletonVMFactory.Meeting.LocalFileName}""");
-            Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
-            Application.Current.Shutdown();
+            Task.Run(() =>
+            {
+                if (string.IsNullOrEmpty(SingletonVMFactory.Meeting.LocalFileName))
+                    Meeting.SaveTempFile();
+                else
+                    Meeting.SaveLocalFile(true);
+                Process.Start("AsystentZOOM.GUI.exe", $@"""{SingletonVMFactory.Meeting.LocalFileName}""");
+                Dispatcher.Invoke(() =>
+                {
+                    Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+                    Application.Current.Shutdown();
+                });
+            });
         }
 
         private RelayCommand _resetVisualSettingsCommand;

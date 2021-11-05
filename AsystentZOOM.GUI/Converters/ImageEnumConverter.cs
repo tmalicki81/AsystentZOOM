@@ -12,7 +12,7 @@ namespace AsystentZOOM.GUI.Converters
         {
             if (!(value is ImageEnum image))
                 return null;
-            return Application.Current.FindResource(Enum.GetName(typeof(ImageEnum), image));
+            return Application.Current.TryFindResource(Enum.GetName(typeof(ImageEnum), image));
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
