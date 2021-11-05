@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using AsystentZOOM.VM.Common.Dialog;
+using System.Threading.Tasks;
 
 namespace AsystentZOOM.GUI.Common.Sortable
 {
@@ -135,14 +136,14 @@ namespace AsystentZOOM.GUI.Common.Sortable
         /// <param name="sender"></param>
         /// <param name="e"></param>
         /// <param name="additionalImplementation"></param>
-        public static void Drop(object sender, DragEventArgs e, Func<DragEventArgs, ISortableItemVM[]> additionalImplementation = null)
+        public static async Task Drop(object sender, DragEventArgs e, Func<DragEventArgs, ISortableItemVM[]> additionalImplementation = null)
         {
             try
             {
                 var targetData = (sender as FrameworkElement)?.DataContext as ISortableItemVM;
                 ISortableItemVM[] droppedData;
 
-                droppedData = additionalImplementation?.Invoke(e);
+                droppedData = await Task.Run(() => additionalImplementation?.Invoke(e));
                 if(droppedData == null)
                 {
                     string format = e.Data.GetFormats().First();

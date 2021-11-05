@@ -102,10 +102,10 @@ namespace AsystentZOOM.GUI.Controls
                 SortableItemControlExtended.MouseMove(sender, e);
         }
 
-        private void OnDrop(object sender, DragEventArgs e)
+        private async void OnDrop(object sender, DragEventArgs e)
         {
             if (!IsPrimitive) 
-                SortableItemControlExtended.Drop(sender, e, ViewModel.GetDataFromFileDrop);
+                await SortableItemControlExtended.Drop(sender, e, ViewModel.GetDataFromFileDrop);
         }
 
         private void OnDragOver(object sender, DragEventArgs e)
