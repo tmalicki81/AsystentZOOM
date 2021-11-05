@@ -74,7 +74,7 @@ namespace AsystentZOOM.GUI
             base.OnStartup(e);
         }
 
-        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        private static async void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             if (e.ExceptionObject is Exception ex)
             {
@@ -83,9 +83,9 @@ namespace AsystentZOOM.GUI
                     File.AppendAllText("c:\\Log.txt", ex.ToString() + Environment.NewLine);
                 }
                 catch { }
-                
-                bool dr = DialogHelper.ShowMessagePanel(
-                    $"{ex.Message}{Environment.NewLine}Czy skopiować treść do schowka?", 
+
+                bool dr = await DialogHelper.ShowMessagePanelAsync(
+                    $"{ex.Message}{Environment.NewLine}Czy skopiować treść do schowka?",
                     "Nieobsłużony błąd", ImageEnum.Question, true,
                     new MsgBoxButtonVM<bool>[]
                     {
