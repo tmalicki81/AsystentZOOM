@@ -290,19 +290,13 @@ namespace AsystentZOOM.VM.ViewModel
                 });
 
             if (!dr) return;
-            await Task.Run(() =>
-            {
-                if (string.IsNullOrEmpty(SingletonVMFactory.Meeting.LocalFileName))
-                    Meeting.SaveTempFile();
-                else
-                    Meeting.SaveLocalFile(true);
-                Process.Start("AsystentZOOM.GUI.exe", $@"""{SingletonVMFactory.Meeting.LocalFileName}""");
-                Dispatcher.Invoke(() =>
-                {
-                    Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
-                    Application.Current.Shutdown();
-                });
-            });
+            if (string.IsNullOrEmpty(SingletonVMFactory.Meeting.LocalFileName))
+                Meeting.SaveTempFile();
+            else
+                Meeting.SaveLocalFile(true);
+            Process.Start("AsystentZOOM.GUI.exe", $@"""{SingletonVMFactory.Meeting.LocalFileName}""");
+            Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+            Application.Current.Shutdown();
         }
 
         private RelayCommand _resetVisualSettingsCommand;
