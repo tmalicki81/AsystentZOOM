@@ -38,11 +38,11 @@ namespace AsystentZOOM.GUI.View
 
         private bool _isLoaded;
 
-        private void MeetingPanelView_Loaded(object sender, RoutedEventArgs e)
+        private async void MeetingPanelView_Loaded(object sender, RoutedEventArgs e)
         {
             if (_isLoaded) return;
             if (!string.IsNullOrEmpty(MeetingVM.StartupFileName))
-                SingletonVMFactory.Meeting.OpenFromLocal(MeetingVM.StartupFileName);
+                await SingletonVMFactory.Meeting.OpenFromLocal(MeetingVM.StartupFileName);
             else
             {
                 SingletonVMFactory.SetSingletonValues(MeetingVM.Empty);

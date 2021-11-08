@@ -1,4 +1,5 @@
 ﻿using AsystentZOOM.VM.Common;
+using System;
 
 namespace AsystentZOOM.VM.Model
 {
@@ -43,5 +44,26 @@ namespace AsystentZOOM.VM.Model
             set => SetValue(ref _isIndeterminate, value, nameof(IsIndeterminate));
         }
         private bool _isIndeterminate;
+    }
+
+    public class ShowProgressInfo : ProgressInfoVM, IProgressInfoVM, IDisposable
+    {
+        public ShowProgressInfo()
+        {
+            EventAggregator.Publish("ProgressInfo_Show", this);
+        }
+
+        public ShowProgressInfo(string operationName, bool isIndeterminate, string taskName)
+        {
+            OperationName = operationName;
+            IsIndeterminate = isIndeterminate;
+            TaskName = taskName;
+            EventAggregator.Publish("ProgressInfo_Show", this);
+        }
+
+        public void Dispose()
+        {
+            EventAggregator.Publish("ProgressInfo_Hide", this);
+        }
     }
 }

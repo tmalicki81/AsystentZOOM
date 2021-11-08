@@ -46,7 +46,7 @@ namespace AsystentZOOM.VM.ViewModel
         string WebAddress { get; set; }
         void ClearLocalFileName();
         void DownloadAndFillMetadata(IProgressInfoVM progress);
-        void OpenFromLocal(string fileName);
+        Task OpenFromLocal(string fileName);
         Task SaveLocalFile(bool force);
         void SaveTempFile();
     }
@@ -358,7 +358,7 @@ namespace AsystentZOOM.VM.ViewModel
             if (_isChanged)
             {
                 bool dr = DialogHelper.ShowMessagePanelAsync(
-                    $"Czy zapisać plik przed zamknięciem aplikacji?", "Zapisywanie pliku", 
+                    $"Czy zapisać plik przed zamknięciem aplikacji?", "Zapisywanie pliku",
                     ImageEnum.Question, false,
                     new MsgBoxButtonVM<bool>[]
                     {
@@ -398,33 +398,42 @@ namespace AsystentZOOM.VM.ViewModel
         public IRelayCommand SyncAllMeetingsCommand
             => _syncAllMeetingsCommand ??= new RelayCommand(SyncAllMeetings);
 
-        private void SyncAllMeetings()
+        private async void SyncAllMeetings()
         {
-            DialogHelper.RunAsync(
-                null, false, null,
-                (p) =>
+            try
+            {
+                using (var progress = new ShowProgressInfo())
                 {
-                    SyncAll(p, "Synchronizacja spotkań", MediaFtpFileRepositoryFactory.Meetings, MediaLocalFileRepositoryFactory.Meetings);
-                });
-
-            DialogHelper.RunAsync(
-                null, false, null,
-                (p) =>
-                {
-                    SyncAll(p, "Synchronizacja zegarów", MediaFtpFileRepositoryFactory.TimePiece, MediaLocalFileRepositoryFactory.TimePiece);
-                });
+                    await SyncAllAsync(progress, "Synchronizacja spotkań", MediaFtpFileRepositoryFactory.Meetings, MediaLocalFileRepositoryFactory.Meetings);
+                    await SyncAllAsync(progress, "Synchronizacja zegarów", MediaFtpFileRepositoryFactory.TimePiece, MediaLocalFileRepositoryFactory.TimePiece);
+                }
+            }
+            catch (Exception ex)
+            {
+                await DialogHelper.ShowMessagePanelAsync(ex.ToString(), "Błąd", ImageEnum.Error);
+            }
         }
 
         private IRelayCommand _syncAllRecordingsCommand;
         public IRelayCommand SyncAllRecordingsCommand
             => _syncAllRecordingsCommand ??= new RelayCommand(SyncAllRecordings);
 
-        private void SyncAllRecordings()
-            => DialogHelper.RunAsync(
-                null, false, null,
-                (p) => SyncAll(p, "Synchronizacja nagrań", MediaFtpFileRepositoryFactory.AudioRecording, MediaLocalFileRepositoryFactory.AudioRecording));
+        private async void SyncAllRecordings()
+        {
+            try
+            {
+                using (var progress = new ShowProgressInfo())
+                {
+                    await SyncAllAsync(progress, "Synchronizacja nagrań", MediaFtpFileRepositoryFactory.AudioRecording, MediaLocalFileRepositoryFactory.AudioRecording);
+                }
+            }
+            catch (Exception ex)
+            {
+                await DialogHelper.ShowMessagePanelAsync(ex.ToString(), "Błąd", ImageEnum.Error);
+            }
+        }
 
-        private void SyncAll(IProgressInfoVM p, string operationName, BaseFileRepository cloud, BaseFileRepository local)
+        private async Task SyncAllAsync(IProgressInfoVM p, string operationName, BaseFileRepository cloud, BaseFileRepository local)
         {
             p.OperationName = operationName;
             cloud.OnFileException += Sync_OnFileException;
@@ -436,11 +445,11 @@ namespace AsystentZOOM.VM.ViewModel
             {
                 p.TaskName = "Z chmury na dysk";
                 p.PercentCompletted = 0;
-                cloud.PushToTarget(local, null);
+                await Task.Run(() => cloud.PushToTarget(local, null));
 
                 p.TaskName = "Z dysku do chmury";
                 p.PercentCompletted = 0;
-                local.PushToTarget(cloud, null);
+                await Task.Run(() => local.PushToTarget(cloud, null));
             }
             finally
             {
@@ -546,22 +555,22 @@ namespace AsystentZOOM.VM.ViewModel
 
         private static FileSystemWatcher _watcher;
 
-        private void OpenFromLocal()
+        private async void OpenFromLocal()
         {
             bool? result = DialogHelper.ShowOpenFile("Otwieranie dokumentu ze spotkaniem", IoConsts.Filter, false, true, IoConsts.DefaultExt, IoConsts.InitialDirectory, out string[] fileNames);
             string fileName = fileNames?.FirstOrDefault();
             if (result != true || string.IsNullOrEmpty(fileName))
                 return;
 
-            OpenFromLocal(fileName);
+            await OpenFromLocal(fileName);
         }
 
-        public void OpenFromLocal(string fileName)
+        public async Task OpenFromLocal(string fileName)
         {
             LocalFileName = fileName;
             _warcher_Create();
             string shortFileName = PathHelper.GetShortFileName(fileName, '\\');
-            DialogHelper.RunAsync($"{shortFileName}..", true, "Ładowanie ", (p) =>
+            await DialogHelper.RunAsync($"{shortFileName}..", true, "Ładowanie ", (p) =>
             {
                 _timer.Stop();
                 p.TaskName = "Zwalnianie blokady";
