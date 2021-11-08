@@ -2,14 +2,15 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              StartupUri="PanelWindow.xaml">
+    <!--https://icons8.com/icon/set/user-interface/fluency-->
     <Application.Resources>
-        <Image x:Key="Error"       Source="Images/icons8-add-property-32.png"/>
-        <Image x:Key="Question"    Source="Images/icons8-alarm-clock-32.png"/>
-        <Image x:Key="Warning"     Source="Images/icons8-all-out-32.png"/>
-        <Image x:Key="Information" Source="Images/icons8-apps-tab-32.png"/>
-        <Image x:Key="Ok"          Source="Images/icons8-below-32.png"/>
-        <Image x:Key="Cancel"      Source="Images/icons8-cloud-sync-32.png"/>
-        <Image x:Key="Yes"         Source="Images/icons8-below-32.png"/>
-        <Image x:Key="No"          Source="Images/icons8-cloud-sync-32.png"/>
+        <Image x:Key="Error"       Source="Images/icons8-high-priority-32.png"/>
+        <Image x:Key="Question"    Source="Images/icons8-help-32.png"/>
+        <Image x:Key="Warning"     Source="Images/icons8-high-risk-32.png"/>
+        <Image x:Key="Information" Source="Images/icons8-info-popup-32.png"/>
+        <Image x:Key="Ok"          Source="Images/icons8-checked-32.png"/>
+        <Image x:Key="Cancel"      Source="Images/icons8-close-window-32.png"/>
+        <Image x:Key="Yes"         Source="Images/icons8-checked-32.png"/>
+        <Image x:Key="No"          Source="Images/icons8-close-window-32.png"/>
     </Application.Resources>
 </Application>

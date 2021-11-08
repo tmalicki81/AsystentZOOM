@@ -29,11 +29,14 @@ namespace AsystentZOOM.VM.ViewModel
 
         private RelayCommand _changeOutputSizeCommand;
         public RelayCommand ChangeOutputSizeCommand
-            => _changeOutputSizeCommand ??= new RelayCommand(() =>
-            {
-                EventAggregator.Publish($"{typeof(ILayerVM)}_ChangeOutputSize", new Size(NaturalVideoWidth, NaturalVideoHeight));
-            },
+            => _changeOutputSizeCommand ??= new RelayCommand(
+            ChangeOutputSize,
             () => PlayerState != PlayerStateEnum.Stopped);
+
+        private void ChangeOutputSize()
+        {
+            EventAggregator.Publish($"{typeof(ILayerVM)}_ChangeOutputSize", new Size(NaturalVideoWidth, NaturalVideoHeight));
+        }
 
         BaseMediaFileInfo ILayerVM.FileInfo
         {

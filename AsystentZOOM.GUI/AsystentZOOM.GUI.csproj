@@ -16,7 +16,9 @@
     <None Remove="Images\icons8-all-out-32.png" />
     <None Remove="Images\icons8-apps-tab-32.png" />
     <None Remove="Images\icons8-below-32.png" />
+    <None Remove="Images\icons8-checked-32.png" />
     <None Remove="Images\icons8-clock-32.png" />
+    <None Remove="Images\icons8-close-window-32.png" />
     <None Remove="Images\icons8-cloud-sync-32.png" />
     <None Remove="Images\icons8-color-wheel-32.png" />
     <None Remove="Images\icons8-delete-32.png" />
@@ -30,9 +32,13 @@
     <None Remove="Images\icons8-full-stop-32.png" />
     <None Remove="Images\icons8-hand-32.png" />
     <None Remove="Images\icons8-height-32.png" />
+    <None Remove="Images\icons8-help-32.png" />
+    <None Remove="Images\icons8-high-priority-32.png" />
+    <None Remove="Images\icons8-high-risk-32.png" />
     <None Remove="Images\icons8-hourglass-32.png" />
     <None Remove="Images\icons8-indent-32.png" />
     <None Remove="Images\icons8-info-32.png" />
+    <None Remove="Images\icons8-info-popup-32.png" />
     <None Remove="Images\icons8-last-6-hours-32.png" />
     <None Remove="Images\icons8-menu-rounded-32.png" />
     <None Remove="Images\icons8-mute-32.png" />
@@ -106,7 +112,13 @@
     <Resource Include="Images\icons8-below-32.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Images\icons8-checked-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Images\icons8-clock-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-close-window-32.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Images\icons8-cloud-sync-32.png">
@@ -148,6 +160,15 @@
     <Resource Include="Images\icons8-height-32.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Images\icons8-help-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-high-priority-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-high-risk-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Images\icons8-hourglass-32.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
@@ -155,6 +176,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Images\icons8-info-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-info-popup-32.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Images\icons8-last-6-hours-32.png">
