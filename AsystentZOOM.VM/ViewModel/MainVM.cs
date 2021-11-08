@@ -293,7 +293,7 @@ namespace AsystentZOOM.VM.ViewModel
             if (string.IsNullOrEmpty(SingletonVMFactory.Meeting.LocalFileName))
                 Meeting.SaveTempFile();
             else
-                Meeting.SaveLocalFile(true);
+                await Meeting.SaveLocalFile(true);
             Process.Start("AsystentZOOM.GUI.exe", $@"""{SingletonVMFactory.Meeting.LocalFileName}""");
             Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
             Application.Current.Shutdown();
@@ -340,25 +340,20 @@ namespace AsystentZOOM.VM.ViewModel
         public RelayCommand NewMeetingDocumentCommand
             => _newMeetingDocumentCommand ??= new RelayCommand(NewMeetingDocumentExecute);
 
-        private void NewMeetingDocumentExecute()
+        private async void NewMeetingDocumentExecute()
         {
-            Task.Run(() =>
-            {
-                bool result = DialogHelper.ShowMessagePanel(
-                    "Czy utworzyć nowy dokument spotkania?",
-                    "Nowy dokument",
-                    ImageEnum.Question,
-                    false,
-                    new MsgBoxButtonVM<bool>[]
-                    {
-                        new (true,  "Utwórz",  ImageEnum.Ok),
-                        new (false, "Anuluj",  ImageEnum.No),
-                    });
-                if (!result)
-                    return;
-                SingletonVMFactory.Meeting.Dispose();
-                SingletonVMFactory.SetSingletonValues(MeetingVM.Empty);
-            });
+            bool result = await DialogHelper.ShowMessagePanelAsync(
+                "Czy utworzyć nowy dokument spotkania?", "Nowy dokument",
+                ImageEnum.Question, false,
+                new MsgBoxButtonVM<bool>[]
+                {
+                    new(true,  "Utwórz", ImageEnum.Ok),
+                    new(false, "Anuluj", ImageEnum.No)
+                });
+            if (!result)
+                return;
+            await Task.Run(SingletonVMFactory.Meeting.Dispose);
+            SingletonVMFactory.SetSingletonValues(MeetingVM.Empty);
         }
 
         private bool _isAutoSaveEnabled;

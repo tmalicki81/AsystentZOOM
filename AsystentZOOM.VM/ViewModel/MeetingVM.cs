@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Media;
@@ -46,8 +47,7 @@ namespace AsystentZOOM.VM.ViewModel
         void ClearLocalFileName();
         void DownloadAndFillMetadata(IProgressInfoVM progress);
         void OpenFromLocal(string fileName);
-        void SaveLocalFile();
-        void SaveLocalFile(bool force);
+        Task SaveLocalFile(bool force);
         void SaveTempFile();
     }
 
@@ -189,17 +189,14 @@ namespace AsystentZOOM.VM.ViewModel
         public void ClearLocalFileName()
             => LocalFileName = null;
 
-        public void SaveLocalFile()
-            => SaveLocalFile(false);
-
-        public void SaveLocalFile(bool force)
+        public async Task SaveLocalFile(bool force)
         {
             if (string.IsNullOrEmpty(LocalFileName))
                 return;
             string shortFileName = PathHelper.GetShortFileName(LocalFileName, '\\');
             if (!force)
             {
-                bool dr = DialogHelper.ShowMessagePanel(
+                bool dr = await DialogHelper.ShowMessagePanelAsync(
                     $"Czy zapisać plik {shortFileName}?", "Zapisywanie pliku", ImageEnum.Question, false,
                     new MsgBoxButtonVM<bool>[]
                     {
@@ -360,14 +357,14 @@ namespace AsystentZOOM.VM.ViewModel
         {
             if (_isChanged)
             {
-                bool dr = DialogHelper.ShowMessagePanel(
+                bool dr = DialogHelper.ShowMessagePanelAsync(
                     $"Czy zapisać plik przed zamknięciem aplikacji?", "Zapisywanie pliku", 
                     ImageEnum.Question, false,
                     new MsgBoxButtonVM<bool>[]
                     {
                         new(true,  "Tak, zapisz", ImageEnum.Yes),
                         new(false, "Nie zapisuj", ImageEnum.No),
-                    });
+                    }).Result;
                 if (dr)
                     SaveToLocal(Save);
             }
@@ -394,7 +391,6 @@ namespace AsystentZOOM.VM.ViewModel
                     catch { }
                 }
             }
-
             base.Dispose();
         }
 
@@ -682,7 +678,7 @@ namespace AsystentZOOM.VM.ViewModel
                 {
                     p.ProgressBarVisibility = false;
                     
-                    bool dr = DialogHelper.ShowMessagePanel(
+                    bool dr = DialogHelper.ShowMessagePanelAsync(
                         $"Czy wysłać niewysłane multimedia ({sourcesToSend.Count()}) do chmury?",
                         "Wysyłanie lokalnych multimediów do chmury",
                         ImageEnum.Question, false,
@@ -690,7 +686,7 @@ namespace AsystentZOOM.VM.ViewModel
                         {
                             new(true,  "Tak, wyślij", ImageEnum.Yes),
                             new(false, "Nie wysyłaj", ImageEnum.No),
-                        });
+                        }).Result;
                     p.ProgressBarVisibility = true;
 
                     if (dr)

@@ -86,7 +86,7 @@ namespace AsystentZOOM.GUI
                     File.AppendAllText(fileName, ex.ToString() + Environment.NewLine);
                 }
                 catch { }
-
+                
                 bool dr = await DialogHelper.ShowMessagePanelAsync(
                     $"{ex.Message}{Environment.NewLine}Czy skopiować treść do schowka?",
                     "Nieobsłużony błąd", ImageEnum.Question, true,

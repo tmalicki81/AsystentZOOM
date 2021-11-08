@@ -214,42 +214,39 @@ namespace AsystentZOOM.VM.Common.Sortable
             => _deleteCommand ??= new RelayCommand(Delete);
         private RelayCommand _deleteCommand;
 
-        private void Delete()
+        private async void Delete()
         {
-            Task.Run(() =>
-            {
                 Dispatcher.Invoke(() => HoldSelected = true);
-                try
-                {
-                    Dispatcher.Invoke(() => IsSelected = true);
+            try
+            {
+                Dispatcher.Invoke(() => IsSelected = true);
 
-                    bool dr = DialogHelper.ShowMessagePanel(
-                        $"Czy na pewno chcesz usunąć {ItemCategory} {ItemName}?",
-                        $"Usuwanie elementu {ItemName}",
-                        ImageEnum.Question, false,
-                        new MsgBoxButtonVM<bool>[]
-                        {
+                bool dr = await DialogHelper.ShowMessagePanelAsync(
+                    $"Czy na pewno chcesz usunąć {ItemCategory} {ItemName}?",
+                    $"Usuwanie elementu {ItemName}",
+                    ImageEnum.Question, false,
+                    new MsgBoxButtonVM<bool>[]
+                    {
                             new(true,  "Tak, usuń",  ImageEnum.Yes),
                             new(false, "Nie usuwaj", ImageEnum.No),
-                        });
-                    if (!dr)
-                        return;
+                    });
+                if (!dr)
+                    return;
 
-                    Dispatcher.Invoke(() =>
-                    {
-                        Item.CallChangeToParent(this, $"Usunięto {ItemCategory} {ItemName}");
-                        ContainerItemsSource.Remove(Item);
-                    });
-                }
-                finally
+                Dispatcher.Invoke(() =>
                 {
-                    Dispatcher.Invoke(() =>
-                    {
-                        HoldSelected = false;
-                        IsSelected = false;
-                    });
-                }
-            });
+                    Item.CallChangeToParent(this, $"Usunięto {ItemCategory} {ItemName}");
+                    ContainerItemsSource.Remove(Item);
+                });
+            }
+            finally
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    HoldSelected = false;
+                    IsSelected = false;
+                });
+            }
         }
 
         /// <summary>

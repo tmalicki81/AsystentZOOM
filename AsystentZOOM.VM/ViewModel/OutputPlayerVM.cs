@@ -278,31 +278,27 @@ namespace AsystentZOOM.VM.ViewModel
             => _deleteBookmarkCommand ??= new RelayCommand(
                 DeleteBookmark,
                 () => GetSelectedBookmark() != null);
-        private void DeleteBookmark()
+        private async void DeleteBookmark()
         {
-            Task.Run(() =>
-            {
-                var selectedBookmark = GetSelectedBookmark();
-
-                bool dr = DialogHelper.ShowMessagePanel(
-                    $"Czy usunąć zakładkę {selectedBookmark.Name}?", "Zakładki", ImageEnum.Question, false,
-                    new MsgBoxButtonVM<bool>[]
-                    {
+            var selectedBookmark = GetSelectedBookmark();
+            bool dr = await DialogHelper.ShowMessagePanelAsync(
+                $"Czy usunąć zakładkę {selectedBookmark.Name}?", "Zakładki", ImageEnum.Question, false,
+                new MsgBoxButtonVM<bool>[]
+                {
                         new(true,  "Tak, usuń",  ImageEnum.Yes),
                         new(false, "Nie usuwaj", ImageEnum.No),
-                    });
-                if (!dr)
-                    return;
-
-                var bookmarks = GetBookmarks();
-                Dispatcher.Invoke(() =>
-                {
-                    bookmarks.Remove(selectedBookmark);
-                    if (!bookmarks.Any())
-                        IsSelectionRangeEnabled = false;
-                    SetBookmarks(bookmarks);
-                    CallChangeToParent(this, $"Usunieto zakładkę {selectedBookmark.Name}");
                 });
+            if (!dr)
+                return;
+
+            var bookmarks = GetBookmarks();
+            Dispatcher.Invoke(() =>
+            {
+                bookmarks.Remove(selectedBookmark);
+                if (!bookmarks.Any())
+                    IsSelectionRangeEnabled = false;
+                SetBookmarks(bookmarks);
+                CallChangeToParent(this, $"Usunieto zakładkę {selectedBookmark.Name}");
             });
         }
 

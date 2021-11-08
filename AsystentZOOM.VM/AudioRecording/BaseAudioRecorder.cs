@@ -2,6 +2,7 @@
 using NAudio.Wave;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace AsystentZOOM.VM.Common.AudioRecording
 {
@@ -141,7 +142,7 @@ namespace AsystentZOOM.VM.Common.AudioRecording
         /// <summary>
         /// Zatrzymanie nagrywania (i zamknięcie zapisywania pliku dźwiękowego)
         /// </summary>
-        public void StopRecording()
+        public async void StopRecording()
         {
             _waveIn.DataAvailable -= OnDataAvailable;
 
@@ -150,7 +151,7 @@ namespace AsystentZOOM.VM.Common.AudioRecording
             _waveWriter = null;
 
             _waveIn.StopRecording();
-            _waveIn.Dispose();
+            await Task.Run(_waveIn.Dispose);
             _waveIn = null;
 
             OnRecordingTimeChanged?.Invoke(null, new EventArgs<TimeSpan>(TimeSpan.Zero));

@@ -164,9 +164,9 @@ namespace AsystentZOOM.Plugins.JW.ViewModel
             DialogHelper.RunAsync("Zebranie środowe", true, "Inicjalizacja", CreateMeetingAsync);
         }
 
-        private void CreateMeetingAsync(ProgressInfoVM progressInfo)
+        private async void CreateMeetingAsync(ProgressInfoVM progressInfo)
         {
-            SingletonVMFactory.Meeting.SaveLocalFile();
+            await SingletonVMFactory.Meeting.SaveLocalFile(false);
 
             var downloader = new WednesdayMeetingsDownloader();
             MeetingVM meeting = downloader.CreateMeeting(

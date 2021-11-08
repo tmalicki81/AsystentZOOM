@@ -338,21 +338,19 @@ namespace AsystentZOOM.VM.ViewModel
         public RelayCommand ClearSourcesCommand
             => _clearSourcesCommand ??= new RelayCommand(ClearSources, () => Sources?.Any() == true);
 
-        private void ClearSources()
+        private async void ClearSources()
         {
-            Task.Run(() =>
-            {
-                bool dr = DialogHelper.ShowMessagePanel(
-                    "Czy na pewno wyczyścić playlistę?", "Playlista", ImageEnum.Question, false,
-                    new MsgBoxButtonVM<bool>[]
-                    {
-                        new(true,  "Wyczyść", ImageEnum.Yes),
-                        new(false, "Anuluj",  ImageEnum.No),
-                    });
-                if (!dr)
-                    return;
-                MainVM.Dispatcher.Invoke(() => Sources = new ObservableCollection<BaseMediaFileInfo>());
-            });
+            bool dr = await DialogHelper.ShowMessagePanelAsync(
+                "Czy na pewno wyczyścić playlistę?", "Playlista", 
+                ImageEnum.Question, false, 
+                new MsgBoxButtonVM<bool>[] 
+                { 
+                    new(true,  "Wyczyść", ImageEnum.Yes), 
+                    new(false, "Anuluj",  ImageEnum.No) 
+                });
+            if (!dr)
+                return;
+            Dispatcher.Invoke(() => Sources = new ObservableCollection<BaseMediaFileInfo>());
         }
 
         private RelayCommand _playAllCommand;
@@ -364,9 +362,9 @@ namespace AsystentZOOM.VM.ViewModel
             Sources.First().PlayCommand.Execute();
         }
 
-        private RelayCommand _OpenWwwCommand;
+        private RelayCommand _openWwwCommand;
         public RelayCommand OpenWwwCommand
-            => _OpenWwwCommand ??= new RelayCommand(OpenWww, () => !string.IsNullOrEmpty(WebAddress));
+            => _openWwwCommand ??= new RelayCommand(OpenWww, () => !string.IsNullOrEmpty(WebAddress));
         private void OpenWww()
         {
             Process.Start(new ProcessStartInfo

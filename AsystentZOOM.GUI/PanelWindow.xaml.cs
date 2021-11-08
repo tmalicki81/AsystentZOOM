@@ -14,6 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 
 namespace AsystentZOOM.GUI
 {
@@ -67,23 +68,24 @@ namespace AsystentZOOM.GUI
 
         private void MessagePanel_Show(MsgBoxVM p)
         {
-            if (Dispatcher.Thread == Thread.CurrentThread)
-                throw new Exception("Nie można otwierać okna powiadomień w wątku interfejsu użytkownika");
-
             Dispatcher.Invoke(() =>
             {
-                ViewModel.MsgBoxList.Add(p);
-                ViewModel.IsAnyMsgBox = true;
+                lock (_msgBoxListLocker)
+                {
+                    ViewModel.MsgBoxList.Add(p);
+                    ViewModel.IsAnyMsgBox = true;
+                }
             });
             while (!p.ToClose)
             {
                 Task.Delay(200).Wait();
             }
+
             Dispatcher.Invoke(() =>
             {
-                ViewModel.MsgBoxList.Remove(p);
                 lock (_msgBoxListLocker)
                 {
+                    ViewModel.MsgBoxList.Remove(p);
                     ViewModel.IsAnyMsgBox = ViewModel.MsgBoxList.Any();
                 }
             });
@@ -156,12 +158,12 @@ namespace AsystentZOOM.GUI
             _mainOutputWindow.Owner = _mainBorderWindow;
         }
 
-        protected override void OnClosing(CancelEventArgs e)
+        protected override async void OnClosing(CancelEventArgs e)
         {
             if (Application.Current.ShutdownMode != ShutdownMode.OnExplicitShutdown)
             {
                 e.Cancel = true;
-                OnClosing();
+                await OnClosing();
             }
             else
             {
@@ -170,27 +172,24 @@ namespace AsystentZOOM.GUI
             }
         }
 
-        private void OnClosing()
+        private async Task OnClosing()
         {
-            Task.Run(() =>
-            {
-                bool dr = DialogHelper.ShowMessagePanel(
-                    "Czy na pewno zamknąć aplikację?", "Asystent ZOOM", ImageEnum.Question, false,
-                    new MsgBoxButtonVM<bool>[]
-                    {
-                        new(true,  "Tak, zamknij", ImageEnum.Yes),
-                        new(false, "Nie zamykaj",  ImageEnum.No),
-                    });
-                if (dr)
+            bool dr = await DialogHelper.ShowMessagePanelAsync(
+                "Czy na pewno zamknąć aplikację?", "Asystent ZOOM", ImageEnum.Question, false,
+                new MsgBoxButtonVM<bool>[]
                 {
-                    SingletonVMFactory.DisposeAllSingletons();
-                    Dispatcher.Invoke(() =>
-                    {
-                        Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
-                        Close();
-                    });
-                }
-            });
+                    new(true,  "Tak, zamknij", ImageEnum.Yes),
+                    new(false, "Nie zamykaj",  ImageEnum.No),
+                });
+            if (dr)
+            {
+                await Task.Run(SingletonVMFactory.DisposeAllSingletons);
+                Dispatcher.Invoke(() =>
+                {
+                    Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+                    Close();
+                });
+            }
         }
 
         protected override void OnClosed(EventArgs e)
