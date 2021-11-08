@@ -2,6 +2,7 @@
 using AsystentZOOM.VM.Common;
 using AsystentZOOM.VM.Common.Dialog;
 using AsystentZOOM.VM.Interfaces;
+using AsystentZOOM.VM.Model;
 using AsystentZOOM.VM.ViewModel;
 using Microsoft.Win32;
 using System;
@@ -43,8 +44,12 @@ namespace AsystentZOOM.GUI
             EventAggregator.Subscribe(nameof(MainVM) + "_Open", OpenMainOutputWindow, () => true);
             EventAggregator.Subscribe(nameof(MainVM) + "_Reset", ResetMainOutputWindow, () => true);
             EventAggregator.Subscribe(nameof(MainVM) + "_ActivatePanel", () => Activate(), () => true);
-            EventAggregator.Subscribe<MessageBoxParameters>("MessageBox_Show", MessageBox_Show, (x) => true);
+            
             EventAggregator.Subscribe<MsgBoxVM>("MessagePanel_Show", MessagePanel_Show, (x) => true);
+
+            EventAggregator.Subscribe<ProgressInfoVM>("ProgressInfo_Show", ProgressInfo_Show, (x) => true);
+            EventAggregator.Subscribe<ProgressInfoVM>("ProgressInfo_Hide", ProgressInfo_Hide, (x) => true);
+
             EventAggregator.Subscribe<OpenFileDialogParameters>("OpenFile_Show", OpenFile_Show, (x) => true);
             EventAggregator.Subscribe<SaveFileDialogParameters>("SaveFile_Show", SaveFile_Show, (x) => true);
 
@@ -60,9 +65,6 @@ namespace AsystentZOOM.GUI
 
             ((UIElement)Content).Focus();
         }
-
-        private void MessageBox_Show(MessageBoxParameters p)
-            => p.Result = MessageBox.Show(p.MessageBoxText, p.Caption, p.Button, p.Icon, p.DefaultResult);
 
         private static readonly object _msgBoxListLocker = new();
 
@@ -89,6 +91,26 @@ namespace AsystentZOOM.GUI
                     ViewModel.IsAnyMsgBox = ViewModel.MsgBoxList.Any();
                 }
             });
+        }
+
+        private readonly object _progressInfoListLocker = new();
+
+        private void ProgressInfo_Show(ProgressInfoVM p)
+        {
+            lock (_progressInfoListLocker)
+            {
+                ViewModel.ProgressInfoList.Add(p);
+                ViewModel.IsAnyProgressInfo = true;
+            }
+        }
+
+        private void ProgressInfo_Hide(ProgressInfoVM p)
+        {
+            lock (_progressInfoListLocker)
+            {
+                ViewModel.ProgressInfoList.Remove(p);
+                ViewModel.IsAnyProgressInfo = ViewModel.ProgressInfoList.Any();
+            }
         }
 
         private void OpenFile_Show(OpenFileDialogParameters p)

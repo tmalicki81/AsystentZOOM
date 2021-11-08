@@ -196,14 +196,32 @@
                         <DataTrigger Binding="{Binding Path=IsAnyMsgBox, Mode=OneWay}" Value="True">
                             <Setter Property="Visibility" Value="Visible"/>
                         </DataTrigger>
+                        <DataTrigger Binding="{Binding Path=IsAnyProgressInfo, Mode=OneWay}" Value="True">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
                     </Style.Triggers>
                 </Style>
             </Grid.Style>
         </Grid>
-        
-        <controls:ProgressInfoControl DataContext="{Binding Path=ProgressInfo}" Grid.Row="0" Grid.RowSpan="3" 
-                                      Visibility="{Binding Path=ProgressBarVisibility, Mode=TwoWay, Converter={StaticResource ResourceKey=BoolToVisibilityConverter}}" />
 
+        <!--ProgressInfo-->
+        <ItemsControl Grid.Row="0" Grid.RowSpan="3" 
+                      ItemsSource="{Binding Path=ProgressInfoList, Mode=OneWay}"
+                      HorizontalAlignment="Center" VerticalAlignment="Center">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <controls:ProgressInfoControl />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        
+        <!--MsgBox-->
         <ItemsControl Grid.Row="0" Grid.RowSpan="3" 
                       ItemsSource="{Binding Path=MsgBoxList, Mode=OneWay}"
                       HorizontalAlignment="Center" VerticalAlignment="Center">

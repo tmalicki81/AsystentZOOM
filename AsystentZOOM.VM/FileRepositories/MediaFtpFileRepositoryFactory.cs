@@ -50,6 +50,7 @@
     public class TimePieceMediaFtpFileService : BaseMediaFtpFileRepository
     {
         public override string RemoteDirectory => "TimePieces";
+        public override string[] FileExtensions => new string[] { "TIM" };
         public override string Description => "Zegary spotkań na serwerze FTP";
     }
 
@@ -57,5 +58,6 @@
     {
         public override string RemoteDirectory => "Backgrounds";
         public override string Description => "Tła na serwerze FTP";
+        public override string[] FileExtensions => new string[] { "BCG" };
     }
 }

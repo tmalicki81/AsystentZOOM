@@ -34,7 +34,7 @@ namespace AsystentZOOM.VM.Common.Dialog
                 defaultButton,
                 buttons);
 
-            await Task.Run(()=>EventAggregator.Publish("MessagePanel_Show", arg));
+            await Task.Run(() => EventAggregator.Publish("MessagePanel_Show", arg));
             return arg.Result;
         }
 
@@ -49,29 +49,6 @@ namespace AsystentZOOM.VM.Common.Dialog
             await ShowMessagePanelAsync(
                 messageBoxText, caption, icon, true,
                 new MsgBoxButtonVM<bool>[] { new(true, "OK", ImageEnum.Ok) });
-        }
-
-        /// <summary>
-        /// Wyświetlenie okna z wiadomością
-        /// </summary>
-        /// <param name="messageBoxText">Treść wiadomości</param>
-        /// <param name="caption">Temat wiaddomości</param>
-        /// <param name="button">Przyciski z odpowiedziami</param>
-        /// <param name="icon">Ikona</param>
-        /// <param name="defaultResult">Domyślna odpowiedź</param>
-        /// <returns>Odpowiedź uzytkownika</returns>
-        public static MessageBoxResult ShowMessageBox(string messageBoxText, string caption, MessageBoxButton button, MessageBoxImage icon, MessageBoxResult defaultResult)
-        {
-            var arg = new MessageBoxParameters
-            {
-                MessageBoxText = messageBoxText,
-                Caption = caption,
-                Button = button,
-                Icon = icon,
-                DefaultResult = defaultResult
-            };
-            EventAggregator.Publish("MessageBox_Show", arg);
-            return arg.Result;
         }
 
         /// <summary>
@@ -150,7 +127,7 @@ namespace AsystentZOOM.VM.Common.Dialog
                 DefaultExt = DefaultExt,
                 InitialDirectory = InitialDirectory,
                 FileName = fileNames.FirstOrDefault(),
-                FileNames = fileNames, 
+                FileNames = fileNames,
             };
             EventAggregator.Publish("SaveFile_Show", arg);
             fileNames = arg.FileNames;
@@ -179,13 +156,6 @@ namespace AsystentZOOM.VM.Common.Dialog
         }
 
         /// <summary>
-        /// Pobranie obiektu postępu
-        /// </summary>
-        /// <returns></returns>
-        public static ProgressInfoVM GetProgressInfo()
-            => SingletonVMFactory.Main.ProgressInfo;
-
-        /// <summary>
         /// Wykonanie asynchroniczne metody
         /// </summary>
         /// <param name="operationName">Nazwa operacji</param>
@@ -193,33 +163,32 @@ namespace AsystentZOOM.VM.Common.Dialog
         /// <param name="taskName">Nazwa zadania</param>
         /// <param name="action">Metoda realizujaca operację</param>
         /// <param name="exception">Metoda obsługująca wyjątek</param>
-        public static void RunAsync(
+        public static async Task RunAsync(
             string operationName, bool isIndeterminate, string taskName,
             Action<ProgressInfoVM> action,
             Action<Exception> exception = null)
         {
-            Task.Run(() =>
+            var progress = new ProgressInfoVM
             {
-                var progress = GetProgressInfo();
-                progress.PercentCompletted = 0;
-                progress.ProgressBarVisibility = true;
-                progress.IsIndeterminate = isIndeterminate;
-                progress.OperationName = operationName;
-                progress.TaskName = taskName;
-                try
-                {
-                    action(progress);
-                    progress.ProgressBarVisibility = false;
-                }
-                catch (Exception ex)
-                {
-                    progress.ProgressBarVisibility = false;
-                    if (exception != null)
-                        exception(ex);
-                    else
-                        ShowMessagePanelAsync(ex.ToString(), "Błąd", ImageEnum.Error).Wait();
-                }
-            });
+                PercentCompletted = 0,
+                IsIndeterminate = isIndeterminate,
+                OperationName = operationName,
+                TaskName = taskName
+            };
+            EventAggregator.Publish("ProgressInfo_Show", progress);
+            try
+            {
+                await Task.Run(() => action(progress));
+                EventAggregator.Publish("ProgressInfo_Hide", progress);
+            }
+            catch (Exception ex)
+            {
+                EventAggregator.Publish("ProgressInfo_Hide", progress);
+                if (exception != null)
+                    exception(ex);
+                else
+                    await ShowMessagePanelAsync(ex.ToString(), "Błąd", ImageEnum.Error);
+            }
         }
     }
 }

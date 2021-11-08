@@ -7,7 +7,6 @@ namespace AsystentZOOM.VM.Model
         bool IsIndeterminate { get; set; }
         string OperationName { get; set; }
         int PercentCompletted { get; set; }
-        bool ProgressBarVisibility { get; set; }
         string TaskName { get; set; }
     }
 
@@ -37,13 +36,6 @@ namespace AsystentZOOM.VM.Model
             set => SetValue(ref _taskName, value, nameof(TaskName));
         }
         private string _taskName;
-
-        public bool ProgressBarVisibility
-        {
-            get => _progressBarVisibility;
-            set => SetValue(ref _progressBarVisibility, value, nameof(ProgressBarVisibility));
-        }
-        private bool _progressBarVisibility;
 
         public bool IsIndeterminate
         {

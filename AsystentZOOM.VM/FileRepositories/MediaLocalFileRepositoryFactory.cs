@@ -30,6 +30,7 @@ namespace AsystentZOOM.VM.FileRepositories
     public class MusicMediaLocalFileRepository : BaseMediaLocalFileRepository
     {
         public override Environment.SpecialFolder DestinationInLocal => Environment.SpecialFolder.MyMusic;
+        public override string[] FileExtensions => new string[] { "MP3" };
         public override string Description => "Muzyka na dysku lokalnym";
     }
 
@@ -56,11 +57,13 @@ namespace AsystentZOOM.VM.FileRepositories
     {
         public override Environment.SpecialFolder DestinationInLocal => Environment.SpecialFolder.MyDocuments;
         public override string Description => "Zegary spotkań na dysku lokalnym";
+        public override string[] FileExtensions => new[] { "TIM" };
     }
 
     public class BackgroundMediaLocalFileRepository : BaseMediaLocalFileRepository
     {
         public override Environment.SpecialFolder DestinationInLocal => Environment.SpecialFolder.MyDocuments;
         public override string Description => "Tła na dysku lokalnym";
+        public override string[] FileExtensions => new[] { "BCG" };
     }
 }

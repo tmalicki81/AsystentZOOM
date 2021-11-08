@@ -17,8 +17,7 @@ namespace AsystentZOOM.VM.ViewModel
     {
         public MainVM()
         {
-            ProgressInfo = new ProgressInfoVM();
-            EventAggregator.Subscribe<Size>($"{typeof(ILayerVM)}_ChangeOutputSize", ChangeMediaSize, (s) => !ProgressInfo.ProgressBarVisibility);
+            EventAggregator.Subscribe<Size>($"{typeof(ILayerVM)}_ChangeOutputSize", ChangeMediaSize, (s) => true);
         }
 
         private Size _mediaSize;
@@ -104,12 +103,20 @@ namespace AsystentZOOM.VM.ViewModel
             => SingletonVMFactory.Layers;
 
         [XmlIgnore]
-        private ProgressInfoVM _progressInfo;
-        public ProgressInfoVM ProgressInfo
+        public ObservableCollection<ProgressInfoVM> ProgressInfoList
         {
-            get => _progressInfo;
-            set => SetValue(ref _progressInfo, value, nameof(ProgressInfo));
+            get => _progressInfoList;
+            set => SetValue(ref _progressInfoList, value, nameof(ProgressInfoList));
         }
+        private ObservableCollection<ProgressInfoVM> _progressInfoList = new();
+
+        [XmlIgnore]
+        public bool IsAnyProgressInfo
+        {
+            get => _isAnyProgressInfo;
+            set => SetValue(ref _isAnyProgressInfo, value, nameof(IsAnyProgressInfo));
+        }
+        private bool _isAnyProgressInfo;
 
         private bool _warnBeforeStoppingSharing = false;
         public bool WarnBeforeStoppingSharing

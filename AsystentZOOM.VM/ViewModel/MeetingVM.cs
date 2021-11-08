@@ -420,9 +420,9 @@ namespace AsystentZOOM.VM.ViewModel
         {
             p.OperationName = operationName;
             cloud.OnFileException += Sync_OnFileException;
-            cloud.OnPushedFile += Sync_OnPushedFile;
+            cloud.OnPushedFile += (s, e) => p.PercentCompletted = e.PercentCompletted;
             local.OnFileException += Sync_OnFileException;
-            local.OnPushedFile += Sync_OnPushedFile;
+            local.OnPushedFile += (s, e) => p.PercentCompletted = e.PercentCompletted;
 
             try
             {
@@ -437,16 +437,10 @@ namespace AsystentZOOM.VM.ViewModel
             finally
             {
                 cloud.OnFileException -= Sync_OnFileException;
-                cloud.OnPushedFile -= Sync_OnPushedFile;
+                cloud.OnPushedFile -= (s, e) => p.PercentCompletted = e.PercentCompletted;
                 local.OnFileException -= Sync_OnFileException;
-                local.OnPushedFile -= Sync_OnPushedFile;
+                local.OnPushedFile -= (s, e) => p.PercentCompletted = e.PercentCompletted;
             }
-        }
-
-        private void Sync_OnPushedFile(object sender, PushedFileEventArgs e)
-        {
-            var p = DialogHelper.GetProgressInfo();
-            p.PercentCompletted = e.PercentCompletted;
         }
 
         private void Sync_OnFileException(object sender, FileExceptionEventArgs e)
@@ -514,7 +508,7 @@ namespace AsystentZOOM.VM.ViewModel
                         });
                     try
                     {
-                        source.OnLoadMediaFile += Source_OnLoadMediaFile;
+                        source.OnLoadMediaFile += (s, e) => Source_OnLoadMediaFile(s, e, progress);
                         source.CheckFileExist();
                         MainVM.Dispatcher.Invoke(() =>
                         {
@@ -524,7 +518,7 @@ namespace AsystentZOOM.VM.ViewModel
                     }
                     finally
                     {
-                        source.OnLoadMediaFile -= Source_OnLoadMediaFile;
+                        source.OnLoadMediaFile -= (s, e) => Source_OnLoadMediaFile(s, e, progress);
                     }
                 }
             }
@@ -533,12 +527,11 @@ namespace AsystentZOOM.VM.ViewModel
         private long _bytesToDownload;
         private long _bytesDownloaded;
 
-        private void Source_OnLoadMediaFile(object sender, LoadingFileEventArgs e)
+        private void Source_OnLoadMediaFile(object sender, LoadingFileEventArgs e, IProgressInfoVM progress)
         {
             long notSavedBytesDownloaded = _bytesDownloaded + e.BytesDownloaded;
             var mediaFileInfo = sender as BaseMediaFileInfo;
 
-            var progress = DialogHelper.GetProgressInfo();
             progress.TaskName = $"Pobieranie pliku {mediaFileInfo.FileName}...";
             progress.PercentCompletted = (int)(100 * notSavedBytesDownloaded / _bytesToDownload);
         }
@@ -676,8 +669,6 @@ namespace AsystentZOOM.VM.ViewModel
             {
                 if (sourcesToSend.Any())
                 {
-                    p.ProgressBarVisibility = false;
-                    
                     bool dr = DialogHelper.ShowMessagePanelAsync(
                         $"Czy wysłać niewysłane multimedia ({sourcesToSend.Count()}) do chmury?",
                         "Wysyłanie lokalnych multimediów do chmury",
@@ -687,7 +678,6 @@ namespace AsystentZOOM.VM.ViewModel
                             new(true,  "Tak, wyślij", ImageEnum.Yes),
                             new(false, "Nie wysyłaj", ImageEnum.No),
                         }).Result;
-                    p.ProgressBarVisibility = true;
 
                     if (dr)
                     {
@@ -695,7 +685,7 @@ namespace AsystentZOOM.VM.ViewModel
                         {
                             string shortFileName = d.FileName.Split('\\').Last();
                             var v = BaseMediaFileInfo.GetFileExtensionConfig(shortFileName);
-                            v.MediaFtpFileRepository.OnSavingFile += MediaFtpFileRepository_OnSavingFile;
+                            v.MediaFtpFileRepository.OnSavingFile += (s, e) => MediaFtpFileRepository_OnSavingFile(s, e, p);
                             string[] destFilePath;
                             try
                             {
@@ -703,7 +693,7 @@ namespace AsystentZOOM.VM.ViewModel
                             }
                             finally
                             {
-                                v.MediaFtpFileRepository.OnSavingFile -= MediaFtpFileRepository_OnSavingFile;
+                                v.MediaFtpFileRepository.OnSavingFile -= (s, e) => MediaFtpFileRepository_OnSavingFile(s, e, p);
                             }
                             string destFileName = destFilePath.Aggregate((a, b) => a + "/" + b);
                             var sessionInfo = v.MediaFtpFileRepository.SessionInfo;
@@ -777,23 +767,15 @@ namespace AsystentZOOM.VM.ViewModel
         {
             var meetingExConfig = BaseMediaFileInfo.GetFileExtensionConfig(fileName);
 
-            try
+
+            lock (_meetingsSyncLocker)
             {
-                meetingExConfig.MediaLocalFileRepository.OnSavingFile += MediaFtpFileRepository_OnSavingFile;
-                lock (_meetingsSyncLocker)
-                {
-                    meetingExConfig.MediaLocalFileRepository.CopyTo(meetingExConfig.MediaFtpFileRepository, fileName.Split('\\').Last());
-                }
-            }
-            finally
-            {
-                meetingExConfig.MediaLocalFileRepository.OnSavingFile -= MediaFtpFileRepository_OnSavingFile;
+                meetingExConfig.MediaLocalFileRepository.CopyTo(meetingExConfig.MediaFtpFileRepository, fileName.Split('\\').Last());
             }
         }
 
-        private void MediaFtpFileRepository_OnSavingFile(object sender, SavingFileEventArgs e)
+        private void MediaFtpFileRepository_OnSavingFile(object sender, SavingFileEventArgs e, ProgressInfoVM p)
         {
-            var p = DialogHelper.GetProgressInfo();
             p.PercentCompletted = e.PercentCompleted;
             p.TaskName = $"Wysyłanie pliku {e.FileName}";
         }

@@ -250,21 +250,20 @@ namespace AsystentZOOM.VM.Common.AudioRecording
 
                 progress.TaskName = "Wysyłanie nagrania do chmury";
                 progress.IsIndeterminate = false;
-                ftpRepo.OnSavingFile += FtpRepo_OnSavingFile;
+                ftpRepo.OnSavingFile += (s, e) => progress.PercentCompletted = e.PercentCompleted;
                 try
                 {
                     localRepo.CopyTo(ftpRepo, mp3FileShortName);
                 }
                 finally
                 {
-                    ftpRepo.OnSavingFile -= FtpRepo_OnSavingFile;
+                    ftpRepo.OnSavingFile -= (s, e) => progress.PercentCompletted = e.PercentCompleted;
                 }
             });
         }
 
-        private void FtpRepo_OnSavingFile(object sender, SavingFileEventArgs e)
+        private void FtpRepo_OnSavingFile(object sender, SavingFileEventArgs e, ProgressInfoVM progress)
         {
-            var progress = DialogHelper.GetProgressInfo();
             progress.PercentCompletted = e.PercentCompleted;
         }
 
