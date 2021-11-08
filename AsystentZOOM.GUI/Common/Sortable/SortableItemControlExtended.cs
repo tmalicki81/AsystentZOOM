@@ -9,6 +9,8 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using AsystentZOOM.VM.Common.Dialog;
 using System.Threading.Tasks;
+using AsystentZOOM.VM.Model;
+using AsystentZOOM.VM.Common;
 
 namespace AsystentZOOM.GUI.Common.Sortable
 {
@@ -136,14 +138,23 @@ namespace AsystentZOOM.GUI.Common.Sortable
         /// <param name="sender"></param>
         /// <param name="e"></param>
         /// <param name="additionalImplementation"></param>
-        public static async Task Drop(object sender, DragEventArgs e, Func<DragEventArgs, ISortableItemVM[]> additionalImplementation = null)
+        public static async Task Drop(
+            object sender, DragEventArgs e, 
+            Func<DragEventArgs, IProgressInfoVM, ISortableItemVM[]> additionalImplementation = null)
         {
+            var progress = new ProgressInfoVM
+            {
+                IsIndeterminate = true,
+                OperationName = "Pobieranie pliku",
+                TaskName = "dsfdsgtdf"
+            };
+            EventAggregator.Publish("ProgressInfo_Show", progress);
             try
             {
                 var targetData = (sender as FrameworkElement)?.DataContext as ISortableItemVM;
                 ISortableItemVM[] droppedData;
 
-                droppedData = await Task.Run(() => additionalImplementation?.Invoke(e));
+                droppedData = await Task.Run(() => additionalImplementation?.Invoke(e, progress));
                 if(droppedData == null)
                 {
                     string format = e.Data.GetFormats().First();
@@ -154,9 +165,12 @@ namespace AsystentZOOM.GUI.Common.Sortable
                     .ToList()
                     .ForEach(x => x.Sorter.DropTo(targetData));
                 e.Handled = true;
+
+                EventAggregator.Publish("ProgressInfo_Hide", progress);
             }
             catch (Exception ex)
             {
+                EventAggregator.Publish("ProgressInfo_Hide", progress);
                 DialogHelper.ShowMessageBar(ex.Message, MessageBarLevelEnum.Error);
             }
         }

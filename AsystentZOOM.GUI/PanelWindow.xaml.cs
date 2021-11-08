@@ -47,8 +47,8 @@ namespace AsystentZOOM.GUI
             
             EventAggregator.Subscribe<MsgBoxVM>("MessagePanel_Show", MessagePanel_Show, (x) => true);
 
-            EventAggregator.Subscribe<ProgressInfoVM>("ProgressInfo_Show", ProgressInfo_Show, (x) => true);
-            EventAggregator.Subscribe<ProgressInfoVM>("ProgressInfo_Hide", ProgressInfo_Hide, (x) => true);
+            EventAggregator.Subscribe<IProgressInfoVM>("ProgressInfo_Show", ProgressInfo_Show, (x) => true);
+            EventAggregator.Subscribe<IProgressInfoVM>("ProgressInfo_Hide", ProgressInfo_Hide, (x) => true);
 
             EventAggregator.Subscribe<OpenFileDialogParameters>("OpenFile_Show", OpenFile_Show, (x) => true);
             EventAggregator.Subscribe<SaveFileDialogParameters>("SaveFile_Show", SaveFile_Show, (x) => true);
@@ -95,7 +95,7 @@ namespace AsystentZOOM.GUI
 
         private readonly object _progressInfoListLocker = new();
 
-        private void ProgressInfo_Show(ProgressInfoVM p)
+        private void ProgressInfo_Show(IProgressInfoVM p)
         {
             lock (_progressInfoListLocker)
             {
@@ -104,7 +104,7 @@ namespace AsystentZOOM.GUI
             }
         }
 
-        private void ProgressInfo_Hide(ProgressInfoVM p)
+        private void ProgressInfo_Hide(IProgressInfoVM p)
         {
             lock (_progressInfoListLocker)
             {

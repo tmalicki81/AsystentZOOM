@@ -51,7 +51,7 @@ namespace AsystentZOOM.VM.ViewModel
         bool Timeout { get; }
         Color TitleColor { get; set; }
         string WebAddress { get; set; }
-        ISortableItemVM[] GetDataFromFileDrop(DragEventArgs e);
+        ISortableItemVM[] GetDataFromFileDrop(DragEventArgs e, IProgressInfoVM progress);
         void SetOrder();
     }
 
@@ -147,7 +147,7 @@ namespace AsystentZOOM.VM.ViewModel
             }
         }
 
-        public ISortableItemVM[] GetDataFromFileDrop(DragEventArgs e)
+        public ISortableItemVM[] GetDataFromFileDrop(DragEventArgs e, IProgressInfoVM progress)
         {
             if (e.Data.GetData("FileDrop") is string[] fileList)
             {
@@ -165,6 +165,7 @@ namespace AsystentZOOM.VM.ViewModel
                     if (!Directory.Exists(destDirectory))
                         Directory.CreateDirectory(destDirectory);
                     string fullFileName = Path.Combine(destDirectory, fileName);
+                    progress.TaskName = $"Pobieranie pliku {fileName}";
                     using (var webClient = new WebClient())
                     {
                         webClient.DownloadFile(fileAddress, fullFileName);

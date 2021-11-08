@@ -237,7 +237,7 @@ namespace AsystentZOOM.VM.Common.AudioRecording
                 .Where(f => !string.IsNullOrEmpty(f))
                 .ToArray();
 
-            DialogHelper.RunAsync("Kończenie nagrywania", true, null, (ProgressInfoVM progress) =>
+            DialogHelper.RunAsync("Kończenie nagrywania", true, null, (IProgressInfoVM progress) =>
             {
                 string mp3FileName = MixMp3Files(progress, mp3Files);
                 string mp3FileShortName = PathHelper.GetShortFileName(mp3FileName, '\\');
@@ -262,17 +262,12 @@ namespace AsystentZOOM.VM.Common.AudioRecording
             });
         }
 
-        private void FtpRepo_OnSavingFile(object sender, SavingFileEventArgs e, ProgressInfoVM progress)
-        {
-            progress.PercentCompletted = e.PercentCompleted;
-        }
-
         /// <summary>
         /// Miksowanie kilku plików mp3
         /// </summary>
         /// <param name="mp3Files">Lista plików mp3</param>
         /// <returns>Nazwa powstałego pliku mp3 (będącego miksem kilku)</returns>
-        private string MixMp3Files(ProgressInfoVM progress, params string[] mp3Files)
+        private string MixMp3Files(IProgressInfoVM progress, params string[] mp3Files)
         {
             string directory = GetRecordingFolder();
             if (!Directory.Exists(directory))

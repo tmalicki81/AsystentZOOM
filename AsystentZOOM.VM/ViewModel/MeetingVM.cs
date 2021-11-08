@@ -399,13 +399,21 @@ namespace AsystentZOOM.VM.ViewModel
             => _syncAllMeetingsCommand ??= new RelayCommand(SyncAllMeetings);
 
         private void SyncAllMeetings()
-            => DialogHelper.RunAsync(
+        {
+            DialogHelper.RunAsync(
                 null, false, null,
                 (p) =>
                 {
                     SyncAll(p, "Synchronizacja spotkań", MediaFtpFileRepositoryFactory.Meetings, MediaLocalFileRepositoryFactory.Meetings);
+                });
+
+            DialogHelper.RunAsync(
+                null, false, null,
+                (p) =>
+                {
                     SyncAll(p, "Synchronizacja zegarów", MediaFtpFileRepositoryFactory.TimePiece, MediaLocalFileRepositoryFactory.TimePiece);
                 });
+        }
 
         private IRelayCommand _syncAllRecordingsCommand;
         public IRelayCommand SyncAllRecordingsCommand
@@ -416,7 +424,7 @@ namespace AsystentZOOM.VM.ViewModel
                 null, false, null,
                 (p) => SyncAll(p, "Synchronizacja nagrań", MediaFtpFileRepositoryFactory.AudioRecording, MediaLocalFileRepositoryFactory.AudioRecording));
 
-        private void SyncAll(ProgressInfoVM p, string operationName, BaseFileRepository cloud, BaseFileRepository local)
+        private void SyncAll(IProgressInfoVM p, string operationName, BaseFileRepository cloud, BaseFileRepository local)
         {
             p.OperationName = operationName;
             cloud.OnFileException += Sync_OnFileException;
@@ -774,7 +782,7 @@ namespace AsystentZOOM.VM.ViewModel
             }
         }
 
-        private void MediaFtpFileRepository_OnSavingFile(object sender, SavingFileEventArgs e, ProgressInfoVM p)
+        private void MediaFtpFileRepository_OnSavingFile(object sender, SavingFileEventArgs e, IProgressInfoVM p)
         {
             p.PercentCompletted = e.PercentCompleted;
             p.TaskName = $"Wysyłanie pliku {e.FileName}";

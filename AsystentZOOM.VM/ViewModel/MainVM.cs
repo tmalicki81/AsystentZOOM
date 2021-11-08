@@ -103,12 +103,12 @@ namespace AsystentZOOM.VM.ViewModel
             => SingletonVMFactory.Layers;
 
         [XmlIgnore]
-        public ObservableCollection<ProgressInfoVM> ProgressInfoList
+        public ObservableCollection<IProgressInfoVM> ProgressInfoList
         {
             get => _progressInfoList;
             set => SetValue(ref _progressInfoList, value, nameof(ProgressInfoList));
         }
-        private ObservableCollection<ProgressInfoVM> _progressInfoList = new();
+        private ObservableCollection<IProgressInfoVM> _progressInfoList = new();
 
         [XmlIgnore]
         public bool IsAnyProgressInfo

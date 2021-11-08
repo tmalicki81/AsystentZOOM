@@ -165,7 +165,7 @@ namespace AsystentZOOM.VM.Common.Dialog
         /// <param name="exception">Metoda obsługująca wyjątek</param>
         public static async Task RunAsync(
             string operationName, bool isIndeterminate, string taskName,
-            Action<ProgressInfoVM> action,
+            Action<IProgressInfoVM> action,
             Action<Exception> exception = null)
         {
             var progress = new ProgressInfoVM
