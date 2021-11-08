@@ -39,17 +39,18 @@ namespace AsystentZOOM.VM.Common.Dialog
         }
 
         public static async Task<T> ShowMessagePanelAsync<T>(
-            string messageBoxText, string caption, ImageEnum icon,
-            T defaultButton, IEnumerable<MsgBoxButtonVM<T>> buttons)
-        {
-            return await Task.Run(() =>
-                ShowMessagePanel<T>(
+            string messageBoxText, 
+            string caption, 
+            ImageEnum icon,
+            T defaultButton, 
+            IEnumerable<MsgBoxButtonVM<T>> buttons)
+         => await Task.Run(() =>
+                ShowMessagePanel(
                     messageBoxText,
                     caption,
                     icon,
                     defaultButton,
                     buttons));
-        }
 
         /// <summary>
         /// Wyświetlenie panelu z wiadomością
