@@ -217,7 +217,7 @@ namespace AsystentZOOM.VM.Common.Dialog
                     if (exception != null)
                         exception(ex);
                     else
-                        ShowMessagePanelAsync(ex.ToString(), "Błąd", ImageEnum.Error);
+                        ShowMessagePanelAsync(ex.ToString(), "Błąd", ImageEnum.Error).Wait();
                 }
             });
         }
