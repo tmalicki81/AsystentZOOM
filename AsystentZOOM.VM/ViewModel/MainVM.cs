@@ -297,11 +297,23 @@ namespace AsystentZOOM.VM.ViewModel
                 });
 
             if (!dr) return;
+            
+            await Shutdown(true);
+        }
+
+        public async Task Shutdown(bool reset)
+        {
+            // Zapisz pliki
             if (string.IsNullOrEmpty(SingletonVMFactory.Meeting.LocalFileName))
                 Meeting.SaveTempFile();
             else
                 await Meeting.SaveLocalFile(true);
-            Process.Start("AsystentZOOM.GUI.exe", $@"""{SingletonVMFactory.Meeting.LocalFileName}""");
+            
+            // Otwórz nową instancję aplikacji
+            if(reset)
+                Process.Start("AsystentZOOM.GUI.exe", $@"""{SingletonVMFactory.Meeting.LocalFileName}""");
+
+            // Zamknij tę instancje aplikacji
             Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
             Application.Current.Shutdown();
         }

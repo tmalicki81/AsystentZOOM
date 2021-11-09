@@ -420,6 +420,7 @@ namespace AsystentZOOM.VM.ViewModel
 
         private async void SyncAllRecordings()
         {
+            throw new Exception("Sztuczny błąd");
             try
             {
                 using (var progress = new ShowProgressInfo())

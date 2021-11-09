@@ -189,7 +189,13 @@ namespace AsystentZOOM.GUI
             }
             else
             {
-                Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+                try
+                {
+                    Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+                }
+                catch (InvalidOperationException)
+                { 
+                }
                 Application.Current.Shutdown();
             }
         }
