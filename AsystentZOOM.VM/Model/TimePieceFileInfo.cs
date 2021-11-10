@@ -37,19 +37,24 @@ namespace AsystentZOOM.VM.Model
                 if (!value)
                     ChangeFileExtension(FileExtensionEnum.TIM);
                 else
-                    ChangeFileExtension(FileExtensionEnum.TMP_TIM);
+                {
+                    if (ChangeFileExtension(FileExtensionEnum.TMP_TIM))
+                    {
+                        File.SetAttributes(FileName, FileAttributes.Hidden);
+                    }
+                }
                 base.IsTemporaryFile = value;
             }
         }
 
-        private void ChangeFileExtension(FileExtensionEnum fileExtension)
+        private bool ChangeFileExtension(FileExtensionEnum fileExtension)
         {
             if (FileExtension == fileExtension)
-                return;
+                return false;
             
             string fileExtensionName = Enum.GetName(typeof(FileExtensionEnum), fileExtension).ToLower();
             string newFileName = Path.ChangeExtension(FileName, fileExtensionName);
-            
+            bool changed = false;
             if (newFileName != FileName)
             {
                 var serializer = new CustomXmlSerializer(Content.GetType());
@@ -63,8 +68,11 @@ namespace AsystentZOOM.VM.Model
                 }
                 local.Delete(FileName);
                 FileName = newFileName;
+                changed = true;
             }
             FileExtension = fileExtension;
+
+            return changed;
         }
 
         public override void FillMetadata()

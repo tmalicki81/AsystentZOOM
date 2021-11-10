@@ -153,6 +153,7 @@ namespace AsystentZOOM.VM.ViewModel
                     xmlSerializer.Serialize(memStream, timePieceVM);
                     timePieceRepository.SaveFile(memStream, timePieceFileName);
                 }
+                File.SetAttributes(Path.Combine(timePieceRepository.RootDirectory, timePieceFileName), FileAttributes.Hidden);
                 var firstPoint = new MeetingPointVM
                 {
                     Duration = TimeSpan.FromMinutes(30),
@@ -350,7 +351,6 @@ namespace AsystentZOOM.VM.ViewModel
             if (!string.IsNullOrEmpty(LocalFileName))
             {
                 SaveMeetingDocument(LocalFileName);
-                SendFileToCloud(LocalFileName);
             }
         }
 
@@ -755,6 +755,7 @@ namespace AsystentZOOM.VM.ViewModel
             string tmpMeetingFile = $"{location}\\{shortFileName}.{extension}";
             
             SaveMeetingDocument(tmpMeetingFile);
+            File.SetAttributes(tmpMeetingFile, FileAttributes.Hidden);
         }
 
         /// <summary>
@@ -763,6 +764,8 @@ namespace AsystentZOOM.VM.ViewModel
         /// <param name="fileName">Pełna nazwa zapisywanego pliku</param>
         private void SaveMeetingDocument(string fileName)
         {
+            var fileExtension = BaseMediaFileInfo.GetFileExtensionConfig(fileName).FileExtension;
+
             lock (_meetingsSyncLocker)
             {
                 _watcher_Dispose();
@@ -775,19 +778,16 @@ namespace AsystentZOOM.VM.ViewModel
                 {
                     xmlSerializer.Serialize(fileStream, this);
                 }
-               
-                //var local = MediaLocalFileRepositoryFactory.Meetings;
-                //var remote = MediaFtpFileRepositoryFactory.Meetings;
-                //var filePath = new string[] { PathHelper.GetShortFileName(fileName, '\\') };
-                //local.PushToTarget(remote, filePath);
-
                 LocalFileName = fileName;
                 _warcher_Create();
             }
 
-            // Zapisz plik w chmurze
-            string shortFileName = PathHelper.GetShortFileName(fileName, '\\');
-            SendFileToCloud(shortFileName);
+            if (fileExtension == FileExtensionEnum.MEETING)
+            {
+                // Zapisz plik w chmurze
+                string shortFileName = PathHelper.GetShortFileName(fileName, '\\');
+                SendFileToCloud(shortFileName);
+            }
 
             // Resetuj zmiany
             _isChanged = false;
@@ -796,7 +796,6 @@ namespace AsystentZOOM.VM.ViewModel
         private void SendFileToCloud(string fileName)
         {
             var meetingExConfig = BaseMediaFileInfo.GetFileExtensionConfig(fileName);
-
 
             lock (_meetingsSyncLocker)
             {

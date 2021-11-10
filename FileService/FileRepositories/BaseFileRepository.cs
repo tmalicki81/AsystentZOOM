@@ -316,6 +316,7 @@ namespace FileService.FileRepositories
             // oraz te, które mają nieobsługiwane rozszerzenie
             var tmpPushedFiles = pushedFiles;
             List<FileMetadata> filesToPush = sourceFileList
+                .Where(sourceFile => sourceFile != null)
                 .Where(sourceFile => // pomiń backup
                                      sourceFile.FilePath.FirstOrDefault() != BackupDirectory &&
                                      // pomiń pliki, które już zsynchronizowano
