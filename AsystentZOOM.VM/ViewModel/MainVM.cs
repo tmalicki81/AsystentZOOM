@@ -312,6 +312,9 @@ namespace AsystentZOOM.VM.ViewModel
             else if (reset)
                 Meeting.SaveTempFile();
 
+            // Zapisz wszystkie ustawienia aplikacji
+            await Task.Run(SingletonVMFactory.DisposeAllSingletons);
+
             if (reset)
                 // Otwórz nową instancję aplikacji
                 Process.Start("AsystentZOOM.GUI.exe", $@"""{SingletonVMFactory.Meeting.LocalFileName}""");

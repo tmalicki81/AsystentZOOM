@@ -210,7 +210,10 @@ namespace AsystentZOOM.VM.ViewModel
         private static readonly object _meetingsSyncLocker = new object();
         private static void _timer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            if (string.IsNullOrEmpty(SingletonVMFactory.Meeting.LocalFileName))
+            string localFileName = SingletonVMFactory.Meeting.LocalFileName;
+
+            if (string.IsNullOrEmpty(localFileName) ||
+                BaseMediaFileInfo.GetFileExtensionConfig(localFileName).FileExtension != FileExtensionEnum.MEETING)
                 return;
 
             _timer.Stop();
@@ -220,7 +223,7 @@ namespace AsystentZOOM.VM.ViewModel
                 {
                     var local = MediaLocalFileRepositoryFactory.Meetings;
                     var remote = MediaFtpFileRepositoryFactory.Meetings;
-                    var filePath = new string[] { PathHelper.GetShortFileName(SingletonVMFactory.Meeting.LocalFileName, '\\') };
+                    var filePath = new string[] { PathHelper.GetShortFileName(localFileName, '\\') };
                     lock (_meetingsSyncLocker)
                     {
                         remote.PushToTarget(local, filePath);
@@ -570,7 +573,11 @@ namespace AsystentZOOM.VM.ViewModel
                         lock (_meetingsSyncLocker)
                         {
                             System.Threading.Thread.Sleep(5000);
-                            local.Synchronize(remote, new string[] { shortFileName });
+                            var c = BaseMediaFileInfo.GetFileExtensionConfig(shortFileName);
+                            if (c.FileExtension == FileExtensionEnum.MEETING)
+                            {
+                                local.Synchronize(remote, new string[] { shortFileName });
+                            }
                         }
                     });
 
@@ -650,12 +657,17 @@ namespace AsystentZOOM.VM.ViewModel
             if (!Directory.Exists(IoConsts.InitialDirectory))
                 Directory.CreateDirectory(IoConsts.InitialDirectory);
 
+            bool isTempMeetingDocument = PathHelper.GetFileExtension(LocalFileName) == nameof(FileExtensionEnum.TMP_MEETING);
             string fileName;
-            if (string.IsNullOrEmpty(LocalFileName) || saveAs)
+            if (saveAs || 
+                string.IsNullOrEmpty(LocalFileName) ||
+                isTempMeetingDocument)
             {
-                var fileNames = !string.IsNullOrEmpty(LocalFileName) && 
-                                PathHelper.GetFileExtension(LocalFileName) != nameof(FileExtensionEnum.TMP_MEETING)
-                    ? new string[] { LocalFileName }
+                var fileNames = !string.IsNullOrEmpty(LocalFileName)
+                    ? new string[] 
+                        { 
+                            Path.ChangeExtension(LocalFileName, nameof(FileExtensionEnum.MEETING).ToLower()) 
+                        }
                     : new string[] { };
 
                 string dialogTitle = "Zapisanie dokumentu ze spotkaniem" + (saveAs ? " jako..." : null);
@@ -737,7 +749,11 @@ namespace AsystentZOOM.VM.ViewModel
         /// </summary>
         public void SaveTempFile()
         {
-            string tmpMeetingFile = Path.Combine(MediaLocalFileRepositoryFactory.Meetings.RootDirectory, $"{InstanceId}.tmp_Meeting");
+            string location = MediaLocalFileRepositoryFactory.Meetings.RootDirectory;
+            string shortFileName = PathHelper.NormalizeToFileName(MeetingTitle);
+            string extension = nameof(FileExtensionEnum.TMP_MEETING).ToLower();
+            string tmpMeetingFile = $"{location}\\{shortFileName}.{extension}";
+            
             SaveMeetingDocument(tmpMeetingFile);
         }
 

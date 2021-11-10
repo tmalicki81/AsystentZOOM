@@ -193,10 +193,10 @@ namespace AsystentZOOM.GUI
                 {
                     Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
                 }
-                catch (InvalidOperationException)
-                { 
-                }
-                await ViewModel.Shutdown(false);
+                catch (InvalidOperationException){ }
+                
+                // Zamknij tę instancje aplikacji
+                Application.Current.Shutdown();
             }
         }
 
@@ -211,12 +211,7 @@ namespace AsystentZOOM.GUI
                 });
             if (dr)
             {
-                await Task.Run(SingletonVMFactory.DisposeAllSingletons);
-                Dispatcher.Invoke(() =>
-                {
-                    Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
-                    Close();
-                });
+                await ViewModel.Shutdown(false);
             }
         }
 
@@ -225,7 +220,14 @@ namespace AsystentZOOM.GUI
             base.OnClosed(e);
             _mainOutputWindow.Close();
             SingletonVMFactory.SaveAllSingletons();
-            ViewModel.Shutdown(false).Wait();
+
+            // Zamknij tę instancje aplikacji
+            try
+            {
+                Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+            }
+            catch (InvalidOperationException) { }
+            Application.Current.Shutdown();
         }
     }
 }
