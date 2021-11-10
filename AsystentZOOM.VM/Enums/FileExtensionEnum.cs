@@ -14,6 +14,13 @@ namespace AsystentZOOM.VM.Enums
         MEETING,
 
         [FileExtensionConfig(
+            "TMP_MEETING",
+            null,
+            typeof(MeetingsMediaLocalFileRepository),
+            typeof(MeetingsMediaFtpFileService))]
+        TMP_MEETING,
+
+        [FileExtensionConfig(
             "MP4",
             typeof(VideoFileInfo),
             typeof(VideosMediaLocalFileRepository),
@@ -26,6 +33,13 @@ namespace AsystentZOOM.VM.Enums
             typeof(TimePieceMediaLocalFileRepository),
             typeof(TimePieceMediaFtpFileService))]
         TIM,
+
+        [FileExtensionConfig(
+            "TMP_TIM",
+            typeof(TimePieceFileInfo),
+            typeof(TimePieceMediaLocalFileRepository),
+            typeof(TimePieceMediaFtpFileService))]
+        TMP_TIM,
 
         [FileExtensionConfig(
             "MP3",

@@ -1,11 +1,14 @@
 ﻿using AsystentZOOM.VM.Common;
 using AsystentZOOM.VM.Common.Dialog;
+using AsystentZOOM.VM.Enums;
+using AsystentZOOM.VM.FileRepositories;
 using AsystentZOOM.VM.Interfaces;
 using AsystentZOOM.VM.Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
@@ -288,7 +291,7 @@ namespace AsystentZOOM.VM.ViewModel
 
         private async void ResetApplicationExecute()
         {
-            bool dr = await DialogHelper.ShowMessagePanelAsync(
+            bool dr = await DialogHelper.ShowMessageBoxAsync(
                 "Czy zresetować aplikację?", "Reset aplikacji", ImageEnum.Question, false,
                 new MsgBoxButtonVM<bool>[]
                 {
@@ -304,17 +307,32 @@ namespace AsystentZOOM.VM.ViewModel
         public async Task Shutdown(bool reset)
         {
             // Zapisz pliki
-            if (string.IsNullOrEmpty(SingletonVMFactory.Meeting.LocalFileName))
-                Meeting.SaveTempFile();
-            else
+            if (!string.IsNullOrEmpty(SingletonVMFactory.Meeting.LocalFileName))
                 await Meeting.SaveLocalFile(true);
-            
-            // Otwórz nową instancję aplikacji
-            if(reset)
+            else if (reset)
+                Meeting.SaveTempFile();
+
+            if (reset)
+                // Otwórz nową instancję aplikacji
                 Process.Start("AsystentZOOM.GUI.exe", $@"""{SingletonVMFactory.Meeting.LocalFileName}""");
+            else
+            {
+                try
+                {
+                    List<string> filetToDelete = new();
+                    filetToDelete.AddRange(Directory.GetFiles(MediaLocalFileRepositoryFactory.Meetings.RootDirectory, $"*.{nameof(FileExtensionEnum.TMP_MEETING)}"));
+                    filetToDelete.AddRange(Directory.GetFiles(MediaLocalFileRepositoryFactory.TimePiece.RootDirectory, $"*.{nameof(FileExtensionEnum.TMP_TIM)}"));
+                    filetToDelete.ForEach(f => File.Delete(f));
+                }
+                catch { }
+            }
 
             // Zamknij tę instancje aplikacji
-            Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+            try
+            {
+                Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+            }
+            catch (InvalidOperationException) { }
             Application.Current.Shutdown();
         }
 
@@ -361,7 +379,7 @@ namespace AsystentZOOM.VM.ViewModel
 
         private async void NewMeetingDocumentExecute()
         {
-            bool result = await DialogHelper.ShowMessagePanelAsync(
+            bool result = await DialogHelper.ShowMessageBoxAsync(
                 "Czy utworzyć nowy dokument spotkania?", "Nowy dokument",
                 ImageEnum.Question, false,
                 new MsgBoxButtonVM<bool>[]

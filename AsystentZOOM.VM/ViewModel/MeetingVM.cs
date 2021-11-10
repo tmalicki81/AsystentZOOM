@@ -45,7 +45,7 @@ namespace AsystentZOOM.VM.ViewModel
         void AudioRecording_OnCommandExecuted(object sender, EventArgs<IRelayCommand> e);
         string WebAddress { get; set; }
         void ClearLocalFileName();
-        void DownloadAndFillMetadata(IProgressInfoVM progress);
+        Task DownloadAndFillMetadata(IProgressInfoVM progress);
         Task OpenFromLocal(string fileName);
         Task SaveLocalFile(bool force);
         void SaveTempFile();
@@ -110,8 +110,6 @@ namespace AsystentZOOM.VM.ViewModel
             TryRegisterSnapshot(description, false);
         }
 
-        private List<string> _timePiecesToDeleteWhenExitWithoutSave = new();
-
         public static string StartupFileName;
 
         public static IMeetingVM Empty
@@ -149,8 +147,7 @@ namespace AsystentZOOM.VM.ViewModel
                 };
                 var xmlSerializer = new CustomXmlSerializer(timePieceVM.GetType());
                 var timePieceRepository = MediaLocalFileRepositoryFactory.TimePiece;
-                string timePieceFileName = $"{DateTime.Now:yyyy-MM-dd__HH_mm_ss}__{PathHelper.NormalizeToFileName(meeting.MeetingTitle)}.tim";
-                meeting._timePiecesToDeleteWhenExitWithoutSave.Add(timePieceFileName);
+                string timePieceFileName = $"{DateTime.Now:yyyy-MM-dd__HH_mm_ss}__{PathHelper.NormalizeToFileName(meeting.MeetingTitle)}.tmp_tim";
                 using (Stream memStream = new MemoryStream())
                 {
                     xmlSerializer.Serialize(memStream, timePieceVM);
@@ -166,6 +163,7 @@ namespace AsystentZOOM.VM.ViewModel
                 meeting.MeetingPointList.Add(firstPoint);
                 var timePieceFileInfo = BaseMediaFileInfo.Factory.Create(firstPoint, timePieceFileName, string.Empty);
                 timePieceFileInfo.Title = $"Spotkanie o {meetingBeginTimespan.ToString(timePieceVM.TimerFormat)}";
+                timePieceFileInfo.IsTemporaryFile = true;
                 firstPoint.Sources.Add(timePieceFileInfo);
 
                 var pointParemeters = new ParametersCollectionVM();
@@ -196,7 +194,7 @@ namespace AsystentZOOM.VM.ViewModel
             string shortFileName = PathHelper.GetShortFileName(LocalFileName, '\\');
             if (!force)
             {
-                bool dr = await DialogHelper.ShowMessagePanelAsync(
+                bool dr = await DialogHelper.ShowMessageBoxAsync(
                     $"Czy zapisać plik {shortFileName}?", "Zapisywanie pliku", ImageEnum.Question, false,
                     new MsgBoxButtonVM<bool>[]
                     {
@@ -357,7 +355,7 @@ namespace AsystentZOOM.VM.ViewModel
         {
             if (_isChanged)
             {
-                bool dr = DialogHelper.ShowMessagePanelAsync(
+                bool dr = DialogHelper.ShowMessageBoxAsync(
                     $"Czy zapisać plik przed zamknięciem aplikacji?", "Zapisywanie pliku",
                     ImageEnum.Question, false,
                     new MsgBoxButtonVM<bool>[]
@@ -375,22 +373,7 @@ namespace AsystentZOOM.VM.ViewModel
 
             foreach (var meetingPoint in MeetingPointList)
                 meetingPoint.Dispose();
-
-            if (string.IsNullOrEmpty(LocalFileName))
-            {
-                var local = MediaLocalFileRepositoryFactory.TimePiece;
-                var cloud = MediaFtpFileRepositoryFactory.TimePiece;
-
-                foreach (string f in _timePiecesToDeleteWhenExitWithoutSave)
-                {
-                    try
-                    {
-                        local.Delete(f);
-                        cloud.Delete(f);
-                    }
-                    catch { }
-                }
-            }
+            
             base.Dispose();
         }
 
@@ -410,7 +393,7 @@ namespace AsystentZOOM.VM.ViewModel
             }
             catch (Exception ex)
             {
-                await DialogHelper.ShowMessagePanelAsync(ex.ToString(), "Błąd", ImageEnum.Error);
+                HandleException(ex);
             }
         }
 
@@ -430,7 +413,7 @@ namespace AsystentZOOM.VM.ViewModel
             }
             catch (Exception ex)
             {
-                await DialogHelper.ShowMessagePanelAsync(ex.ToString(), "Błąd", ImageEnum.Error);
+                await DialogHelper.ShowMessageBoxAsync(ex.ToString(), "Błąd", ImageEnum.Error);
             }
         }
 
@@ -504,8 +487,9 @@ namespace AsystentZOOM.VM.ViewModel
         public IRelayCommand OpenFromLocalCommand
             => _openFromLocalCommand ??= new RelayCommand(OpenFromLocal);
 
-        public void DownloadAndFillMetadata(IProgressInfoVM progress)
+        public async Task DownloadAndFillMetadata(IProgressInfoVM progress)
         {
+            await Task.Delay(5000);
             _bytesDownloaded = 0;
             _bytesToDownload = MeetingPointList.Sum(x => x.Sources.Sum(u => u.GetBytesToDownload()));
 
@@ -571,54 +555,58 @@ namespace AsystentZOOM.VM.ViewModel
             LocalFileName = fileName;
             _warcher_Create();
             string shortFileName = PathHelper.GetShortFileName(fileName, '\\');
-            await DialogHelper.RunAsync($"{shortFileName}..", true, "Ładowanie ", (p) =>
+            using (var p = new ShowProgressInfo($"{shortFileName}..", true, "Ładowanie "))
             {
                 _timer.Stop();
                 p.TaskName = "Zwalnianie blokady";
-                lock (_meetingsSyncLocker)
+
+                try
                 {
-                    try
+                    p.TaskName = "Synchronizacja pliku";
+                    var local = MediaLocalFileRepositoryFactory.Meetings;
+                    var remote = MediaFtpFileRepositoryFactory.Meetings;
+                    await Task.Run(() =>
                     {
-                        p.TaskName = "Synchronizacja pliku";
-                        var local = MediaLocalFileRepositoryFactory.Meetings;
-                        var remote = MediaFtpFileRepositoryFactory.Meetings;
-                        string shortFileName = PathHelper.GetShortFileName(fileName, '\\');
-                        local.Synchronize(remote, new string[] { shortFileName });
-
-                        p.TaskName = "Otwieranie pliku";
-                        var xmlSerializer = new CustomXmlSerializer(GetType());
-                        using (var file = File.OpenRead(fileName))
+                        lock (_meetingsSyncLocker)
                         {
-                            var source = (MeetingVM)xmlSerializer.Deserialize(file);
-                            var target = SingletonVMFactory.Meeting;
+                            System.Threading.Thread.Sleep(5000);
+                            local.Synchronize(remote, new string[] { shortFileName });
+                        }
+                    });
 
-                            p.TaskName = "Szukanie różnic";
-                            MainVM.Dispatcher.Invoke(() =>
-                            {
-                                if (source.InstanceId == target.InstanceId)
-                                    SingletonVMFactory.CopyValuesWhenDifferent(source, ref target);
-                                else
-                                    SingletonVMFactory.SetSingletonValues(source);
-                            });
-                            target.AudioRecording.ExecuteRequests();
-                            foreach (var meetingPoint in target.MeetingPointList)
-                            {
-                                meetingPoint.AudioRecording.ExecuteRequests();
-                            }
+                    p.TaskName = "Otwieranie pliku";
+                    var xmlSerializer = new CustomXmlSerializer(GetType());
+                    using (var file = File.OpenRead(fileName))
+                    {
+                        var source = (MeetingVM)xmlSerializer.Deserialize(file);
+                        var target = SingletonVMFactory.Meeting;
+
+                        p.TaskName = "Szukanie różnic";
+                        MainVM.Dispatcher.Invoke(() =>
+                        {
+                            if (source.InstanceId == target.InstanceId)
+                                SingletonVMFactory.CopyValuesWhenDifferent(source, ref target);
+                            else
+                                SingletonVMFactory.SetSingletonValues(source);
+                        });
+                        target.AudioRecording.ExecuteRequests();
+                        foreach (var meetingPoint in target.MeetingPointList)
+                        {
+                            meetingPoint.AudioRecording.ExecuteRequests();
                         }
                     }
-                    finally
-                    {
-                        _timer.Start();
-                        DialogHelper.ShowMessageBar($"Załadowano dokument {shortFileName}");
-                    }
+                }
+                finally
+                {
+                    _timer.Start();
+                    DialogHelper.ShowMessageBar($"Załadowano dokument {shortFileName}");
                 }
                 p.TaskName = "Pobieranie metadanych";
-                DownloadAndFillMetadata(p);
+                await DownloadAndFillMetadata(p);
                 ClearSnapshots();
                 TryRegisterSnapshot($"Załadowano dokument {shortFileName}", true);
                 _isChanged = false;
-            });
+            }
         }
 
         private void _watcher_Dispose()
@@ -665,7 +653,8 @@ namespace AsystentZOOM.VM.ViewModel
             string fileName;
             if (string.IsNullOrEmpty(LocalFileName) || saveAs)
             {
-                var fileNames = !string.IsNullOrEmpty(LocalFileName)
+                var fileNames = !string.IsNullOrEmpty(LocalFileName) && 
+                                PathHelper.GetFileExtension(LocalFileName) != nameof(FileExtensionEnum.TMP_MEETING)
                     ? new string[] { LocalFileName }
                     : new string[] { };
 
@@ -679,6 +668,13 @@ namespace AsystentZOOM.VM.ViewModel
             {
                 fileName = LocalFileName;
             }
+
+            // Jeśli plik jest plikiem tymczasowym, zmień go na zwykły
+            foreach (var meetingPoint in MeetingPointList)
+                foreach (var source in meetingPoint.Sources)
+                    source.IsTemporaryFile = false;
+
+            // Lista multimediów do wysłania do chmury
             var sourcesToSend = new List<IBaseMediaFileInfo>();
             foreach (var meetingPoint in MeetingPointList)
                 sourcesToSend.AddRange(meetingPoint.Sources.Where(source => string.IsNullOrEmpty(source.WebAddress)));
@@ -687,7 +683,7 @@ namespace AsystentZOOM.VM.ViewModel
             {
                 if (sourcesToSend.Any())
                 {
-                    bool dr = DialogHelper.ShowMessagePanelAsync(
+                    bool dr = DialogHelper.ShowMessageBoxAsync(
                         $"Czy wysłać niewysłane multimedia ({sourcesToSend.Count()}) do chmury?",
                         "Wysyłanie lokalnych multimediów do chmury",
                         ImageEnum.Question, false,
@@ -741,7 +737,7 @@ namespace AsystentZOOM.VM.ViewModel
         /// </summary>
         public void SaveTempFile()
         {
-            string tmpMeetingFile = Path.Combine(MediaLocalFileRepositoryFactory.Meetings.RootDirectory, $"{InstanceId}.meeting");
+            string tmpMeetingFile = Path.Combine(MediaLocalFileRepositoryFactory.Meetings.RootDirectory, $"{InstanceId}.tmp_Meeting");
             SaveMeetingDocument(tmpMeetingFile);
         }
 

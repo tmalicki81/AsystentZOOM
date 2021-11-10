@@ -23,7 +23,7 @@ namespace AsystentZOOM.VM.Common.Dialog
         /// <param name="icon">Ikona</param>
         /// <param name="defaultResult">Domyślna odpowiedź</param>
         /// <returns>Odpowiedź uzytkownika</returns>
-        public static async Task<T> ShowMessagePanelAsync<T>(
+        public static async Task<T> ShowMessageBoxAsync<T>(
             string messageBoxText, string caption, ImageEnum icon,
             T defaultButton, IEnumerable<MsgBoxButtonVM<T>> buttons)
         {
@@ -44,9 +44,9 @@ namespace AsystentZOOM.VM.Common.Dialog
         /// <param name="messageBoxText">Treść wiadomości</param>
         /// <param name="caption">Temat wiaddomości</param>
         /// <param name="icon">Ikona</param>
-        public static async Task ShowMessagePanelAsync(string messageBoxText, string caption, ImageEnum icon)
+        public static async Task ShowMessageBoxAsync(string messageBoxText, string caption, ImageEnum icon)
         {
-            await ShowMessagePanelAsync(
+            await ShowMessageBoxAsync(
                 messageBoxText, caption, icon, true,
                 new MsgBoxButtonVM<bool>[] { new(true, "OK", ImageEnum.Ok) });
         }
@@ -187,7 +187,7 @@ namespace AsystentZOOM.VM.Common.Dialog
                 if (exception != null)
                     exception(ex);
                 else
-                    await ShowMessagePanelAsync(ex.ToString(), "Błąd", ImageEnum.Error);
+                    await ShowMessageBoxAsync(ex.ToString(), "Błąd", ImageEnum.Error);
             }
         }
     }

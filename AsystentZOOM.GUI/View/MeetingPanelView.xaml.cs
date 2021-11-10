@@ -6,6 +6,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using AsystentZOOM.VM.Common;
+using AsystentZOOM.VM.Model;
+using System.Threading.Tasks;
+using System;
 
 namespace AsystentZOOM.GUI.View
 {
@@ -41,12 +44,25 @@ namespace AsystentZOOM.GUI.View
         private async void MeetingPanelView_Loaded(object sender, RoutedEventArgs e)
         {
             if (_isLoaded) return;
-            if (!string.IsNullOrEmpty(MeetingVM.StartupFileName))
-                await SingletonVMFactory.Meeting.OpenFromLocal(MeetingVM.StartupFileName);
-            else
+
+            try
             {
-                SingletonVMFactory.SetSingletonValues(MeetingVM.Empty);
-                DialogHelper.RunAsync("Pobieranie plików z chmury", false, "Inicjalizacja", ViewModel.DownloadAndFillMetadata);
+                if (!string.IsNullOrEmpty(MeetingVM.StartupFileName))
+                {
+                    await SingletonVMFactory.Meeting.OpenFromLocal(MeetingVM.StartupFileName);
+                }
+                else
+                {
+                    SingletonVMFactory.SetSingletonValues(MeetingVM.Empty);
+                    using (var progress = new ShowProgressInfo("Pobieranie plików z chmury", false, "Inicjalizacja"))
+                    {
+                        await ViewModel.DownloadAndFillMetadata(progress);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ViewModel.HandleException(ex);
             }
             _isLoaded = true;
         }

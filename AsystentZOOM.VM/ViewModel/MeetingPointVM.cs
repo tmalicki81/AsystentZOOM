@@ -341,7 +341,7 @@ namespace AsystentZOOM.VM.ViewModel
 
         private async void ClearSources()
         {
-            bool dr = await DialogHelper.ShowMessagePanelAsync(
+            bool dr = await DialogHelper.ShowMessageBoxAsync(
                 "Czy na pewno wyczyścić playlistę?", "Playlista", 
                 ImageEnum.Question, false, 
                 new MsgBoxButtonVM<bool>[] 

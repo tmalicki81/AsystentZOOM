@@ -178,7 +178,7 @@ namespace AsystentZOOM.Plugins.JW.ViewModel
 
             MainVM.Dispatcher.Invoke(() => SingletonVMFactory.SetSingletonValues(meeting));
 
-            meeting.DownloadAndFillMetadata(progressInfo);
+            await meeting.DownloadAndFillMetadata(progressInfo);
             SingletonVMFactory.Meeting.ClearLocalFileName();
         }
     }

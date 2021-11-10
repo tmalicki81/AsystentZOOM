@@ -196,13 +196,13 @@ namespace AsystentZOOM.GUI
                 catch (InvalidOperationException)
                 { 
                 }
-                Application.Current.Shutdown();
+                await ViewModel.Shutdown(false);
             }
         }
 
         private async Task OnClosing()
         {
-            bool dr = await DialogHelper.ShowMessagePanelAsync(
+            bool dr = await DialogHelper.ShowMessageBoxAsync(
                 "Czy na pewno zamknąć aplikację?", "Asystent ZOOM", ImageEnum.Question, false,
                 new MsgBoxButtonVM<bool>[]
                 {
@@ -225,7 +225,7 @@ namespace AsystentZOOM.GUI
             base.OnClosed(e);
             _mainOutputWindow.Close();
             SingletonVMFactory.SaveAllSingletons();
-            Application.Current?.Shutdown();
+            ViewModel.Shutdown(false).Wait();
         }
     }
 }

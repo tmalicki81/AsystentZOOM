@@ -24,7 +24,7 @@ namespace AsystentZOOM.VM.Model
     {
         BitmapSource Bitmap { get; set; }
         string Description { get; set; }
-        FileExtensionEnum FileExtension { get; set; }
+        FileExtensionEnum? FileExtension { get; set; }
         string FileName { get; set; }
         bool FileNotFound { get; set; }
         bool IsPlaying { get; set; }
@@ -296,7 +296,7 @@ namespace AsystentZOOM.VM.Model
             set
             {
                 SetValue(ref _title, value, nameof(Title));
-                CallChangeToParent(this, $"Zmieniono tytuł na pliku {value}");
+                CallChangeToParent(this, $"Zmieniono tytuł pliku na {value}");
             }
         }
 
@@ -307,6 +307,13 @@ namespace AsystentZOOM.VM.Model
             set => SetValue(ref _fileName, value, nameof(FileName));
         }
 
+        private bool _isTemporaryFile;
+        public virtual bool IsTemporaryFile
+        {
+            get => _isTemporaryFile;
+            set => SetValue(ref _isTemporaryFile, value, nameof(IsTemporaryFile));
+        }
+
         [XmlIgnore]
         public bool MetadataCompleted
         {
@@ -315,8 +322,8 @@ namespace AsystentZOOM.VM.Model
         }
         private bool _metadataCompleted;
 
-        private FileExtensionEnum _fileExtension;
-        public FileExtensionEnum FileExtension
+        private FileExtensionEnum? _fileExtension;
+        public FileExtensionEnum? FileExtension
         {
             get => _fileExtension;
             set => SetValue(ref _fileExtension, value, nameof(FileExtension));

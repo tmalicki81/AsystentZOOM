@@ -54,7 +54,7 @@ namespace AsystentZOOM.GUI
         {
             return;
             e.Handled = true;
-            int dr = await DialogHelper.ShowMessagePanelAsync(
+            int dr = await DialogHelper.ShowMessageBoxAsync(
                     $"{e.Exception.Message}{Environment.NewLine}Czy skopiować treść do schowka?",
                     "Nieobsłużony błąd", ImageEnum.Error, 3,
                     new MsgBoxButtonVM<int>[]

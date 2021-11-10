@@ -1,4 +1,5 @@
 ﻿using AsystentZOOM.VM.Attributes;
+using AsystentZOOM.VM.Common.Dialog;
 using AsystentZOOM.VM.Interfaces;
 using AsystentZOOM.VM.ViewModel;
 using System;
@@ -85,6 +86,11 @@ namespace AsystentZOOM.VM.Common
 
         public Dispatcher Dispatcher
             => MainVM.Dispatcher;
+
+        public async void HandleException(Exception ex)
+        {
+            await DialogHelper.ShowMessageBoxAsync(ex.ToString(), "Błąd", ImageEnum.Error);
+        }
 
         /// <summary>
         /// Lista poleceń

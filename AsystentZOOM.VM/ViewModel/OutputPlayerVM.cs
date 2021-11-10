@@ -281,7 +281,7 @@ namespace AsystentZOOM.VM.ViewModel
         private async void DeleteBookmark()
         {
             var selectedBookmark = GetSelectedBookmark();
-            bool dr = await DialogHelper.ShowMessagePanelAsync(
+            bool dr = await DialogHelper.ShowMessageBoxAsync(
                 $"Czy usunąć zakładkę {selectedBookmark.Name}?", "Zakładki", ImageEnum.Question, false,
                 new MsgBoxButtonVM<bool>[]
                 {

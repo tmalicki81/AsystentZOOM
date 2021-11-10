@@ -221,7 +221,7 @@ namespace AsystentZOOM.VM.Common.Sortable
             {
                 Dispatcher.Invoke(() => IsSelected = true);
 
-                bool dr = await DialogHelper.ShowMessagePanelAsync(
+                bool dr = await DialogHelper.ShowMessageBoxAsync(
                     $"Czy na pewno chcesz usunąć {ItemCategory} {ItemName}?",
                     $"Usuwanie elementu {ItemName}",
                     ImageEnum.Question, false,

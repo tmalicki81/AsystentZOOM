@@ -1,4 +1,6 @@
 ﻿using AsystentZOOM.VM.Common;
+using AsystentZOOM.VM.Enums;
+using AsystentZOOM.VM.FileRepositories;
 using AsystentZOOM.VM.Interfaces;
 using AsystentZOOM.VM.ViewModel;
 using System;
@@ -21,6 +23,48 @@ namespace AsystentZOOM.VM.Model
                 stream.Position = 0;
                 return (TimePieceVM)xmlSerializer.Deserialize(stream);
             }
+        }
+
+        public override bool IsTemporaryFile 
+        { 
+            get => base.IsTemporaryFile;
+            set
+            {
+                if (base.IsTemporaryFile == value)
+                    return;
+
+                // Zmień z pliku tymczasowego na normalny
+                if (!value)
+                    ChangeFileExtension(FileExtensionEnum.TIM);
+                else
+                    ChangeFileExtension(FileExtensionEnum.TMP_TIM);
+                base.IsTemporaryFile = value;
+            }
+        }
+
+        private void ChangeFileExtension(FileExtensionEnum fileExtension)
+        {
+            if (FileExtension == fileExtension)
+                return;
+            
+            string fileExtensionName = Enum.GetName(typeof(FileExtensionEnum), fileExtension).ToLower();
+            string newFileName = Path.ChangeExtension(FileName, fileExtensionName);
+            
+            if (newFileName != FileName)
+            {
+                var serializer = new CustomXmlSerializer(Content.GetType());
+                var local = MediaLocalFileRepositoryFactory.TimePiece;
+
+                using (var stream = new MemoryStream())
+                {
+                    serializer.Serialize(stream, Content);
+                    stream.Position = 0;
+                    local.SaveFile(stream, newFileName);
+                }
+                local.Delete(FileName);
+                FileName = newFileName;
+            }
+            FileExtension = fileExtension;
         }
 
         public override void FillMetadata()
