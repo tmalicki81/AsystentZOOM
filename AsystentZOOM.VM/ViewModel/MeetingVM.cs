@@ -492,7 +492,6 @@ namespace AsystentZOOM.VM.ViewModel
 
         public async Task DownloadAndFillMetadata(IProgressInfoVM progress)
         {
-            await Task.Delay(5000);
             _bytesDownloaded = 0;
             _bytesToDownload = MeetingPointList.Sum(x => x.Sources.Sum(u => u.GetBytesToDownload()));
 

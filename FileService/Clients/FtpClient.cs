@@ -180,7 +180,13 @@ namespace FileService.Clients
         public List<FileMetadata> GetListDirectoryDetails(string subDir = "", SearchOption searchOption = SearchOption.AllDirectories)
         {
             var list = new List<FileMetadata>();
-            FillListDirectoryDetails(list, subDir, searchOption);
+            try
+            {
+                FillListDirectoryDetails(list, subDir, searchOption);
+            }
+            catch (WebException ex) when (((FtpWebResponse)ex.Response).StatusCode == FtpStatusCode.ActionNotTakenFileUnavailable)
+            {
+            }
             return list;
         }
 
