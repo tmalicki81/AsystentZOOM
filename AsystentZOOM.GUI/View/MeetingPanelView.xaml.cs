@@ -54,9 +54,9 @@ namespace AsystentZOOM.GUI.View
                 else
                 {
                     SingletonVMFactory.SetSingletonValues(MeetingVM.Empty);
-                    using (var progress = new ShowProgressInfo("Pobieranie plików z chmury", false, "Inicjalizacja"))
+                    using (var progress = new ShowProgressInfo("Pobieranie multimediów z chmury", false, "Inicjalizacja"))
                     {
-                        await ViewModel.DownloadAndFillMetadata(progress);
+                        ViewModel.DownloadAndFillMetadata(progress);
                     }
                 }
             }

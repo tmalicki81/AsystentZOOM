@@ -7,6 +7,7 @@ using JW;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace AsystentZOOM.Plugins.JW.ViewModel
 {
@@ -25,11 +26,11 @@ namespace AsystentZOOM.Plugins.JW.ViewModel
         private MeetingsAndPeoples MeetingsAndPeoples
             => _meetingsAndPeoples ??= IsolatedStorageHelper.LoadObject<MeetingsAndPeoples>();
 
-        private void SaveMeetingsAndPeoples() 
+        private void SaveMeetingsAndPeoples()
         {
             if (MeetingPointList?.Any() != true)
                 return;
-            
+
             MeetingsAndPeoples.LastUpdated = DateTime.Now;
             var selectedMonday = WeekHelper.GetDayOfWeek(MeetingDate, MeetingDayOfWeek);
             var mondayFromCache = MeetingsAndPeoples.MeetingList.FirstOrDefault(m => m.MeetingDay == selectedMonday);
@@ -75,7 +76,7 @@ namespace AsystentZOOM.Plugins.JW.ViewModel
                         Value = string.Empty
                     })
                     .ToList();
-                
+
                 var selectedMonday = WeekHelper.GetDayOfWeek(MeetingDate, MeetingDayOfWeek);
                 var mondayFromCache = MeetingsAndPeoples.MeetingList.FirstOrDefault(m => m.MeetingDay == selectedMonday);
                 if (mondayFromCache != null)
@@ -147,8 +148,8 @@ namespace AsystentZOOM.Plugins.JW.ViewModel
         private RelayCommand _openDbFileCommand;
         public RelayCommand OpenDbFileCommand
             => _openDbFileCommand ??= new RelayCommand(OpenDbFile);
-        
-        private void OpenDbFile() 
+
+        private void OpenDbFile()
         {
             IsolatedStorageHelper.SaveObject(MeetingsAndPeoples);
             IsolatedStorageHelper.OpenObject<MeetingsAndPeoples>();
@@ -158,13 +159,16 @@ namespace AsystentZOOM.Plugins.JW.ViewModel
         public RelayCommand CreateMeetingCommand
             => _createMeetingCommand ??= new RelayCommand(CreateMeeting);
 
-        private void CreateMeeting()
+        private async void CreateMeeting()
         {
             SaveMeetingsAndPeoples();
-            DialogHelper.RunAsync("Zebranie środowe", true, "Inicjalizacja", CreateMeetingAsync);
+            using (var p = new ShowProgressInfo("Zebranie środowe", true, "Inicjalizacja"))
+            {
+                await CreateMeetingAsync(p);
+            }
         }
 
-        private async void CreateMeetingAsync(IProgressInfoVM progressInfo)
+        private async Task CreateMeetingAsync(IProgressInfoVM progressInfo)
         {
             await SingletonVMFactory.Meeting.SaveLocalFile(false);
 
@@ -178,7 +182,7 @@ namespace AsystentZOOM.Plugins.JW.ViewModel
 
             MainVM.Dispatcher.Invoke(() => SingletonVMFactory.SetSingletonValues(meeting));
 
-            await meeting.DownloadAndFillMetadata(progressInfo);
+            await Task.Run(() => meeting.DownloadAndFillMetadata(progressInfo));
             SingletonVMFactory.Meeting.ClearLocalFileName();
         }
     }

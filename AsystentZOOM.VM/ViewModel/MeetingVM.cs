@@ -45,7 +45,7 @@ namespace AsystentZOOM.VM.ViewModel
         void AudioRecording_OnCommandExecuted(object sender, EventArgs<IRelayCommand> e);
         string WebAddress { get; set; }
         void ClearLocalFileName();
-        Task DownloadAndFillMetadata(IProgressInfoVM progress);
+        void DownloadAndFillMetadata(IProgressInfoVM progress);
         Task OpenFromLocal(string fileName);
         Task SaveLocalFile(bool force);
         void SaveTempFile();
@@ -490,7 +490,7 @@ namespace AsystentZOOM.VM.ViewModel
         public IRelayCommand OpenFromLocalCommand
             => _openFromLocalCommand ??= new RelayCommand(OpenFromLocal);
 
-        public async Task DownloadAndFillMetadata(IProgressInfoVM progress)
+        public void DownloadAndFillMetadata(IProgressInfoVM progress)
         {
             _bytesDownloaded = 0;
             _bytesToDownload = MeetingPointList.Sum(x => x.Sources.Sum(u => u.GetBytesToDownload()));
@@ -561,17 +561,18 @@ namespace AsystentZOOM.VM.ViewModel
             {
                 _timer.Stop();
                 p.TaskName = "Zwalnianie blokady";
+                await Task.Delay(6000);
 
                 try
                 {
                     p.TaskName = "Synchronizacja pliku";
+                    await Task.Delay(6000);
                     var local = MediaLocalFileRepositoryFactory.Meetings;
                     var remote = MediaFtpFileRepositoryFactory.Meetings;
                     await Task.Run(() =>
                     {
                         lock (_meetingsSyncLocker)
                         {
-                            System.Threading.Thread.Sleep(5000);
                             var c = BaseMediaFileInfo.GetFileExtensionConfig(shortFileName);
                             if (c.FileExtension == FileExtensionEnum.MEETING)
                             {
@@ -581,6 +582,7 @@ namespace AsystentZOOM.VM.ViewModel
                     });
 
                     p.TaskName = "Otwieranie pliku";
+                    await Task.Delay(6000);
                     var xmlSerializer = new CustomXmlSerializer(GetType());
                     using (var file = File.OpenRead(fileName))
                     {
@@ -588,6 +590,7 @@ namespace AsystentZOOM.VM.ViewModel
                         var target = SingletonVMFactory.Meeting;
 
                         p.TaskName = "Szukanie różnic";
+                        await Task.Delay(6000);
                         MainVM.Dispatcher.Invoke(() =>
                         {
                             if (source.InstanceId == target.InstanceId)
@@ -608,7 +611,8 @@ namespace AsystentZOOM.VM.ViewModel
                     DialogHelper.ShowMessageBar($"Załadowano dokument {shortFileName}");
                 }
                 p.TaskName = "Pobieranie metadanych";
-                await DownloadAndFillMetadata(p);
+                await Task.Delay(6000);
+                await Task.Run(()=> DownloadAndFillMetadata(p));
                 ClearSnapshots();
                 TryRegisterSnapshot($"Załadowano dokument {shortFileName}", true);
                 _isChanged = false;
@@ -651,21 +655,21 @@ namespace AsystentZOOM.VM.ViewModel
         public static bool SaveAs = true;
         public static bool Save = false;
 
-        private void SaveToLocal(bool saveAs)
+        private async void SaveToLocal(bool saveAs)
         {
             if (!Directory.Exists(IoConsts.InitialDirectory))
                 Directory.CreateDirectory(IoConsts.InitialDirectory);
 
             bool isTempMeetingDocument = PathHelper.GetFileExtension(LocalFileName) == nameof(FileExtensionEnum.TMP_MEETING);
             string fileName;
-            if (saveAs || 
+            if (saveAs ||
                 string.IsNullOrEmpty(LocalFileName) ||
                 isTempMeetingDocument)
             {
                 var fileNames = !string.IsNullOrEmpty(LocalFileName)
-                    ? new string[] 
-                        { 
-                            Path.ChangeExtension(LocalFileName, nameof(FileExtensionEnum.MEETING).ToLower()) 
+                    ? new string[]
+                        {
+                            Path.ChangeExtension(LocalFileName, nameof(FileExtensionEnum.MEETING).ToLower())
                         }
                     : new string[] { };
 
@@ -690,48 +694,56 @@ namespace AsystentZOOM.VM.ViewModel
             foreach (var meetingPoint in MeetingPointList)
                 sourcesToSend.AddRange(meetingPoint.Sources.Where(source => string.IsNullOrEmpty(source.WebAddress)));
 
-            DialogHelper.RunAsync("Zapisywanie spotkania", false, string.Empty, (p) =>
+            if (sourcesToSend.Any())
             {
-                if (sourcesToSend.Any())
-                {
-                    bool dr = DialogHelper.ShowMessageBoxAsync(
-                        $"Czy wysłać niewysłane multimedia ({sourcesToSend.Count()}) do chmury?",
-                        "Wysyłanie lokalnych multimediów do chmury",
-                        ImageEnum.Question, false,
-                        new MsgBoxButtonVM<bool>[]
-                        {
+                bool dr = await DialogHelper.ShowMessageBoxAsync(
+                    $"Czy wysłać niewysłane multimedia ({sourcesToSend.Count}) do chmury?",
+                    "Wysyłanie lokalnych multimediów do chmury",
+                    ImageEnum.Question, false,
+                    new MsgBoxButtonVM<bool>[]
+                    {
                             new(true,  "Tak, wyślij", ImageEnum.Yes),
                             new(false, "Nie wysyłaj", ImageEnum.No),
-                        }).Result;
+                    });
 
-                    if (dr)
+                if (dr)
+                {
+                    using (var p = new ShowProgressInfo("Wysyłanie multimediów", false, string.Empty))
                     {
-                        foreach (IBaseMediaFileInfo d in sourcesToSend)
-                        {
-                            string shortFileName = d.FileName.Split('\\').Last();
-                            var v = BaseMediaFileInfo.GetFileExtensionConfig(shortFileName);
-                            v.MediaFtpFileRepository.OnSavingFile += (s, e) => MediaFtpFileRepository_OnSavingFile(s, e, p);
-                            string[] destFilePath;
-                            try
-                            {
-                                destFilePath = v.MediaLocalFileRepository.CopyTo(v.MediaFtpFileRepository, shortFileName);
-                            }
-                            finally
-                            {
-                                v.MediaFtpFileRepository.OnSavingFile -= (s, e) => MediaFtpFileRepository_OnSavingFile(s, e, p);
-                            }
-                            string destFileName = destFilePath.Aggregate((a, b) => a + "/" + b);
-                            var sessionInfo = v.MediaFtpFileRepository.SessionInfo;
-                            MainVM.Dispatcher.Invoke(() =>
-                            {
-                                d.FileName = shortFileName;
-                                d.WebAddress = $"ftp://{sessionInfo.HostName}/{sessionInfo.RemoteDirectory}/{destFileName}";
-                            });
-                        }
+                        await Task.Run(() => SendSources(sourcesToSend, p));
                     }
                 }
-                SaveMeetingDocument(fileName);
-            });
+                using (var p = new ShowProgressInfo("Zapisywanie spotkania", false, string.Empty))
+                {
+                    SaveMeetingDocument(fileName);
+                }
+            }
+        }
+
+        private void SendSources(List<IBaseMediaFileInfo> sourcesToSend, IProgressInfoVM p)
+        {
+            foreach (IBaseMediaFileInfo d in sourcesToSend)
+            {
+                string shortFileName = d.FileName.Split('\\').Last();
+                var v = BaseMediaFileInfo.GetFileExtensionConfig(shortFileName);
+                v.MediaFtpFileRepository.OnSavingFile += (s, e) => MediaFtpFileRepository_OnSavingFile(s, e, p);
+                string[] destFilePath;
+                try
+                {
+                    destFilePath = v.MediaLocalFileRepository.CopyTo(v.MediaFtpFileRepository, shortFileName);
+                }
+                finally
+                {
+                    v.MediaFtpFileRepository.OnSavingFile -= (s, e) => MediaFtpFileRepository_OnSavingFile(s, e, p);
+                }
+                string destFileName = destFilePath.Aggregate((a, b) => a + "/" + b);
+                var sessionInfo = v.MediaFtpFileRepository.SessionInfo;
+                MainVM.Dispatcher.Invoke(() =>
+                {
+                    d.FileName = shortFileName;
+                    d.WebAddress = $"ftp://{sessionInfo.HostName}/{sessionInfo.RemoteDirectory}/{destFileName}";
+                });
+            }
         }
 
         private void AutoSave()
