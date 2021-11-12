@@ -152,41 +152,5 @@ namespace AsystentZOOM.VM.Common.Dialog
                 });
             }
         }
-
-        /// <summary>
-        /// Wykonanie asynchroniczne metody
-        /// </summary>
-        /// <param name="operationName">Nazwa operacji</param>
-        /// <param name="isIndeterminate">Czy nie można określić postępu wykonania operacji</param>
-        /// <param name="taskName">Nazwa zadania</param>
-        /// <param name="action">Metoda realizujaca operację</param>
-        /// <param name="exception">Metoda obsługująca wyjątek</param>
-        public static async Task RunAsync(
-            string operationName, bool isIndeterminate, string taskName,
-            Action<IProgressInfoVM> action,
-            Action<Exception> exception = null)
-        {
-            var progress = new ProgressInfoVM
-            {
-                PercentCompletted = 0,
-                IsIndeterminate = isIndeterminate,
-                OperationName = operationName,
-                TaskName = taskName
-            };
-            EventAggregator.Publish("ProgressInfo_Show", progress);
-            try
-            {
-                await Task.Run(() => action(progress));
-                EventAggregator.Publish("ProgressInfo_Hide", progress);
-            }
-            catch (Exception ex)
-            {
-                EventAggregator.Publish("ProgressInfo_Hide", progress);
-                if (exception != null)
-                    exception(ex);
-                else
-                    await ShowMessageBoxAsync(ex.ToString(), "Błąd", ImageEnum.Error);
-            }
-        }
     }
 }

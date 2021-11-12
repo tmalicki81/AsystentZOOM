@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Media;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Xml.Serialization;
 
@@ -216,7 +217,7 @@ namespace AsystentZOOM.VM.Common.AudioRecording
             OnCommandExecuted?.Invoke(this, new EventArgs<IRelayCommand>(StopRecordingCommand));
         }
 
-        private void StopRecording()
+        private async void StopRecording()
         {
             RecordingTime = TimeSpan.Zero;
 
@@ -237,9 +238,9 @@ namespace AsystentZOOM.VM.Common.AudioRecording
                 .Where(f => !string.IsNullOrEmpty(f))
                 .ToArray();
 
-            DialogHelper.RunAsync("Kończenie nagrywania", true, null, (IProgressInfoVM progress) =>
+            using (var progress = new ShowProgressInfo("Kończenie nagrywania", true, null))
             {
-                string mp3FileName = MixMp3Files(progress, mp3Files);
+                string mp3FileName = await Task.Run(() => MixMp3Files(progress, mp3Files));
                 string mp3FileShortName = PathHelper.GetShortFileName(mp3FileName, '\\');
                 DialogHelper.ShowMessageBar($"Przekonwertowano plik {ShortFileName} do formatu mp3");
                 _audioCardRecorder = null;
@@ -253,13 +254,13 @@ namespace AsystentZOOM.VM.Common.AudioRecording
                 ftpRepo.OnSavingFile += (s, e) => progress.PercentCompletted = e.PercentCompleted;
                 try
                 {
-                    localRepo.CopyTo(ftpRepo, mp3FileShortName);
+                    await Task.Run(() => localRepo.CopyTo(ftpRepo, mp3FileShortName));
                 }
                 finally
                 {
                     ftpRepo.OnSavingFile -= (s, e) => progress.PercentCompletted = e.PercentCompleted;
                 }
-            });
+            }
         }
 
         /// <summary>
