@@ -173,16 +173,18 @@ namespace AsystentZOOM.Plugins.JW.ViewModel
             await SingletonVMFactory.Meeting.SaveLocalFile(false);
 
             var downloader = new WednesdayMeetingsDownloader();
-            MeetingVM meeting = downloader.CreateMeeting(
+
+            MeetingVM meeting = await Task.Run(()=>
+             downloader.CreateMeeting(
                 MeetingDate,
                 Chairman,
                 Host, 
                 CoHost,
-                PeoplesList);
+                PeoplesList));
 
             MainVM.Dispatcher.Invoke(() => SingletonVMFactory.SetSingletonValues(meeting));
 
-            await Task.Run(() => meeting.DownloadAndFillMetadata(progressInfo));
+            await meeting.DownloadAndFillMetadata(progressInfo);
             SingletonVMFactory.Meeting.ClearLocalFileName();
         }
     }

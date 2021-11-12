@@ -45,7 +45,7 @@ namespace AsystentZOOM.VM.ViewModel
         void AudioRecording_OnCommandExecuted(object sender, EventArgs<IRelayCommand> e);
         string WebAddress { get; set; }
         void ClearLocalFileName();
-        void DownloadAndFillMetadata(IProgressInfoVM progress);
+        Task DownloadAndFillMetadata(IProgressInfoVM progress);
         Task OpenFromLocal(string fileName);
         Task SaveLocalFile(bool force);
         void SaveTempFile();
@@ -490,7 +490,7 @@ namespace AsystentZOOM.VM.ViewModel
         public IRelayCommand OpenFromLocalCommand
             => _openFromLocalCommand ??= new RelayCommand(OpenFromLocal);
 
-        public void DownloadAndFillMetadata(IProgressInfoVM progress)
+        public async Task DownloadAndFillMetadata(IProgressInfoVM progress)
         {
             _bytesDownloaded = 0;
             _bytesToDownload = MeetingPointList.Sum(x => x.Sources.Sum(u => u.GetBytesToDownload()));
@@ -513,7 +513,7 @@ namespace AsystentZOOM.VM.ViewModel
                     try
                     {
                         source.OnLoadMediaFile += (s, e) => Source_OnLoadMediaFile(s, e, progress);
-                        source.CheckFileExist();
+                        await Task.Run(() => source.CheckFileExist());
                         MainVM.Dispatcher.Invoke(() =>
                         {
                             source.FillMetadata();
@@ -561,12 +561,10 @@ namespace AsystentZOOM.VM.ViewModel
             {
                 _timer.Stop();
                 p.TaskName = "Zwalnianie blokady";
-                await Task.Delay(6000);
 
                 try
                 {
                     p.TaskName = "Synchronizacja pliku";
-                    await Task.Delay(6000);
                     var local = MediaLocalFileRepositoryFactory.Meetings;
                     var remote = MediaFtpFileRepositoryFactory.Meetings;
                     await Task.Run(() =>
@@ -582,7 +580,6 @@ namespace AsystentZOOM.VM.ViewModel
                     });
 
                     p.TaskName = "Otwieranie pliku";
-                    await Task.Delay(6000);
                     var xmlSerializer = new CustomXmlSerializer(GetType());
                     using (var file = File.OpenRead(fileName))
                     {
@@ -611,8 +608,7 @@ namespace AsystentZOOM.VM.ViewModel
                     DialogHelper.ShowMessageBar($"Załadowano dokument {shortFileName}");
                 }
                 p.TaskName = "Pobieranie metadanych";
-                await Task.Delay(6000);
-                await Task.Run(()=> DownloadAndFillMetadata(p));
+                await DownloadAndFillMetadata(p);
                 ClearSnapshots();
                 TryRegisterSnapshot($"Załadowano dokument {shortFileName}", true);
                 _isChanged = false;

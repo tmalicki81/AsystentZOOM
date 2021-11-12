@@ -78,7 +78,7 @@ namespace JW
             return sb.ToString();
         }
 
-        public MeetingVM CreateMeeting(DateTime dateTime, string chairman, string host, string coHost, List<string> persons)
+        internal MeetingVM CreateMeeting(DateTime dateTime, string chairman, string host, string coHost, List<string> persons)
         {
             var meeting = new MeetingVM();
             meeting.WebAddress = GetAddress(dateTime);
