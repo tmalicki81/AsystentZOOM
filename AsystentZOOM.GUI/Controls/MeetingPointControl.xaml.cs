@@ -2,6 +2,7 @@
 using AsystentZOOM.VM.Interfaces;
 using AsystentZOOM.VM.ViewModel;
 using System;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -102,10 +103,24 @@ namespace AsystentZOOM.GUI.Controls
                 SortableItemControlExtended.MouseMove(sender, e);
         }
 
+        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
+
         private async void OnDrop(object sender, DragEventArgs e)
         {
-            if (!IsPrimitive) 
+            if (IsPrimitive)
+                return;
+
+            e.Handled = true;
+
+            await _semaphore.WaitAsync();
+            try
+            {
                 await SortableItemControlExtended.Drop(sender, e, ViewModel.GetDataFromFileDrop);
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
         }
 
         private void OnDragOver(object sender, DragEventArgs e)

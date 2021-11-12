@@ -180,7 +180,7 @@ namespace AsystentZOOM.VM.ViewModel
                 meeting.ClearSnapshots();
                 meeting.IsDataReady = true;
                 meeting.TryRegisterSnapshot("Utworzono nowy dokument", true);
-                meeting._isChanged = false;
+                meeting.IsChanged = false;
                 return meeting;
             }
         }
@@ -356,7 +356,7 @@ namespace AsystentZOOM.VM.ViewModel
 
         public override void Dispose()
         {
-            if (_isChanged)
+            if (IsChanged)
             {
                 bool dr = DialogHelper.ShowMessageBoxAsync(
                     $"Czy zapisać plik przed zamknięciem aplikacji?", "Zapisywanie pliku",
@@ -376,7 +376,7 @@ namespace AsystentZOOM.VM.ViewModel
 
             foreach (var meetingPoint in MeetingPointList)
                 meetingPoint.Dispose();
-            
+
             base.Dispose();
         }
 
@@ -587,7 +587,6 @@ namespace AsystentZOOM.VM.ViewModel
                         var target = SingletonVMFactory.Meeting;
 
                         p.TaskName = "Szukanie różnic";
-                        await Task.Delay(6000);
                         MainVM.Dispatcher.Invoke(() =>
                         {
                             if (source.InstanceId == target.InstanceId)
@@ -709,10 +708,10 @@ namespace AsystentZOOM.VM.ViewModel
                         await Task.Run(() => SendSources(sourcesToSend, p));
                     }
                 }
-                using (var p = new ShowProgressInfo("Zapisywanie spotkania", false, string.Empty))
-                {
-                    SaveMeetingDocument(fileName);
-                }
+            }
+            using (var p = new ShowProgressInfo("Zapisywanie spotkania", false, string.Empty))
+            {
+                SaveMeetingDocument(fileName);
             }
         }
 
@@ -760,7 +759,7 @@ namespace AsystentZOOM.VM.ViewModel
             string shortFileName = PathHelper.NormalizeToFileName(MeetingTitle);
             string extension = nameof(FileExtensionEnum.TMP_MEETING).ToLower();
             string tmpMeetingFile = $"{location}\\{shortFileName}.{extension}";
-            
+
             SaveMeetingDocument(tmpMeetingFile);
             File.SetAttributes(tmpMeetingFile, FileAttributes.Hidden);
         }
@@ -772,6 +771,7 @@ namespace AsystentZOOM.VM.ViewModel
         private void SaveMeetingDocument(string fileName)
         {
             var fileExtension = BaseMediaFileInfo.GetFileExtensionConfig(fileName).FileExtension;
+            string shortFileName = PathHelper.GetShortFileName(fileName, '\\');
 
             lock (_meetingsSyncLocker)
             {
@@ -792,12 +792,13 @@ namespace AsystentZOOM.VM.ViewModel
             if (fileExtension == FileExtensionEnum.MEETING)
             {
                 // Zapisz plik w chmurze
-                string shortFileName = PathHelper.GetShortFileName(fileName, '\\');
                 SendFileToCloud(shortFileName);
             }
 
             // Resetuj zmiany
             _isChanged = false;
+
+            DialogHelper.ShowMessageBar($"Zapisano plik {shortFileName}");
         }
 
         private void SendFileToCloud(string fileName)
@@ -818,7 +819,12 @@ namespace AsystentZOOM.VM.ViewModel
 
         private static UndoRedoManager<MeetingVM> _undoRedoManager = new();
 
-        private bool _isChanged;
+        private static bool _isChanged;
+        private bool IsChanged
+        {
+            get => _isChanged;
+            set => _isChanged = value;
+        }
 
         private void ClearSnapshots()
         {

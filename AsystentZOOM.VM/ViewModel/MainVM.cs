@@ -306,11 +306,14 @@ namespace AsystentZOOM.VM.ViewModel
 
         public async Task Shutdown(bool reset)
         {
-            // Zapisz pliki
-            if (!string.IsNullOrEmpty(SingletonVMFactory.Meeting.LocalFileName))
-                await Meeting.SaveLocalFile(true);
-            else if (reset)
-                Meeting.SaveTempFile();
+            // Jeśli reset => Zapisz pliki bez pytania
+            if (reset)
+            {
+                if (!string.IsNullOrEmpty(SingletonVMFactory.Meeting.LocalFileName))
+                    await Meeting.SaveLocalFile(true);
+                else 
+                    Meeting.SaveTempFile();
+            }
 
             // Zapisz wszystkie ustawienia aplikacji
             await Task.Run(SingletonVMFactory.DisposeAllSingletons);

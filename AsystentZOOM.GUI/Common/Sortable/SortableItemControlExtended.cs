@@ -142,36 +142,30 @@ namespace AsystentZOOM.GUI.Common.Sortable
             object sender, DragEventArgs e, 
             Func<DragEventArgs, IProgressInfoVM, ISortableItemVM[]> additionalImplementation = null)
         {
-            var progress = new ProgressInfoVM
+            e.Handled = true;
+            using (var progress = new ShowProgressInfo("Pobieranie pliku", true, null))
             {
-                IsIndeterminate = true,
-                OperationName = "Pobieranie pliku",
-                TaskName = "dsfdsgtdf"
-            };
-            EventAggregator.Publish("ProgressInfo_Show", progress);
-            try
-            {
-                var targetData = (sender as FrameworkElement)?.DataContext as ISortableItemVM;
-                ISortableItemVM[] droppedData;
-
-                droppedData = await Task.Run(() => additionalImplementation?.Invoke(e, progress));
-                if(droppedData == null)
+                try
                 {
-                    string format = e.Data.GetFormats().First();
-                    droppedData = new ISortableItemVM[] { e.Data.GetData(format) as ISortableItemVM };
-                }
-                droppedData?
-                    .Where(dd => dd != null && targetData != null && dd != targetData)
-                    .ToList()
-                    .ForEach(x => x.Sorter.DropTo(targetData));
-                e.Handled = true;
+                    var targetData = (sender as FrameworkElement)?.DataContext as ISortableItemVM;
+                    ISortableItemVM[] droppedData;
 
-                EventAggregator.Publish("ProgressInfo_Hide", progress);
-            }
-            catch (Exception ex)
-            {
-                EventAggregator.Publish("ProgressInfo_Hide", progress);
-                DialogHelper.ShowMessageBar(ex.Message, MessageBarLevelEnum.Error);
+                    droppedData = await Task.Run(() => additionalImplementation?.Invoke(e, progress));
+                    if (droppedData == null)
+                    {
+                        string format = e.Data.GetFormats().First();
+                        droppedData = new ISortableItemVM[] { e.Data.GetData(format) as ISortableItemVM };
+                    }
+                    droppedData?
+                        .Where(dd => dd != null && targetData != null && dd != targetData)
+                        .ToList()
+                        .ForEach(x => x.Sorter.DropTo(targetData));
+                }
+                catch (Exception ex)
+                {
+                    progress.Dispose();
+                    DialogHelper.ShowMessageBar(ex.Message, MessageBarLevelEnum.Error);
+                }
             }
         }
 

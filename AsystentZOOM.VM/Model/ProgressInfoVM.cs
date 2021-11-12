@@ -63,7 +63,10 @@ namespace AsystentZOOM.VM.Model
 
         public void Dispose()
         {
+            if (_isDisposed) return;
             EventAggregator.Publish("ProgressInfo_Hide", this);
+            _isDisposed = true;
         }
+        private bool _isDisposed;
     }
 }

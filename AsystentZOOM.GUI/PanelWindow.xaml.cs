@@ -97,20 +97,26 @@ namespace AsystentZOOM.GUI
 
         private void ProgressInfo_Show(IProgressInfoVM p)
         {
-            lock (_progressInfoListLocker)
+            Dispatcher.Invoke(() =>
             {
-                ViewModel.ProgressInfoList.Add(p);
-                ViewModel.IsAnyProgressInfo = true;
-            }
+                lock (_progressInfoListLocker)
+                {
+                    ViewModel.ProgressInfoList.Add(p);
+                    ViewModel.IsAnyProgressInfo = true;
+                }
+            });
         }
 
         private void ProgressInfo_Hide(IProgressInfoVM p)
         {
-            lock (_progressInfoListLocker)
+            Dispatcher.Invoke(() =>
             {
-                ViewModel.ProgressInfoList.Remove(p);
-                ViewModel.IsAnyProgressInfo = ViewModel.ProgressInfoList.Any();
-            }
+                lock (_progressInfoListLocker)
+                {
+                    ViewModel.ProgressInfoList.Remove(p);
+                    ViewModel.IsAnyProgressInfo = ViewModel.ProgressInfoList.Any();
+                }
+            });
         }
 
         private void OpenFile_Show(OpenFileDialogParameters p)
