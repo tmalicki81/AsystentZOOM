@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net5.0-windows</TargetFramework>
+    <TargetFramework>net6.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <AssemblyName>AsystentZOOM.GUI</AssemblyName>
     <ApplicationIcon>Blackvariant-Button-Ui-System-Folders-Alt-Group.ico</ApplicationIcon>
@@ -323,7 +323,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="..\BinaryBackupper\bin\Debug\net5.0\BinaryBackupper.exe -increment&#xD;&#xA;" />
+    <Exec Command="..\BinaryBackupper\bin\Debug\net6.0\BinaryBackupper.exe -increment&#xD;&#xA;" />
   </Target>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">

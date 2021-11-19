@@ -23,7 +23,7 @@ namespace BinaryHelper.FileRepositories
 #else
                         "Release",
 #endif
-                        "net5.0-windows");
+                        "net6.0-windows");
                         //"netcoreapp3.1");
     }
 }
