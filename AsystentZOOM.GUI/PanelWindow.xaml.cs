@@ -188,10 +188,10 @@ namespace AsystentZOOM.GUI
 
         protected override async void OnClosing(CancelEventArgs e)
         {
-            if (ViewModel._forceShutdown)
+            if (ViewModel.ForceShutdown)
             {
                 // Zamknij tę instancje aplikacji
-                ViewModel._forceShutdown = true;
+                ViewModel.ForceShutdown = true;
                 Application.Current.Shutdown(); 
             }
             else
@@ -223,7 +223,7 @@ namespace AsystentZOOM.GUI
             SingletonVMFactory.SaveAllSingletons();
 
             // Zamknij tę instancje aplikacji
-            ViewModel._forceShutdown = true;
+            ViewModel.ForceShutdown = true;
             Application.Current.Shutdown();
         }
     }
