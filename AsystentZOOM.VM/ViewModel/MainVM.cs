@@ -289,6 +289,11 @@ namespace AsystentZOOM.VM.ViewModel
         public RelayCommand ResetApplicationCommand
             => _resetApplicationCommand ??= new RelayCommand(ResetApplicationExecute);
 
+        /// <summary>
+        /// Czy zamknąć aplikację w trybie Force
+        /// </summary>
+        public bool _forceShutdown;
+
         private async void ResetApplicationExecute()
         {
             bool dr = await DialogHelper.ShowMessageBoxAsync(
@@ -334,11 +339,7 @@ namespace AsystentZOOM.VM.ViewModel
             }
 
             // Zamknij tę instancje aplikacji
-            try
-            {
-                Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
-            }
-            catch (InvalidOperationException) { }
+            _forceShutdown = true;
             Application.Current.Shutdown();
         }
 

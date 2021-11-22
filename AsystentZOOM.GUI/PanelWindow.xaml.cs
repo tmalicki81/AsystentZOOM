@@ -186,17 +186,12 @@ namespace AsystentZOOM.GUI
             _mainOutputWindow.Owner = _mainBorderWindow;
         }
 
-        /// <summary>
-        /// Czy zamknąć aplikację w trybie Force
-        /// </summary>
-        public bool _forceShutdown;
-
         protected override async void OnClosing(CancelEventArgs e)
         {
-            if (_forceShutdown)
+            if (ViewModel._forceShutdown)
             {
                 // Zamknij tę instancje aplikacji
-                _forceShutdown = true;
+                ViewModel._forceShutdown = true;
                 Application.Current.Shutdown(); 
             }
             else
@@ -228,7 +223,7 @@ namespace AsystentZOOM.GUI
             SingletonVMFactory.SaveAllSingletons();
 
             // Zamknij tę instancje aplikacji
-            _forceShutdown = true;
+            ViewModel._forceShutdown = true;
             Application.Current.Shutdown();
         }
     }
