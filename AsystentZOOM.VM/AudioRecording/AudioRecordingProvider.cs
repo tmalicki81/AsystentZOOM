@@ -251,14 +251,15 @@ namespace AsystentZOOM.VM.Common.AudioRecording
 
                 progress.TaskName = "Wysyłanie nagrania do chmury";
                 progress.IsIndeterminate = false;
-                ftpRepo.OnSavingFile += (s, e) => progress.PercentCompletted = e.PercentCompleted;
+                var handler = new EventHandler<SavingFileEventArgs>((s, e) => progress.PercentCompletted = e.PercentCompleted);
+                ftpRepo.OnSavingFile += handler;
                 try
                 {
                     await Task.Run(() => localRepo.CopyTo(ftpRepo, mp3FileShortName));
                 }
                 finally
                 {
-                    ftpRepo.OnSavingFile -= (s, e) => progress.PercentCompletted = e.PercentCompleted;
+                    ftpRepo.OnSavingFile -= handler;
                 }
             }
         }

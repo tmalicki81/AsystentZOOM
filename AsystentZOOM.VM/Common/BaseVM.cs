@@ -131,6 +131,8 @@ namespace AsystentZOOM.VM.Common
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
+        private Dictionary<string, NotifyCollectionChangedEventHandler> _dict = new();
+
         /// <summary>
         /// Ustawienie nowej wartości własciwosci
         /// </summary>
@@ -155,10 +157,16 @@ namespace AsystentZOOM.VM.Common
                 else
                 {
                     // Przypnij zdarzenia zmiany kolekcji
-                    if (field is INotifyCollectionChanged oldCollection)
-                        oldCollection.CollectionChanged -= (s, e) => Value_CollectionChanged(property, s, e);
+                    if (field is INotifyCollectionChanged oldCollection &&
+                        _dict.ContainsKey(propertyName))
+                    {
+                        oldCollection.CollectionChanged -= _dict[propertyName];
+                    }
                     if (value is INotifyCollectionChanged newCollection)
-                        newCollection.CollectionChanged += (s, e) => Value_CollectionChanged(property, s, e);
+                    {
+                        _dict[propertyName] = new NotifyCollectionChangedEventHandler((s, e) => Value_CollectionChanged(property, s, e));
+                        newCollection.CollectionChanged += _dict[propertyName];
+                    }
 
                     // Podmień wartości Parent
                     if (value is ICollection collection)

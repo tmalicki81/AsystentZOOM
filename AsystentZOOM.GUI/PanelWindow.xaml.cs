@@ -191,7 +191,6 @@ namespace AsystentZOOM.GUI
             if (ViewModel.ForceShutdown)
             {
                 // Zamknij tę instancje aplikacji
-                ViewModel.ForceShutdown = true;
                 Application.Current.Shutdown(); 
             }
             else

@@ -424,9 +424,11 @@ namespace AsystentZOOM.VM.ViewModel
         {
             p.OperationName = operationName;
             cloud.OnFileException += Sync_OnFileException;
-            cloud.OnPushedFile += (s, e) => p.PercentCompletted = e.PercentCompletted;
             local.OnFileException += Sync_OnFileException;
-            local.OnPushedFile += (s, e) => p.PercentCompletted = e.PercentCompletted;
+
+            var onPushedFileHandler = new EventHandler<PushedFileEventArgs>((s, e) => p.PercentCompletted = e.PercentCompletted);
+            cloud.OnPushedFile += onPushedFileHandler;
+            local.OnPushedFile += onPushedFileHandler;
 
             try
             {
@@ -441,9 +443,9 @@ namespace AsystentZOOM.VM.ViewModel
             finally
             {
                 cloud.OnFileException -= Sync_OnFileException;
-                cloud.OnPushedFile -= (s, e) => p.PercentCompletted = e.PercentCompletted;
                 local.OnFileException -= Sync_OnFileException;
-                local.OnPushedFile -= (s, e) => p.PercentCompletted = e.PercentCompletted;
+                cloud.OnPushedFile -= onPushedFileHandler;
+                local.OnPushedFile -= onPushedFileHandler;
             }
         }
 
@@ -492,40 +494,49 @@ namespace AsystentZOOM.VM.ViewModel
 
         public async Task DownloadAndFillMetadata(IProgressInfoVM progress)
         {
-            _bytesDownloaded = 0;
-            _bytesToDownload = MeetingPointList.Sum(x => x.Sources.Sum(u => u.GetBytesToDownload()));
+            var allSources = new List<IBaseMediaFileInfo>();
+            foreach (var meetingPoint in MeetingPointList)
+                foreach (var source in meetingPoint.Sources)
+                    allSources.Add(source);
 
+            progress.TaskName = "Liczenie...";
+            _bytesDownloaded = 0;
+            _bytesToDownload = allSources.Sum(u => u.GetBytesToDownload());
+
+            progress.TaskName = "Pobieranie tła...";
             if (!string.IsNullOrEmpty(HeaderImage))
             {
                 var headerImage = BaseMediaFileInfo.Factory.Create(null, HeaderImage, null);
                 headerImage.CheckFileExist();
             }
 
-            foreach (var meetingPoint in MeetingPointList)
+            progress.TaskName = "Sortowanie...";
+            MainVM.Dispatcher.Invoke(() =>
+                MeetingPointList
+                    .ToList()
+                    .ForEach(meetingPoint => meetingPoint.Sources?.FirstOrDefault()?.Sorter.Sort()));
+
+            var handler = new EventHandler<LoadingFileEventArgs>((s, e) =>
+                Source_OnLoadMediaFile(s, e, progress));
+
+            progress.TaskName = "Pobieranie multimediów...";
+            foreach (var source in allSources)
             {
-                foreach (var source in meetingPoint.Sources.ToList())
+                try
                 {
-                    if (source == meetingPoint.Sources.First())
-                        MainVM.Dispatcher.Invoke(() =>
-                        {
-                            source.Sorter.Sort();
-                        });
-                    try
-                    {
-                        source.OnLoadMediaFile += (s, e) => Source_OnLoadMediaFile(s, e, progress);
-                        await Task.Run(() => source.CheckFileExist());
-                        MainVM.Dispatcher.Invoke(() =>
-                        {
-                            source.FillMetadata();
-                        });
-                        _bytesDownloaded += source.GetBytesToDownload();
-                    }
-                    finally
-                    {
-                        source.OnLoadMediaFile -= (s, e) => Source_OnLoadMediaFile(s, e, progress);
-                    }
+                    source.OnLoadMediaFile += handler;
+                    await Task.Run(() => source.CheckFileExist());
+                    _bytesDownloaded += source.GetBytesToDownload();
+                }
+                finally
+                {
+                    source.OnLoadMediaFile -= handler;
                 }
             }
+
+            progress.TaskName = "Uzupełnianie...";
+            MainVM.Dispatcher.Invoke(() =>
+                allSources.ForEach(s => s.FillMetadata()));
         }
 
         private long _bytesToDownload;

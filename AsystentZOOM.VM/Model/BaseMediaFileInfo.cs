@@ -13,6 +13,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
@@ -105,8 +106,6 @@ namespace AsystentZOOM.VM.Model
                     .Select(x => x.GetCustomAttributes(typeof(FileExtensionConfigAttribute), false).FirstOrDefault() as FileExtensionConfigAttribute)
                     .FirstOrDefault(x => x?.Extension == fileOrExtension.Split('.').Last().ToUpper());
 
-        private bool _fileWhenNotExistsChecked;
-
         public event EventHandler<LoadingFileEventArgs> OnLoadMediaFile;
 
         private void CallOnLoadMediaFile(object sender, LoadingFileEventArgs e)
@@ -154,7 +153,7 @@ namespace AsystentZOOM.VM.Model
 
         public void CheckFileExist()
         {
-            if (_fileWhenNotExistsChecked || string.IsNullOrEmpty(FileName))
+            if (string.IsNullOrEmpty(FileName))
                 return;
 
             var fileExtensionConfig = GetFileExtensionConfig(FileName);
@@ -205,7 +204,6 @@ namespace AsystentZOOM.VM.Model
                     return;
                 }
             }
-            _fileWhenNotExistsChecked = true;
         }
 
         public virtual void FillMetadata()
@@ -415,8 +413,10 @@ namespace AsystentZOOM.VM.Model
         public RelayCommand PlayCommand
             => _playCommand ??= new RelayCommand(Play);
 
-        private void Play()
+        private async void Play()
         {
+            await Task.Run(CheckFileExist);
+
             foreach (var d in MeetingPoint.Sources)
                 d.Sorter.IsSelected = d == MeetingPoint.Source;
             MeetingPoint.Source = this;
