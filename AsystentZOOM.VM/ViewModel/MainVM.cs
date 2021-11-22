@@ -292,6 +292,7 @@ namespace AsystentZOOM.VM.ViewModel
         /// <summary>
         /// Czy zamknąć aplikację w trybie Force
         /// </summary>
+        [XmlIgnore]
         public bool _forceShutdown;
 
         private async void ResetApplicationExecute()
