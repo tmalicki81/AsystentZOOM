@@ -18,72 +18,74 @@
         <conv:SourceFileNameConverter x:Key="SourceFileNameConverter"/>
     </UserControl.Resources>
 
-    <Grid>
-        <ContentControl DataContext="{Binding Path=BackgroundMediaFile, Mode=TwoWay}">
-            <ContentControl.Style>
-                <Style TargetType="ContentControl">
-                    <Setter Property="Content">
-                        <Setter.Value>
-                            <local:BackgroundOutputView />
-                        </Setter.Value>
-                    </Setter>
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding Path=FileExtension, Mode=TwoWay}" Value="BCG">
-                            <Setter Property="Content">
-                                <Setter.Value>
-                                    <local:BackgroundOutputView DataContext="{Binding Path=Content, Mode=TwoWay}" />
-                                </Setter.Value>
-                            </Setter>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </ContentControl.Style>
-        </ContentControl>
-
-        <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-
-            <!--Tekst nad zegarem-->
-            <Label Grid.Row="0" HorizontalAlignment="Center" 
-               Foreground="{Binding Path=TextColor, Converter={StaticResource ResourceKey=SolidColorBrushConverter}}" 
-               FontSize="{Binding Path=TextFontSize}" Margin="{Binding Path=Margins}"
-               Visibility="{Binding Path=TextAbove, Converter={StaticResource ResourceKey=IsNullOrEmptyToVisibilityConverter}}">
-                <Label.Content>
-                    <TextBlock Text="{Binding Path=TextAbove}" TextWrapping="Wrap" TextAlignment="Center"/>
-                </Label.Content>
-            </Label>
-
-            <!--Zegar-->
-            <Label Grid.Row="1" HorizontalAlignment="Center"
-               FontSize="{Binding Path=ClockFontSize}" FontFamily="Arial" Margin="{Binding Path=Margins}">
-                <Label.Style>
-                    <Style TargetType="Label">
-                        <Setter Property="Foreground" Value="{Binding Path=ClockColor, Converter={StaticResource ResourceKey=SolidColorBrushConverter}}" />
+    <Viewbox Stretch="Fill">
+        <Grid>
+            <ContentControl DataContext="{Binding Path=BackgroundMediaFile, Mode=TwoWay}">
+                <ContentControl.Style>
+                    <Style TargetType="ContentControl">
+                        <Setter Property="Content">
+                            <Setter.Value>
+                                <local:BackgroundOutputView />
+                            </Setter.Value>
+                        </Setter>
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding Path=IsAlert, Mode=OneWay}" Value="True">
-                                <Setter Property="Foreground" Value="{Binding Path=ClockAlertColor, Converter={StaticResource ResourceKey=SolidColorBrushConverter}}" />
+                            <DataTrigger Binding="{Binding Path=FileExtension, Mode=TwoWay}" Value="BCG">
+                                <Setter Property="Content">
+                                    <Setter.Value>
+                                        <local:BackgroundOutputView DataContext="{Binding Path=Content, Mode=TwoWay}" />
+                                    </Setter.Value>
+                                </Setter>
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
-                </Label.Style>
-                <Label.Content>
-                    <TextBlock Text="{Binding Path=TimerValueString}"/>
-                </Label.Content>
-            </Label>
+                </ContentControl.Style>
+            </ContentControl>
 
-            <!--Tekst pod zegarem-->
-            <Label Grid.Row="2" HorizontalAlignment="Center"
+            <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Margin="50">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!--Tekst nad zegarem-->
+                <Label Grid.Row="0" HorizontalAlignment="Center" 
+               Foreground="{Binding Path=TextColor, Converter={StaticResource ResourceKey=SolidColorBrushConverter}}" 
+               FontSize="{Binding Path=TextFontSize}" Margin="{Binding Path=Margins}"
+               Visibility="{Binding Path=TextAbove, Converter={StaticResource ResourceKey=IsNullOrEmptyToVisibilityConverter}}">
+                    <Label.Content>
+                        <TextBlock Text="{Binding Path=TextAbove}" TextWrapping="Wrap" TextAlignment="Center"/>
+                    </Label.Content>
+                </Label>
+
+                <!--Zegar-->
+                <Label Grid.Row="1" HorizontalAlignment="Center"
+               FontSize="{Binding Path=ClockFontSize}" FontFamily="Arial" Margin="{Binding Path=Margins}">
+                    <Label.Style>
+                        <Style TargetType="Label">
+                            <Setter Property="Foreground" Value="{Binding Path=ClockColor, Converter={StaticResource ResourceKey=SolidColorBrushConverter}}" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=IsAlert, Mode=OneWay}" Value="True">
+                                    <Setter Property="Foreground" Value="{Binding Path=ClockAlertColor, Converter={StaticResource ResourceKey=SolidColorBrushConverter}}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Label.Style>
+                    <Label.Content>
+                        <TextBlock Text="{Binding Path=TimerValueString}"/>
+                    </Label.Content>
+                </Label>
+
+                <!--Tekst pod zegarem-->
+                <Label Grid.Row="2" HorizontalAlignment="Center"
                Foreground="{Binding Path=TextColor, Converter={StaticResource ResourceKey=SolidColorBrushConverter}}" 
                FontSize="{Binding Path=TextFontSize}" Margin="{Binding Path=Margins}" 
                Visibility="{Binding Path=TextBelow, Converter={StaticResource ResourceKey=IsNullOrEmptyToVisibilityConverter}}">
-                <Label.Content>
-                    <TextBlock Text="{Binding Path=TextBelow}" TextWrapping="Wrap" TextAlignment="Center"/>
-                </Label.Content>
-            </Label>
+                    <Label.Content>
+                        <TextBlock Text="{Binding Path=TextBelow}" TextWrapping="Wrap" TextAlignment="Center"/>
+                    </Label.Content>
+                </Label>
+            </Grid>
         </Grid>
-    </Grid>
+    </Viewbox>
 </UserControl>
