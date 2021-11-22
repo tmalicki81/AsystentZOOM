@@ -5,10 +5,7 @@ using AsystentZOOM.VM.ViewModel;
 using BinaryHelper;
 using BinaryHelper.FileRepositories;
 using System;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Windows;
 
 namespace AsystentZOOM.GUI
@@ -52,7 +49,6 @@ namespace AsystentZOOM.GUI
 
         private async void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
-            return;
             e.Handled = true;
             int dr = await DialogHelper.ShowMessageBoxAsync(
                     $"{e.Exception.Message}{Environment.NewLine}Czy skopiować treść do schowka?",
@@ -73,7 +69,7 @@ namespace AsystentZOOM.GUI
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            if (!(e.ExceptionObject is Exception ex))
+            if (e.ExceptionObject is not Exception ex)
                 return;
 
             var w = new Window
@@ -109,5 +105,10 @@ namespace AsystentZOOM.GUI
             if (dc.Result)
                 Clipboard.SetText(ex.ToString());
         }
+
+        /// <summary>
+        /// Czy zamknąć aplikację w trybie Force
+        /// </summary>
+        public static bool ForceShutdown { get; set; }
     }
 }
