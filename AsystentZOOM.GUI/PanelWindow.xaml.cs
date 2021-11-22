@@ -186,22 +186,27 @@ namespace AsystentZOOM.GUI
             _mainOutputWindow.Owner = _mainBorderWindow;
         }
 
+        /// <summary>
+        /// Czy zamknąć aplikację w trybie Force
+        /// </summary>
+        public bool _forceShutdown;
+
         protected override async void OnClosing(CancelEventArgs e)
         {
-            if (!App.ForceShutdown)
+            if (_forceShutdown)
             {
-                e.Cancel = true;
-                await OnClosing();
+                // Zamknij tę instancje aplikacji
+                _forceShutdown = true;
+                Application.Current.Shutdown(); 
             }
             else
             {
-                // Zamknij tę instancje aplikacji
-                App.ForceShutdown = true;
-                Application.Current.Shutdown();
+                e.Cancel = true;
+                await PromptOnClosingAsync();
             }
         }
 
-        private async Task OnClosing()
+        private async Task PromptOnClosingAsync()
         {
             bool dr = await DialogHelper.ShowMessageBoxAsync(
                 "Czy na pewno zamknąć aplikację?", "Asystent ZOOM", ImageEnum.Question, false,
@@ -212,7 +217,7 @@ namespace AsystentZOOM.GUI
                 });
             if (dr)
             {
-                await ViewModel.Shutdown(false);
+                await ViewModel.ShutdownAsync(false);
             }
         }
 
@@ -223,7 +228,7 @@ namespace AsystentZOOM.GUI
             SingletonVMFactory.SaveAllSingletons();
 
             // Zamknij tę instancje aplikacji
-            App.ForceShutdown = true;
+            _forceShutdown = true;
             Application.Current.Shutdown();
         }
     }

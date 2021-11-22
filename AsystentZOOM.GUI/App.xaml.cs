@@ -64,7 +64,7 @@ namespace AsystentZOOM.GUI
                 Clipboard.SetText(e.Exception.ToString());
             bool reset = dr == 3;
 
-            await SingletonVMFactory.Main.Shutdown(reset);
+            await SingletonVMFactory.Main.ShutdownAsync(reset);
         }
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -105,10 +105,5 @@ namespace AsystentZOOM.GUI
             if (dc.Result)
                 Clipboard.SetText(ex.ToString());
         }
-
-        /// <summary>
-        /// Czy zamknąć aplikację w trybie Force
-        /// </summary>
-        public static bool ForceShutdown { get; set; }
     }
 }

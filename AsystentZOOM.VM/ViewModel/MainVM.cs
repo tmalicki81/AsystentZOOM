@@ -301,10 +301,10 @@ namespace AsystentZOOM.VM.ViewModel
 
             if (!dr) return;
             
-            await Shutdown(true);
+            await ShutdownAsync(true);
         }
 
-        public async Task Shutdown(bool reset)
+        public async Task ShutdownAsync(bool reset)
         {
             // Jeśli reset => Zapisz pliki bez pytania
             if (reset)
