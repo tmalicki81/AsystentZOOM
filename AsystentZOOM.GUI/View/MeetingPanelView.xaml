@@ -287,7 +287,7 @@
             </Grid>
         </WrapPanel>
 
-        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Visible">
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Visible" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
             <ItemsControl ItemsSource="{Binding Path=MeetingPointList}" HorizontalContentAlignment="Stretch" >
                 <!--<ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>

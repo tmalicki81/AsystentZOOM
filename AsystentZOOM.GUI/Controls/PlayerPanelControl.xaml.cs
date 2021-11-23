@@ -111,6 +111,11 @@ namespace AsystentZOOM.GUI.Controls
                 tppPosition.Offset = ViewModel.Position;
             else if (e.PropertyName == nameof(ViewModel.TimeToEnd))
                 tppTimeToEnd.Offset = ViewModel.TimeToEnd;
+            //else if (e.PropertyName == nameof(ViewModel.FileInfo))
+            //{
+            //    tppFinishBefore.MaxValue = TimeSpan.MaxValue;
+            //    tppFinishBefore.Offset = ViewModel.FileInfo?.FinishBefore ?? TimeSpan.Zero;
+            //}
             else if (e.PropertyName == nameof(ViewModel.SelectionStart))
             {
                 Color rangeColor = ViewModel.GetBookmarks()?.FirstOrDefault(b => b.IsPlaying)?.Color ?? Colors.Blue;

@@ -191,9 +191,8 @@
                             <Label Grid.Row="10" Grid.Column="1" Content="Tytuł:" HorizontalAlignment="Right" />
                             <TextBox Grid.Row="10" Grid.Column="2" HorizontalAlignment="Stretch" TextWrapping="Wrap" Text="{Binding Path=FileInfo.Title, Mode=OneWay}" IsReadOnly="True" Padding="3" Margin=".5"/>
                             <Label Grid.Row="11" Grid.Column="1" Content="Zakończ przed:" HorizontalAlignment="Right" />
-                            <local:TimePiecePicker Grid.Row="11" Grid.Column="2" 
-                                                   Offset="{Binding Path=FileInfo.FinishBefore, Mode=TwoWay}"
-                                                   MaxValue="{Binding Path=Duration}"/>
+                            <local:TimePiecePicker Grid.Row="11" Grid.Column="2" x:Name="tppFinishBefore"
+                                                   Offset="{Binding Path=FileInfo.FinishBefore, Mode=TwoWay}"/>
                         </Grid>
                     </Grid>
                 </GroupBox>
