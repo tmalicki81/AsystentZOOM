@@ -454,7 +454,7 @@ namespace AsystentZOOM.VM.Model
         public RelayCommand PlayAndShareCommand
             => _playAndShareCommand ??= new RelayCommand(PlayAndShare);
 
-        private static bool bbb;
+        private static bool _shareOptionsSet;
 
         private int GetIndex<T>(List<T> list, T key)
             where T : IComparable
@@ -479,48 +479,62 @@ namespace AsystentZOOM.VM.Model
 
         private async void PlayAndShare()
         {
-            Play();
-
+            // Czy włączono aplikację ZOOM
             bool isZoomOpened = Process.GetProcessesByName("Zoom").Any();
             if (isZoomOpened)
             {
-                const string shareOptionsKeys = nameof(shareOptionsKeys);
-                const string vvvvvKeys = nameof(vvvvvKeys);
+                const string shareOptions = nameof(shareOptions);
+                const string changeShareWindow = nameof(changeShareWindow);
 
                 var keys = new List<string>(new string[] 
                 { 
-                    "%s",
-                    shareOptionsKeys,
-                    "{TAB 2}",
-                    "{LEFT 10}",
+                    "%s",               // Włącz okno z wyborem okien do udostępniania
+                    shareOptions,       // Zmiana opcji udostępniania
+                    "{TAB 2}",          // Przenieś się na listę okien do udostępniania
+                    "{LEFT 10}",        // Przenieś się na początek listy
                     "{UP 10}",
-                    vvvvvKeys,
-                    "{ENTER}" 
+                    changeShareWindow,  // Wybierz właściwe okno udostępniania
+                    "{ENTER}"           // Zatwierdź
                 });
 
-                int index = GetIndex(keys, shareOptionsKeys);
-                if (!bbb)
+                // Na liście przycisków do wysłania znajdź pozycję ze zmianą ustawień udostępniania
+                int shareOptionsIndex = GetIndex(keys, shareOptions);
+                if (!_shareOptionsSet)
                 {
-                    var ddd = new string[] { "{TAB 3}", " ", "{TAB 2}", " ", "{TAB}" };
-                    keys.InsertRange(index, ddd);
+                    // Jeśli nie zmieniono ustawień udostępniania => dodaj sekwencję klawiszy do wysłania
+                    var shareOptionsKeys = new string[] 
+                    { 
+                        "{TAB 3}", " ",     // Optymalizuj audio
+                        "{TAB 2}", " ",     // Optymalizuj wideo
+                        "{TAB}"             // Przejdź na pocczątek
+                    };
+                    keys.InsertRange(shareOptionsIndex, shareOptionsKeys);
                 }
-                keys.Remove(shareOptionsKeys);
+                // Usuń sztuczny wpis z grupą zmiany ustawień udostępniania
+                keys.Remove(shareOptions);
 
-                var before = new List<string>();
+                // Okna udostępniania, które należy pominąć
+                var shareWindows = new List<string>();
                 foreach(var screen in Screen.AllScreens)
-                    before.Add($"Screen {screen.DeviceName}");
-                before.Add("Whiteboard");
-                before.Add("iPhone/iPad");
+                    shareWindows.Add($"Screen {screen.DeviceName}");
+                shareWindows.Add("Whiteboard");
+                shareWindows.Add("iPhone/iPad");
 
-                Replace(keys, vvvvvKeys, "{RIGHT " + before.Count + "}");
+                // Dostosuj liczbę pominięć okien, których nie bedzie się udostępniało
+                Replace(keys, changeShareWindow, "{RIGHT " + shareWindows.Count + "}");
 
+                // Wyślij wszystkie przyciśnięcia
                 foreach (string key in keys)
                 {
                     await Task.Run(() => SendKeys.SendWait(key));
                     await Task.Delay(100);
                 }
             }
-            bbb = true;
+            // Zapamiętaj, że zmieniono już ustawienia udostępniania (żeby ich potem nie zmieniac)
+            _shareOptionsSet = true;
+
+            // Włącz multimedia
+            Play();
         }
 
         public override string ToString()
