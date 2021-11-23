@@ -10,11 +10,16 @@ using FileService.Clients;
 using FileService.EventArgs;
 using Microsoft.WindowsAPICodePack.Shell;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 using System.Xml.Serialization;
@@ -443,6 +448,79 @@ namespace AsystentZOOM.VM.Model
                     layer.IsEnabled = false;
                 }
             }
+        }
+
+        private RelayCommand _playAndShareCommand;
+        public RelayCommand PlayAndShareCommand
+            => _playAndShareCommand ??= new RelayCommand(PlayAndShare);
+
+        private static bool bbb;
+
+        private int GetIndex<T>(List<T> list, T key)
+            where T : IComparable
+        {
+            int index = 0;
+            foreach (T item in list)
+            {
+                if (item.Equals(key))
+                    return index;
+                index++;
+            }
+            return -1;
+        }
+
+        private void Replace<T>(List<T> list, T oldValue, T newValue)
+            where T : IComparable
+        {
+            int index = GetIndex(list, oldValue);
+            if (index > 0)
+                list[index] = newValue;
+        }
+
+        private async void PlayAndShare()
+        {
+            Play();
+
+            bool isZoomOpened = Process.GetProcessesByName("Zoom").Any();
+            if (isZoomOpened)
+            {
+                const string shareOptionsKeys = nameof(shareOptionsKeys);
+                const string vvvvvKeys = nameof(vvvvvKeys);
+
+                var keys = new List<string>(new string[] 
+                { 
+                    "%s",
+                    shareOptionsKeys,
+                    "{TAB 2}",
+                    "{LEFT 10}",
+                    "{UP 10}",
+                    vvvvvKeys,
+                    "{ENTER}" 
+                });
+
+                int index = GetIndex(keys, shareOptionsKeys);
+                if (!bbb)
+                {
+                    var ddd = new string[] { "{TAB 3}", " ", "{TAB 2}", " ", "{TAB}" };
+                    keys.InsertRange(index, ddd);
+                }
+                keys.Remove(shareOptionsKeys);
+
+                var before = new List<string>();
+                foreach(var screen in Screen.AllScreens)
+                    before.Add($"Screen {screen.DeviceName}");
+                before.Add("Whiteboard");
+                before.Add("iPhone/iPad");
+
+                Replace(keys, vvvvvKeys, "{RIGHT " + before.Count + "}");
+
+                foreach (string key in keys)
+                {
+                    await Task.Run(() => SendKeys.SendWait(key));
+                    await Task.Delay(100);
+                }
+            }
+            bbb = true;
         }
 
         public override string ToString()
