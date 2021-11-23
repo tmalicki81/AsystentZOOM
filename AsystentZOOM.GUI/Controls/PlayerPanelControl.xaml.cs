@@ -105,18 +105,7 @@ namespace AsystentZOOM.GUI.Controls
 
         private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(ViewModel.Duration))
-                tppDuration.Offset = ViewModel.Duration;
-            else if (e.PropertyName == nameof(ViewModel.Position))
-                tppPosition.Offset = ViewModel.Position;
-            else if (e.PropertyName == nameof(ViewModel.TimeToEnd))
-                tppTimeToEnd.Offset = ViewModel.TimeToEnd;
-            //else if (e.PropertyName == nameof(ViewModel.FileInfo))
-            //{
-            //    tppFinishBefore.MaxValue = TimeSpan.MaxValue;
-            //    tppFinishBefore.Offset = ViewModel.FileInfo?.FinishBefore ?? TimeSpan.Zero;
-            //}
-            else if (e.PropertyName == nameof(ViewModel.SelectionStart))
+            if (e.PropertyName == nameof(ViewModel.SelectionStart))
             {
                 Color rangeColor = ViewModel.GetBookmarks()?.FirstOrDefault(b => b.IsPlaying)?.Color ?? Colors.Blue;
                 positionSlider.Resources[SystemColors.HighlightBrushKey] = new SolidColorBrush(rangeColor);
