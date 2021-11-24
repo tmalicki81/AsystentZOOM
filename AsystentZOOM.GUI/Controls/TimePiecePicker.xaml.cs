@@ -14,7 +14,7 @@ namespace AsystentZOOM.GUI.Controls
             nameof(Offset),
             typeof(TimeSpan),
             typeof(TimePiecePicker),
-            new PropertyMetadata(TimeSpan.MinValue, PropertyChangedCallback));
+            new PropertyMetadata(TimeSpan.Zero, PropertyChangedCallback));
 
         public TimeSpan Offset
         {
@@ -26,7 +26,7 @@ namespace AsystentZOOM.GUI.Controls
             nameof(MinValue),
             typeof(TimeSpan),
             typeof(TimePiecePicker),
-            new PropertyMetadata(TimeSpan.MinValue, PropertyChangedCallback));
+            new PropertyMetadata(TimeSpan.Zero, PropertyChangedCallback));
 
         public TimeSpan MinValue
         {
@@ -100,6 +100,9 @@ namespace AsystentZOOM.GUI.Controls
             set => SetValue(SecondsVisibilityProperty, value);
         }
 
+        private static bool CanChange(TimePiecePicker timePiecePicker)
+            => timePiecePicker.MinValue < timePiecePicker.MaxValue;
+
         private static void PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var timePiecePicker = (TimePiecePicker)d;
@@ -110,17 +113,20 @@ namespace AsystentZOOM.GUI.Controls
                 var newValue = (TimeSpan)e.NewValue;
                 if (oldValue == newValue) return;
 
-                if (newValue < timePiecePicker.MinValue)
+                if (CanChange(timePiecePicker))
                 {
-                    newValue = timePiecePicker.MinValue;
-                    timePiecePicker.Offset = newValue;
-                    return;
-                }
-                if (newValue > timePiecePicker.MaxValue)
-                {
-                    newValue = timePiecePicker.MaxValue;
-                    timePiecePicker.Offset = newValue;
-                    return;
+                    if (newValue < timePiecePicker.MinValue)
+                    {
+                        newValue = timePiecePicker.MinValue;
+                        timePiecePicker.Offset = newValue;
+                        return;
+                    }
+                    if (newValue > timePiecePicker.MaxValue)
+                    {
+                        newValue = timePiecePicker.MaxValue;
+                        timePiecePicker.Offset = newValue;
+                        return;
+                    }
                 }
                 timePiecePicker._lockUpdateValueFromHoursMinutesSeconds = true;
                 
@@ -130,23 +136,26 @@ namespace AsystentZOOM.GUI.Controls
 
                 timePiecePicker._lockUpdateValueFromHoursMinutesSeconds = false;                
             }
-            else if (e.Property.Name == nameof(MinValue))
+            if (CanChange(timePiecePicker))
             {
-                var oldValue = (TimeSpan)e.OldValue;
-                var newValue = (TimeSpan)e.NewValue;
-                if (oldValue == newValue) return;
+                if (e.Property.Name == nameof(MinValue))
+                {
+                    var oldValue = (TimeSpan)e.OldValue;
+                    var newValue = (TimeSpan)e.NewValue;
+                    if (oldValue == newValue) return;
 
-                if (timePiecePicker.Offset < newValue)
-                    timePiecePicker.Offset = newValue;
-            }
-            else if (e.Property.Name == nameof(MaxValue))
-            {
-                var oldValue = (TimeSpan)e.OldValue;
-                var newValue = (TimeSpan)e.NewValue;
-                if (oldValue == newValue) return;
+                    if (timePiecePicker.Offset < newValue)
+                        timePiecePicker.Offset = newValue;
+                }
+                else if (e.Property.Name == nameof(MaxValue))
+                {
+                    var oldValue = (TimeSpan)e.OldValue;
+                    var newValue = (TimeSpan)e.NewValue;
+                    if (oldValue == newValue) return;
 
-                if (timePiecePicker.Offset > newValue)
-                    timePiecePicker.Offset = newValue;
+                    if (timePiecePicker.Offset > newValue)
+                        timePiecePicker.Offset = newValue;
+                }
             }
         }
 
