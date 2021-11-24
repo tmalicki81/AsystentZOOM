@@ -24,7 +24,7 @@ namespace AsystentZOOM.VM.ViewModel
         public TimePieceVM()
         {
             _timer = new Timer();
-            _timer.Elapsed += _timer_Elapsed;
+            _timer.Elapsed += timer_Elapsed;
             EventAggregator.Subscribe<MeetingPointVM>(
                 nameof(MeetingPointVM) + "_SourcesChanged", 
                 OnSourcesChangedHandler, 
@@ -52,7 +52,7 @@ namespace AsystentZOOM.VM.ViewModel
         private DateTime DateTimeFromTimespan(TimeSpan timeSpan) 
             => DateTime.Now.Date.Add(timeSpan);
 
-        private void BBB()
+        private void timerElapsedWithDispatcher()
         {
             _timer.Enabled = false;
             lock (this)
@@ -90,9 +90,9 @@ namespace AsystentZOOM.VM.ViewModel
             }
         }
 
-        private void _timer_Elapsed(object sender, ElapsedEventArgs e)
+        private void timer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            MainVM.Dispatcher.Invoke(BBB);
+            MainVM.Dispatcher.Invoke(timerElapsedWithDispatcher);
         }
 
         private bool _isEnabled;

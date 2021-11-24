@@ -8,8 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Xml.Serialization;
 
 namespace AsystentZOOM.VM.ViewModel
@@ -121,7 +119,6 @@ namespace AsystentZOOM.VM.ViewModel
                 }
                 TimeSpan finishBefore = FileInfo?.FinishBefore ?? TimeSpan.Zero;
                 if (finishBefore > TimeSpan.Zero && Position > Duration - finishBefore)
-                    //StopCommand.Execute();
                     EventAggregator.Publish($"{typeof(ILayerVM)}_Finished", this);
             }
         }

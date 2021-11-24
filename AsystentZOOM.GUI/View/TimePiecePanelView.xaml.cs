@@ -1,6 +1,7 @@
 ﻿using AsystentZOOM.VM.Common;
 using AsystentZOOM.VM.Common.Dialog;
 using AsystentZOOM.VM.Enums;
+using AsystentZOOM.VM.FileRepositories;
 using AsystentZOOM.VM.Interfaces;
 using AsystentZOOM.VM.Model;
 using AsystentZOOM.VM.ViewModel;
@@ -69,7 +70,7 @@ namespace AsystentZOOM.GUI.View
 
         private class IoConsts
         {
-            internal static string InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + $@"\Asystent ZOOM\Zegar";
+            internal static string InitialDirectory = MediaLocalFileRepositoryFactory.TimePiece.RootDirectory;
             internal const string DefaultExt = "tim";
             internal const string Filter = "Pliki ustawień minutnika lub stopera|*.tim";
         }
