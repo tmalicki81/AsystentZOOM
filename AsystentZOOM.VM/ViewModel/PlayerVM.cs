@@ -121,7 +121,8 @@ namespace AsystentZOOM.VM.ViewModel
                 }
                 TimeSpan finishBefore = FileInfo?.FinishBefore ?? TimeSpan.Zero;
                 if (finishBefore > TimeSpan.Zero && Position > Duration - finishBefore)
-                    StopCommand.Execute();
+                    //StopCommand.Execute();
+                    EventAggregator.Publish($"{typeof(ILayerVM)}_Finished", this);
             }
         }
         private TimeSpan _position;

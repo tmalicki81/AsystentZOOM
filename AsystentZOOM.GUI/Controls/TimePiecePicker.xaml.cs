@@ -48,7 +48,7 @@ namespace AsystentZOOM.GUI.Controls
 
         public int Hours
         {
-            get => (int)cmbHours.SelectedItem;
+            get => (int)(cmbHours.SelectedItem ?? 0);
             set => cmbHours.SelectedItem = value;
         }
 
@@ -66,7 +66,7 @@ namespace AsystentZOOM.GUI.Controls
 
         public int Minutes
         {
-            get => (int)cmbMinutes.SelectedItem;
+            get => (int)(cmbMinutes.SelectedItem ?? 0);
             set => cmbMinutes.SelectedItem = value;
         }
 
@@ -84,7 +84,7 @@ namespace AsystentZOOM.GUI.Controls
 
         public int Seconds
         {
-            get => (int)cmbSeconds.SelectedItem;
+            get => (int)(cmbSeconds.SelectedItem ?? 0);
             set => cmbSeconds.SelectedItem = value;
         }
 
