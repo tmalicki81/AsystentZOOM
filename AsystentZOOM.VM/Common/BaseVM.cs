@@ -117,7 +117,8 @@ namespace AsystentZOOM.VM.Common
             if (_commandList == null)
             {
                 _commandList = GetType().GetProperties()
-                    .Where(x => x.PropertyType.GetInterfaces().Any(i => i == typeof(IRelayCommand)))
+                    .Where(x => x.PropertyType == typeof(IRelayCommand) ||
+                                x.PropertyType.GetInterfaces().Any(i => i == typeof(IRelayCommand)))
                     .Where(x => x.GetMethod != null)
                     .Select(x => (IRelayCommand)x.GetValue(this))
                     .ToList();

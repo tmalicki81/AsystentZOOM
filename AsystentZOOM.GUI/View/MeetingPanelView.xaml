@@ -117,12 +117,8 @@
                                             <ContextMenu>
                                                 <MenuItem Header="Mikrofon włączony"
                                                           IsCheckable="True" IsChecked="{Binding Path=UseMicrophoneInThisMachine, Mode=TwoWay}" />
-                                                <!--Command="{Binding Path=ChangeUseMicrophoneCommand}"-->
-                                                
                                                 <MenuItem Header="Nagrywaj na tym komputerze" 
                                                           IsCheckable="True" IsChecked="{Binding Path=IsEnabledInThisMachine, Mode=TwoWay}" />
-
-                                                <!--Command="{Binding Path=ChangeAudioRecordingEnabledCommand}"-->
                                             </ContextMenu>
                                         </Button.ContextMenu>
                                         <Button.Template>
