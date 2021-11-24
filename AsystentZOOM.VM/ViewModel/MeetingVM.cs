@@ -406,7 +406,6 @@ namespace AsystentZOOM.VM.ViewModel
 
         private async void SyncAllRecordings()
         {
-            throw new Exception("Sztuczny błąd");
             try
             {
                 using (var progress = new ShowProgressInfo())
@@ -486,6 +485,18 @@ namespace AsystentZOOM.VM.ViewModel
             MeetingPointList.Add(newMeetingPoint);
             newMeetingPoint.Sorter.Sort();
             TryRegisterSnapshot("Dodano nowy punkt", false);
+        }
+
+        private IRelayCommand _refreshAllCommand;
+        public IRelayCommand RefreshAllCommand
+            => _refreshAllCommand ??= new RelayCommand(
+                RefreshAll);
+
+        private void RefreshAll()
+        {
+            foreach (var meeting in MeetingPointList)
+                foreach (var source in meeting.Sources)
+                    source.RefreshCommand.Execute();
         }
 
         private IRelayCommand _openFromLocalCommand;
