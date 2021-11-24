@@ -6,6 +6,7 @@
     public enum FileRepositoryExceptionCodeEnum
     {
         FileNotFound,
+        Forbidden,
         Unknown
     }
 }

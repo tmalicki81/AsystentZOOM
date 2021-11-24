@@ -33,9 +33,13 @@ namespace FileService.Clients
                     return webResponse.ContentLength;
                 }
             }
-            catch (WebException ex) when (((HttpWebResponse)ex.Response).StatusCode == HttpStatusCode.NotFound)
+            catch (WebException ex) when (ex.Response is HttpWebResponse exResp && exResp.StatusCode == HttpStatusCode.NotFound)
             {
                 throw new FileRepositoryException(FileRepositoryExceptionCodeEnum.FileNotFound, $"Nie znaleziono pliku", ex);
+            }
+            catch (WebException ex) when (ex.Response is HttpWebResponse exResp && exResp.StatusCode == HttpStatusCode.Forbidden)
+            {
+                throw new FileRepositoryException(FileRepositoryExceptionCodeEnum.FileNotFound, $"Dostęp zabroniony", ex);
             }
         }
 

@@ -150,7 +150,9 @@ namespace AsystentZOOM.VM.Model
                     {
                         _bytesToDownload = httpFileClient.GetFileSize(WebAddress);
                     }
-                    catch (FileRepositoryException ex) when (ex.ExceptionCode == FileRepositoryExceptionCodeEnum.FileNotFound)
+                    catch (FileRepositoryException ex) when 
+                                (ex.ExceptionCode == FileRepositoryExceptionCodeEnum.FileNotFound ||
+                                 ex.ExceptionCode == FileRepositoryExceptionCodeEnum.Forbidden)
                     {
                         _bytesToDownload = 0;
                     }
