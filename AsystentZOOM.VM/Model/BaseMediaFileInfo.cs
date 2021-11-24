@@ -8,6 +8,7 @@ using AsystentZOOM.VM.Interfaces.Sortable;
 using AsystentZOOM.VM.ViewModel;
 using FileService.Clients;
 using FileService.EventArgs;
+using FileService.Exceptions;
 using Microsoft.WindowsAPICodePack.Shell;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -131,13 +133,27 @@ namespace AsystentZOOM.VM.Model
             {
                 if (WebAddress.StartsWith("ftp://"))
                 {
-                    FtpClient ftpClient = new FtpClient(fileExtensionConfig.MediaFtpFileRepository.SessionInfo);
-                    _bytesToDownload = ftpClient.GetFileSize(FileName);
+                    var ftpClient = new FtpClient(fileExtensionConfig.MediaFtpFileRepository.SessionInfo);
+                    try
+                    {
+                        _bytesToDownload = ftpClient.GetFileSize(FileName);
+                    }
+                    catch(FileRepositoryException ex) when(ex.ExceptionCode == FileRepositoryExceptionCodeEnum.FileNotFound)
+                    {
+                        _bytesToDownload = 0;
+                    }
                 }
                 else if (WebAddress.StartsWith("http://") || WebAddress.StartsWith("https://"))
                 {
-                    HttpFileClient httpFileClient = new HttpFileClient();
-                    _bytesToDownload = httpFileClient.GetFileSize(WebAddress);
+                    var httpFileClient = new HttpFileClient();
+                    try
+                    {
+                        _bytesToDownload = httpFileClient.GetFileSize(WebAddress);
+                    }
+                    catch (FileRepositoryException ex) when (ex.ExceptionCode == FileRepositoryExceptionCodeEnum.FileNotFound)
+                    {
+                        _bytesToDownload = 0;
+                    }
                 }
             }
             else

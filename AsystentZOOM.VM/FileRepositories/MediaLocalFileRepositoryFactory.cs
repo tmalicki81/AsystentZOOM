@@ -6,13 +6,25 @@ namespace AsystentZOOM.VM.FileRepositories
 {
     public static class MediaLocalFileRepositoryFactory
     {
-        public static BaseMediaLocalFileRepository Images = new ImagesMediaLocalFileRepository();
-        public static BaseMediaLocalFileRepository Videos = new VideosMediaLocalFileRepository();
-        public static BaseMediaLocalFileRepository Music = new MusicMediaLocalFileRepository();
-        public static BaseMediaLocalFileRepository AudioRecording = new AudioRecordingLocalFileRepository();
-        public static BaseMediaLocalFileRepository Meetings = new MeetingsMediaLocalFileRepository();
-        public static BaseMediaLocalFileRepository TimePiece = new TimePieceMediaLocalFileRepository();
-        public static BaseMediaLocalFileRepository Background = new BackgroundMediaLocalFileRepository();
+        public static BaseMediaLocalFileRepository Images 
+            => new ImagesMediaLocalFileRepository();
+
+        public static BaseMediaLocalFileRepository Videos 
+            => new VideosMediaLocalFileRepository();
+        
+        public static BaseMediaLocalFileRepository Music 
+            => new MusicMediaLocalFileRepository();
+        public static BaseMediaLocalFileRepository AudioRecording 
+            => new AudioRecordingLocalFileRepository();
+
+        public static BaseMediaLocalFileRepository Meetings 
+            => new MeetingsMediaLocalFileRepository();
+
+        public static BaseMediaLocalFileRepository TimePiece 
+            => new TimePieceMediaLocalFileRepository();
+
+        public static BaseMediaLocalFileRepository Background 
+            => new BackgroundMediaLocalFileRepository();
     }
 
     public class ImagesMediaLocalFileRepository : BaseMediaLocalFileRepository
@@ -45,8 +57,8 @@ namespace AsystentZOOM.VM.FileRepositories
 
     public class MeetingsMediaLocalFileRepository : BaseMediaLocalFileRepository
     {
-        public override bool VerifyCheckSumBeforePullFile => true;
-        public override bool PullOnlyNewerFiles => false;
+        public override bool VerifyCheckSumBeforePullFile => false;
+        public override bool PullOnlyNewerFiles => true;
         public override bool CreateBackupBeforePullFile => true;
         public override Environment.SpecialFolder DestinationInLocal => Environment.SpecialFolder.MyDocuments;
         public override string[] FileExtensions => new string[] { "MEETING" };

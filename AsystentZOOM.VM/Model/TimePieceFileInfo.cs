@@ -15,6 +15,13 @@ namespace AsystentZOOM.VM.Model
         {
             var fileExtensionConfig = GetFileExtensionConfig(fileName);
             string fullFileName = Path.Combine(fileExtensionConfig.MediaLocalFileRepository.RootDirectory, fileName);
+            
+            if (!File.Exists(fullFileName))
+                return new TimePieceVM 
+                { 
+                    TextAbove = $"Nie znaleziono pliku {fileName}"
+                };
+
             Type t = typeof(TimePieceVM);
             var xmlSerializer = new CustomXmlSerializer(t);
             using (var stream = File.OpenRead(fullFileName))

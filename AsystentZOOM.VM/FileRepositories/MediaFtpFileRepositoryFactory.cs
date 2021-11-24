@@ -2,13 +2,26 @@
 {
     public static class MediaFtpFileRepositoryFactory
     {
-        public static BaseMediaFtpFileRepository Images = new ImagesMediaFtpFileService();
-        public static BaseMediaFtpFileRepository Videos = new VideosMediaFtpFileService();
-        public static BaseMediaFtpFileRepository Music = new MusicMediaFtpFileService();
-        public static BaseMediaFtpFileRepository AudioRecording = new AudioRecordingFtpFileService();
-        public static BaseMediaFtpFileRepository Meetings = new MeetingsMediaFtpFileService();
-        public static BaseMediaFtpFileRepository TimePiece = new TimePieceMediaFtpFileService();
-        public static BaseMediaFtpFileRepository Background = new BackgroundMediaFtpFileService();
+        public static BaseMediaFtpFileRepository Images 
+            => new ImagesMediaFtpFileService();
+        
+        public static BaseMediaFtpFileRepository Videos 
+            => new VideosMediaFtpFileService();
+        
+        public static BaseMediaFtpFileRepository Music 
+            => new MusicMediaFtpFileService();
+        
+        public static BaseMediaFtpFileRepository AudioRecording 
+            => new AudioRecordingFtpFileService();
+        
+        public static BaseMediaFtpFileRepository Meetings 
+            => new MeetingsMediaFtpFileService();
+        
+        public static BaseMediaFtpFileRepository TimePiece 
+            => new TimePieceMediaFtpFileService();
+        
+        public static BaseMediaFtpFileRepository Background 
+            => new BackgroundMediaFtpFileService();
     }
 
     public class ImagesMediaFtpFileService : BaseMediaFtpFileRepository
@@ -39,8 +52,8 @@
 
     public class MeetingsMediaFtpFileService : BaseMediaFtpFileRepository
     {
-        public override bool VerifyCheckSumBeforePullFile => true;
-        public override bool PullOnlyNewerFiles => false;
+        public override bool VerifyCheckSumBeforePullFile => false;
+        public override bool PullOnlyNewerFiles => true;
         public override bool CreateBackupBeforePullFile => true;
         public override string RemoteDirectory => "Meetings";
         public override string[] FileExtensions => new string[] { "MEETING" };

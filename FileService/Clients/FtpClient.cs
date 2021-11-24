@@ -1,5 +1,6 @@
 ﻿using FileService.Common;
 using FileService.EventArgs;
+using FileService.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -324,11 +325,18 @@ namespace FileService.Clients
         /// <returns>Rozmiar pliku w bajtach</returns>
         public long GetFileSize(string filePath)
         {
-            FtpWebRequest ccc = GetFtpWebRequest(WebRequestMethods.Ftp.GetFileSize, filePath);
-            using (var ddd = (FtpWebResponse)ccc.GetResponse())
+            FtpWebRequest request = GetFtpWebRequest(WebRequestMethods.Ftp.GetFileSize, filePath);
+            try
             {
-                return ddd.ContentLength;
+                using (var response = (FtpWebResponse)request.GetResponse())
+                {
+                    return response.ContentLength;
+                }
             }
+            catch (WebException ex) when (((FtpWebResponse)ex.Response).StatusCode == FtpStatusCode.ActionNotTakenFileUnavailable)
+            {
+                throw new FileRepositoryException(FileRepositoryExceptionCodeEnum.FileNotFound, $"Nie znaleziono pliku", ex);
+            }            
         }
 
         /// <summary>

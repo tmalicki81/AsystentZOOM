@@ -18,19 +18,15 @@ namespace JW
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            if (e.ExceptionObject is Exception ex)
-            {
-                try
-                {
-                    File.AppendAllText("c:\\Log.txt", ex.ToString() + Environment.NewLine);
-                }
-                catch { }
-                var dr = MessageBox.Show(
-                    $"{ex.Message}{Environment.NewLine}Czy skopiować treść do schowka?",
-                    "Nieobsłużony błąd", MessageBoxButton.YesNo, MessageBoxImage.Error, MessageBoxResult.No);
-                if (dr == MessageBoxResult.Yes)
-                    Clipboard.SetText(ex.ToString());
-            }
+            if (e.ExceptionObject is not Exception ex)
+                return;
+
+            var dr = MessageBox.Show(
+                $"{ex.Message}{Environment.NewLine}Czy skopiować treść do schowka?",
+                "Nieobsłużony błąd", MessageBoxButton.YesNo, MessageBoxImage.Error, MessageBoxResult.No);
+            
+            if (dr == MessageBoxResult.Yes)
+                Clipboard.SetText(ex.ToString());
         }
     }
 }

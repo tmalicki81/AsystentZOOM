@@ -1,5 +1,6 @@
 ﻿using FileService.Common;
 using FileService.EventArgs;
+using FileService.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,10 +25,17 @@ namespace FileService.Clients
         /// <returns>Rozmiar pliku</returns>
         public long GetFileSize(string webAddress)
         {
-            HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(webAddress);
-            using (HttpWebResponse webResponse = (HttpWebResponse)webRequest.GetResponse())
-            { 
-                return webResponse.ContentLength;
+            var webRequest = (HttpWebRequest)WebRequest.Create(webAddress);
+            try
+            {
+                using (var webResponse = (HttpWebResponse)webRequest.GetResponse())
+                {
+                    return webResponse.ContentLength;
+                }
+            }
+            catch (WebException ex) when (((HttpWebResponse)ex.Response).StatusCode == HttpStatusCode.NotFound)
+            {
+                throw new FileRepositoryException(FileRepositoryExceptionCodeEnum.FileNotFound, $"Nie znaleziono pliku", ex);
             }
         }
 
