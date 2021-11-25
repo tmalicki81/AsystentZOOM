@@ -1,9 +1,12 @@
 ﻿using AsystentZOOM.VM.Common;
 using AsystentZOOM.VM.Enums;
+using AsystentZOOM.VM.FileRepositories;
 using AsystentZOOM.VM.Interfaces;
 using AsystentZOOM.VM.Model;
+using FileService.Common;
 using System;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Timers;
 using System.Windows;
@@ -20,6 +23,39 @@ namespace AsystentZOOM.VM.ViewModel
         private readonly Timer _timer;
         private DateTime _start;
         private bool _isRunning;
+
+        public static (TimePieceVM timePiece, string fileName) CreateTimePiece(string meetingPointTitle)
+        {
+            // Dodaj zegar
+            var meetingBeginTimespan = new TimeSpan(DateTime.Now.AddHours(1).Hour, 30, 0);
+            var timePieceVM = new TimePieceVM
+            {
+                AlertMinTime = TimeSpan.FromSeconds(10),
+                TimerFormat = @"hh\:mm\:ss",
+                BreakTime = TimeSpan.FromSeconds(20),
+                Direction = TimePieceDirectionEnum.Back,
+                EndTime = meetingBeginTimespan,
+                Mode = TimePieceModeEnum.Timer,
+                ReferencePoint = TimePieceReferencePointEnum.ToSpecificTime,
+                UseBreak = true,
+                TextAbove = "Czasu do rozpoczęcia punktu:",
+                TextBelow = $"Tytuł punktu: {meetingPointTitle}"
+            };
+            
+            // Zapisz plik w lokalnym repozytorium
+            var xmlSerializer = new CustomXmlSerializer(timePieceVM.GetType());
+            var timePieceRepository = MediaLocalFileRepositoryFactory.TimePiece;
+            string timePieceFileName = $"{DateTime.Now:yyyy-MM-dd__HH_mm_ss}__{PathHelper.NormalizeToFileName(meetingPointTitle)}.tmp_tim";
+            using (Stream memStream = new MemoryStream())
+            {
+                xmlSerializer.Serialize(memStream, timePieceVM);
+                timePieceRepository.SaveFile(memStream, timePieceFileName);
+            }
+            File.SetAttributes(Path.Combine(timePieceRepository.RootDirectory, timePieceFileName), FileAttributes.Hidden);
+
+            return (timePiece: timePieceVM,
+                    fileName: timePieceFileName);
+        }
 
         public TimePieceVM()
         {

@@ -115,6 +115,34 @@ namespace AsystentZOOM.VM.ViewModel
             _changePositionTimer.Elapsed += _changePositionTimer_Elapsed;
         }
 
+        private static int newPoints = 0;
+        public static MeetingPointVM CreateMeetingPoint()
+        {
+            var newMeetingPoint = new MeetingPointVM
+            {
+                Duration = TimeSpan.FromMinutes(30),
+                IsExpanded = true,
+                PointTitle = $"Punkt nr {++newPoints}",
+                TitleColor = Colors.DarkGray
+            };
+
+            (TimePieceVM timePiece, string fileName) = TimePieceVM.CreateTimePiece(newMeetingPoint.PointTitle);
+
+            var timePieceFileInfo = BaseMediaFileInfo.Factory.Create(newMeetingPoint, fileName, string.Empty);
+            timePieceFileInfo.Title = $"Spotkanie o {timePiece.EndTime.ToString(timePiece.TimerFormat)}";
+            timePieceFileInfo.IsTemporaryFile = true;
+            newMeetingPoint.Sources.Add(timePieceFileInfo);
+
+            var pointParemeters = new ParametersCollectionVM();
+            newMeetingPoint.ParameterList = pointParemeters;
+            pointParemeters.Parameters = new ObservableCollection<ParameterVM>
+                {
+                    new ParameterVM { Key = "Parametr A", Value = "Wartość parametru A" },
+                    new ParameterVM { Key = "Parametr B", Value = "Wartość parametru B" }
+                };
+            return newMeetingPoint;
+        }
+
         [XmlIgnore]
         public SortableMeetingPointProvider Sorter
         {

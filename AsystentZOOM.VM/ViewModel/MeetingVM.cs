@@ -112,7 +112,7 @@ namespace AsystentZOOM.VM.ViewModel
 
         public static string StartupFileName;
 
-        public static IMeetingVM Empty
+        public static IMeetingVM CreateMeeting
         {
             get
             {
@@ -131,50 +131,8 @@ namespace AsystentZOOM.VM.ViewModel
                     new ParameterVM { Key = "Parametr 2", Value = "Wartość parametru 2" },
                     new ParameterVM { Key = "Parametr 3", Value = "Wartość parametru 3" },
                 };
-                // Dodaj zegar
-                var timePieceVM = new TimePieceVM
-                {
-                    AlertMinTime = TimeSpan.FromSeconds(10),
-                    TimerFormat = @"hh\:mm\:ss",
-                    BreakTime = TimeSpan.FromSeconds(20),
-                    Direction = TimePieceDirectionEnum.Back,
-                    EndTime = meetingBeginTimespan,
-                    Mode = TimePieceModeEnum.Timer,
-                    ReferencePoint = TimePieceReferencePointEnum.ToSpecificTime,
-                    UseBreak = true,
-                    TextAbove = "Czasu do rozpoczęcia spotkania:",
-                    TextBelow = $"Tytuł spotkania: {meeting.MeetingTitle}"
-                };
-                var xmlSerializer = new CustomXmlSerializer(timePieceVM.GetType());
-                var timePieceRepository = MediaLocalFileRepositoryFactory.TimePiece;
-                string timePieceFileName = $"{DateTime.Now:yyyy-MM-dd__HH_mm_ss}__{PathHelper.NormalizeToFileName(meeting.MeetingTitle)}.tmp_tim";
-                using (Stream memStream = new MemoryStream())
-                {
-                    xmlSerializer.Serialize(memStream, timePieceVM);
-                    timePieceRepository.SaveFile(memStream, timePieceFileName);
-                }
-                File.SetAttributes(Path.Combine(timePieceRepository.RootDirectory, timePieceFileName), FileAttributes.Hidden);
-                var firstPoint = new MeetingPointVM
-                {
-                    Duration = TimeSpan.FromMinutes(30),
-                    IsExpanded = true,
-                    PointTitle = "Punkt pierwszy",
-                    TitleColor = Colors.DarkGray
-                };
-                
-                var timePieceFileInfo = BaseMediaFileInfo.Factory.Create(firstPoint, timePieceFileName, string.Empty);
-                timePieceFileInfo.Title = $"Spotkanie o {meetingBeginTimespan.ToString(timePieceVM.TimerFormat)}";
-                timePieceFileInfo.IsTemporaryFile = true;
-                firstPoint.Sources.Add(timePieceFileInfo);
 
-                var pointParemeters = new ParametersCollectionVM();
-                firstPoint.ParameterList = pointParemeters;
-                pointParemeters.Parameters = new ObservableCollection<ParameterVM>
-                {
-                    new ParameterVM { Key = "Parametr A", Value = "Wartość parametru A" },
-                    new ParameterVM { Key = "Parametr B", Value = "Wartość parametru B" },
-                    new ParameterVM { Key = "Parametr C", Value = "Wartość parametru C" },
-                };
+                var firstPoint = MeetingPointVM.CreateMeetingPoint();
 
                 meeting.MeetingPointList.Add(firstPoint);
                 meeting.ConfigureAudioRecording();

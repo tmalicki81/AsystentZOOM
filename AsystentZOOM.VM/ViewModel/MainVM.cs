@@ -398,7 +398,7 @@ namespace AsystentZOOM.VM.ViewModel
             if (!result)
                 return;
             await Task.Run(SingletonVMFactory.Meeting.Dispose);
-            SingletonVMFactory.SetSingletonValues(MeetingVM.Empty);
+            SingletonVMFactory.SetSingletonValues(MeetingVM.CreateMeeting);
         }
 
         private bool _isAutoSaveEnabled;
