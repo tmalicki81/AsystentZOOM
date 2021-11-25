@@ -354,9 +354,9 @@
 
                         <!--Opcje zakładek i przycinanie-->
                         <Label Grid.Row="2" Grid.Column="0" Content="Opcje zakładek i przycinanie" FontWeight="Bold" Grid.ColumnSpan="3" Margin="0,5,0,0"/>
-                        <Label Grid.Row="3" Grid.Column="1" Content="Po zakonczeniu:" HorizontalAlignment="Right" />
+                        <Label Grid.Row="3" Grid.Column="1" Content="Po zakończeniu:" HorizontalAlignment="Right" />
                         <ComboBox Grid.Row="3" Grid.Column="2" VerticalAlignment="Center" Height="25" VerticalContentAlignment="Center"
-                                  ItemsSource="{Binding Path=AfterEndBookmarkList}" SelectedItem="{Binding Path=AfterEndBookmark}" >
+                                  ItemsSource="{Binding Path=AfterEndBookmarkList, Mode=OneTime}" SelectedItem="{Binding Path=AfterEndBookmark}" >
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">

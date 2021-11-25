@@ -1,6 +1,4 @@
-﻿using AsystentZOOM.VM.Model;
-using AsystentZOOM.VM.ViewModel;
-using System;
+﻿using AsystentZOOM.VM.ViewModel;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -132,8 +130,6 @@ namespace AsystentZOOM.VM.Common.Dialog
             return arg.Result;
         }
 
-        private static readonly object _locker = new object();
-
         /// <summary>
         /// Wyświetlenie wiadomości na dolnym pasku
         /// </summary>
@@ -141,16 +137,13 @@ namespace AsystentZOOM.VM.Common.Dialog
         /// <param name="level">Poziom ważności</param>
         public static void ShowMessageBar(string message, MessageBarLevelEnum level = MessageBarLevelEnum.Information)
         {
-            lock (_locker)
+            MainVM.Dispatcher.Invoke(() =>
             {
-                MainVM.Dispatcher.Invoke(() =>
-                {
-                    var main = SingletonVMFactory.Main;
-                    main.MessageBarIsNew = false;
-                    main.MessageBarText = message;
-                    main.MessageBarIsNew = true;
-                });
-            }
+                var main = SingletonVMFactory.Main;
+                main.MessageBarIsNew = false;
+                main.MessageBarText = message;
+                main.MessageBarIsNew = true;
+            });
         }
     }
 }

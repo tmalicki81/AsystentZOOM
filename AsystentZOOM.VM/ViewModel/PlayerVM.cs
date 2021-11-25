@@ -33,14 +33,12 @@ namespace AsystentZOOM.VM.ViewModel
             }
         }
 
-        private List<PlayerStateEnum> _afterEndBookmarkList;
-        public List<PlayerStateEnum> AfterEndBookmarkList
-            => _afterEndBookmarkList ??= new List<PlayerStateEnum>
-            {
-                 PlayerStateEnum.Played,
-                 PlayerStateEnum.Paused,
-                 PlayerStateEnum.Stopped
-            };
+        public List<PlayerStateEnum> AfterEndBookmarkList => new()
+        {
+            PlayerStateEnum.Played,
+            PlayerStateEnum.Paused,
+            PlayerStateEnum.Stopped
+        };
 
         private static bool _showBookmarks;
         public bool ShowBookmarks
