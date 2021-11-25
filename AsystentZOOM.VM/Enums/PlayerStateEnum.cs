@@ -4,6 +4,7 @@
     {
         Played,
         Paused,
-        Stopped        
+        Stopped,
+        Closed
     }
 }

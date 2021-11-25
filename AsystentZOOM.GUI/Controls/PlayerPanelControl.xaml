@@ -373,6 +373,9 @@
                                                         <DataTrigger Binding="{Binding Path=.}" Value="Stopped">
                                                             <Setter Property="Source" Value="..\Images\icons8-stop-32.png"/>
                                                         </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Path=.}" Value="Closed">
+                                                            <Setter Property="Source" Value="..\Images\icons8-close-window-32.png"/>
+                                                        </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
                                             </Image.Style>
@@ -389,6 +392,9 @@
                                                         </DataTrigger>
                                                         <DataTrigger Binding="{Binding Path=.}" Value="Stopped">
                                                             <Setter Property="Content" Value="Zatrzymaj"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Path=.}" Value="Closed">
+                                                            <Setter Property="Content" Value="Zakończ udostępnianie"/>
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>

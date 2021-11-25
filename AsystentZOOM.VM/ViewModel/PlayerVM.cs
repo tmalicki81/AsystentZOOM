@@ -37,7 +37,8 @@ namespace AsystentZOOM.VM.ViewModel
         {
             PlayerStateEnum.Played,
             PlayerStateEnum.Paused,
-            PlayerStateEnum.Stopped
+            PlayerStateEnum.Stopped, 
+            PlayerStateEnum.Closed
         };
 
         private static bool _showBookmarks;
@@ -103,6 +104,9 @@ namespace AsystentZOOM.VM.ViewModel
                                 break;
                             case PlayerStateEnum.Stopped:
                                 StopCommand.Execute();
+                                break;
+                            case PlayerStateEnum.Closed:
+                                EventAggregator.Publish($"{typeof(ILayerVM)}_Finished", this);
                                 break;
                         }
                     }
