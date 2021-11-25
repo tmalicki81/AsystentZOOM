@@ -8,6 +8,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using System.Windows.Media;
 using static AsystentZOOM.GUI.Controls.SliderWithPopup;
 
@@ -92,6 +93,13 @@ namespace AsystentZOOM.GUI.Controls
         {
             InitializeComponent();
             DataContextChanged += AudioVideoPanelControl_DataContextChanged;
+        }
+
+        private void ScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            var scv = (ScrollViewer)sender;
+            scv.ScrollToVerticalOffset(scv.VerticalOffset - e.Delta);
+            e.Handled = true;
         }
 
         private void AudioVideoPanelControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)

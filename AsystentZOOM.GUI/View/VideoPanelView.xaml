@@ -12,10 +12,11 @@
     <controls:PlayerPanelControl MediaName="video">
         <controls:PlayerPanelControl.AdditionalButtons>
 
-            <Button Command="{Binding Path=ChangeOutputSizeCommand}" Padding="8" Margin="42,2,2,2" Cursor="Hand" Width="65">
+            <Button Command="{Binding Path=StopShareCommand}" Padding="8" Margin="42,2,2,2" Cursor="Hand">
                 <StackPanel>
-                    <Image Source="..\Images\icons8-height-32.png" Height="32"/>
-                    <Label Content="Dostosuj" Padding="0" HorizontalAlignment="Center"/>
+                    <Image Source="..\Images\icons8-close-window-32.png" Height="32"/>
+                    <Label Content="Zatrzymaj" Padding="0" HorizontalAlignment="Center"/>
+                    <Label Content="udostępnianie" Padding="0" HorizontalAlignment="Center"/>
                 </StackPanel>
             </Button>
 

@@ -16,7 +16,7 @@
         <conv:BookmarksToDoubleCollectionConverter x:Key="BookmarksToDoubleCollectionConverter"/>
     </UserControl.Resources>
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
         <WrapPanel x:Name="thisControl">
             <StackPanel Margin="3,3,15,3">
                 <Grid>
@@ -38,7 +38,7 @@
                         <Label Content="Pokaż zakładki" VerticalAlignment="Center" Padding="0" />
                     </CheckBox>
                 </Grid>
-                <GroupBox Header="{Binding Path=LayerName}" Foreground="Blue" HorizontalAlignment="Left" VerticalAlignment="Top" Padding="3" Width="370">
+                <GroupBox Header="{Binding Path=LayerName}" Foreground="Blue" HorizontalAlignment="Left" VerticalAlignment="Top" Padding="3" Width="395">
                     <GroupBox.Style>
                         <Style TargetType="GroupBox">
                             <Style.Triggers>
@@ -200,7 +200,7 @@
             </StackPanel>
 
             <GroupBox Header="Zakładki" Foreground="Blue" HorizontalAlignment="Left" 
-                      VerticalAlignment="Top" Padding="3" Width="370"
+                      VerticalAlignment="Top" Padding="3" Width="395"
                       Margin="0,32,0,0"
                       Visibility="{Binding Path=ShowBookmarks, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=COLAPSE}">
                 <GroupBox.Style>
@@ -243,7 +243,7 @@
                             </StackPanel>
                         </Button>
 
-                        <Button Command="{Binding Path=SetPositionFromBookmarkCommand}" Padding="8" Margin="60,2,2,2" Cursor="Hand" Width="94" >
+                        <Button Command="{Binding Path=SetPositionFromBookmarkCommand}" Padding="8" Margin="83,2,2,2" Cursor="Hand" Width="94" >
                             <StackPanel>
                                 <Image Source="..\Images\icons8-pin-in-circle-32.png" Height="32"/>
                                 <Label Content="Ustaw pozycję" Padding="0" HorizontalAlignment="Center"/>
@@ -284,8 +284,8 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
-                            <DataGrid Grid.Row="1" ItemsSource="{Binding Path=Bookmarks}" Padding="0" Margin="0" Height="285" AutoGenerateColumns="False"
-                                      CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False"
+                            <DataGrid Grid.Row="1" ItemsSource="{Binding Path=Bookmarks}" Padding="0" Margin="5" Height="285" AutoGenerateColumns="False"
+                                      CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" HorizontalGridLinesBrush="DarkGray" VerticalGridLinesBrush="LightGray"
                                       SelectedItem="{Binding Path=SelectedBookmark}" SelectionMode="Single" SelectionUnit="FullRow">
                                 <DataGrid.CellStyle>
                                     <Style TargetType="DataGridCell">
@@ -355,7 +355,7 @@
                         <!--Opcje zakładek i przycinanie-->
                         <Label Grid.Row="2" Grid.Column="0" Content="Opcje zakładek i przycinanie" FontWeight="Bold" Grid.ColumnSpan="3" Margin="0,5,0,0"/>
                         <Label Grid.Row="3" Grid.Column="1" Content="Po zakończeniu:" HorizontalAlignment="Right" />
-                        <ComboBox Grid.Row="3" Grid.Column="2" VerticalAlignment="Center" Height="25" VerticalContentAlignment="Center"
+                        <ComboBox Grid.Row="3" Grid.Column="2" VerticalAlignment="Center" Height="25" VerticalContentAlignment="Center" Margin="0,0,5,0"
                                   ItemsSource="{Binding Path=AfterEndBookmarkList, Mode=OneTime}" SelectedItem="{Binding Path=AfterEndBookmark}" >
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
@@ -417,7 +417,7 @@
                                 </TextBlock>
                             </Label.Content>
                         </Label>
-                        <Button Grid.Row="5" Grid.Column="2" Height="25" Margin="0,0,0,1" 
+                        <Button Grid.Row="5" Grid.Column="2" Height="25" Margin="0,0,5,1" 
                                 HorizontalContentAlignment="Left" Cursor="Hand" IsEnabled="False">
                             <Button.Content>
                                 <StackPanel Orientation="Horizontal">
@@ -428,7 +428,7 @@
                                 </StackPanel>
                             </Button.Content>
                         </Button>
-                        <Button Grid.Row="6" Grid.Column="2" Height="25" 
+                        <Button Grid.Row="6" Grid.Column="2" Height="25" Margin="0,0,5,0"
                                 HorizontalContentAlignment="Left" Cursor="Hand" IsEnabled="False">
                             <Button.Content>
                                 <StackPanel Orientation="Horizontal">

@@ -227,7 +227,9 @@ namespace AsystentZOOM.VM.ViewModel
                     EventAggregator.Publish($"{GetType().Name}_Pause");
                     PlayerState = PlayerStateEnum.Paused;
                 },
-                () => PlayerState != PlayerStateEnum.Paused && PlayerState != PlayerStateEnum.Stopped);
+                () => PlayerState != PlayerStateEnum.Paused && 
+                      PlayerState != PlayerStateEnum.Stopped &&
+                      PlayerState != PlayerStateEnum.Closed);
 
         private RelayCommand _stopCommand;
         public RelayCommand StopCommand
@@ -238,7 +240,8 @@ namespace AsystentZOOM.VM.ViewModel
                     PlayerState = PlayerStateEnum.Stopped;
                     Position = TimeSpan.Zero;
                 },
-                () => PlayerState != PlayerStateEnum.Stopped);
+                () => PlayerState != PlayerStateEnum.Stopped &&
+                      PlayerState != PlayerStateEnum.Closed);
 
         private RelayCommand _restartCommand;
         public RelayCommand RestartCommand
@@ -248,6 +251,16 @@ namespace AsystentZOOM.VM.ViewModel
                     PlayerState = PlayerStateEnum.Played;
                 },
                 () => true);
+
+        private RelayCommand _stopShareCommand;
+        public RelayCommand StopShareCommand
+            => _stopShareCommand ??= new RelayCommand(() =>
+                {
+                    PlayerState = PlayerStateEnum.Closed;
+                    EventAggregator.Publish(nameof(MainVM) + "_Reset");
+                    Position = TimeSpan.Zero;
+                }, 
+                () => PlayerState != PlayerStateEnum.Closed);
 
         private IBookmarkVM GetSelectedBookmark()
             => FileInfo?.SelectedBookmark;
