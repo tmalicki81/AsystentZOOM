@@ -161,7 +161,7 @@ namespace AsystentZOOM.VM.ViewModel
                     PointTitle = "Punkt pierwszy",
                     TitleColor = Colors.DarkGray
                 };
-                meeting.MeetingPointList.Add(firstPoint);
+                
                 var timePieceFileInfo = BaseMediaFileInfo.Factory.Create(firstPoint, timePieceFileName, string.Empty);
                 timePieceFileInfo.Title = $"Spotkanie o {meetingBeginTimespan.ToString(timePieceVM.TimerFormat)}";
                 timePieceFileInfo.IsTemporaryFile = true;
@@ -176,6 +176,7 @@ namespace AsystentZOOM.VM.ViewModel
                     new ParameterVM { Key = "Parametr C", Value = "Wartość parametru C" },
                 };
 
+                meeting.MeetingPointList.Add(firstPoint);
                 meeting.ConfigureAudioRecording();
                 meeting.ClearSnapshots();
                 meeting.IsDataReady = true;
