@@ -131,6 +131,8 @@ namespace AsystentZOOM.VM.ViewModel
             var timePieceFileInfo = BaseMediaFileInfo.Factory.Create(newMeetingPoint, fileName, string.Empty);
             timePieceFileInfo.Title = $"Spotkanie o {timePiece.EndTime.ToString(timePiece.TimerFormat)}";
             timePieceFileInfo.IsTemporaryFile = true;
+            timePieceFileInfo.CheckFileExist();
+            timePieceFileInfo.FillMetadata();
             newMeetingPoint.Sources.Add(timePieceFileInfo);
 
             var pointParemeters = new ParametersCollectionVM();
