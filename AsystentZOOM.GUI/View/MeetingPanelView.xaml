@@ -285,32 +285,77 @@
 
         <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Visible" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
             <ItemsControl ItemsSource="{Binding Path=MeetingPointList}" HorizontalContentAlignment="Stretch" >
-                <!--<ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <WrapPanel/>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>-->
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Grid MouseEnter="StackPanel_MouseEnter" MouseLeave="StackPanel_MouseLeave">
-                            <Grid.InputBindings>
-                                <KeyBinding Key="Delete" Command="{Binding Path=Sorter.DeleteCommand}"/>
-                            </Grid.InputBindings>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="2"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
+                <ItemsControl.Resources>
+                    <Style x:Key="GridWithMouseEvents" TargetType="Grid">
+                        <EventSetter Event="MouseEnter" Handler="StackPanel_MouseEnter" />
+                        <EventSetter Event="MouseLeave" Handler="StackPanel_MouseLeave" />
+                    </Style>
+                </ItemsControl.Resources>
+                
+                <ItemsControl.Style>
+                    <Style TargetType="ItemsControl">
+                        <Style.Triggers>
+                            <!-- Zawijanie punktów -->
+                            <DataTrigger Binding="{Binding Path=IsMeetingPointsInWrapPanel, Source={x:Static factory:SingletonVMFactory.Main}, Mode=OneWay}" Value="True">
+                                <Setter Property="ItemsPanel">
+                                    <Setter.Value>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Orientation="Horizontal" />
+                                        </ItemsPanelTemplate>
+                                    </Setter.Value>
+                                </Setter>
 
-                            <Grid Grid.Column="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="{Binding TitleColor, Converter={StaticResource SolidColorBrushConverter}}"
-                                  Visibility="{Binding Path=Sorter.IsMouseOver, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                            
-                            <Grid Grid.Column="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="Black" Opacity=".4"
-                                  Visibility="{Binding Path=Sorter.IsMouseOver, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                            
-                            <controls:MeetingPointControl Grid.Column="1" Margin="0" />                            
-                        </Grid>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
+                                <Setter Property="ItemTemplate">
+                                    <Setter.Value>
+                                        <DataTemplate>
+                                            <Grid Margin="0,3,6,3" Style="{StaticResource GridWithMouseEvents}">
+                                                <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="{Binding TitleColor, Converter={StaticResource SolidColorBrushConverter}}"
+                                                      Visibility="{Binding Path=Sorter.IsMouseOver, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+                                                <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="Black" Opacity=".4"
+                                                      Visibility="{Binding Path=Sorter.IsMouseOver, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+                                                <controls:MeetingPointControl Padding="3" Margin="0" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+
+                            <!-- Bez zawijania punktów -->
+                            <DataTrigger Binding="{Binding Path=IsMeetingPointsInWrapPanel, Source={x:Static factory:SingletonVMFactory.Main}, Mode=OneWay}" Value="False">
+                                <Setter Property="ItemsPanel">
+                                    <Setter.Value>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel/>
+                                        </ItemsPanelTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                
+                                <Setter Property="ItemTemplate">
+                                    <Setter.Value>
+                                        <DataTemplate>
+                                            <Grid Style="{StaticResource GridWithMouseEvents}">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="2"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <Grid Grid.Column="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="{Binding TitleColor, Converter={StaticResource SolidColorBrushConverter}}"
+                                                      Visibility="{Binding Path=Sorter.IsMouseOver, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+                                                <Grid Grid.Column="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="Black" Opacity=".4"
+                                                      Visibility="{Binding Path=Sorter.IsMouseOver, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+                                                <controls:MeetingPointControl Grid.Column="1" Margin="0" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ItemsControl.Style>
             </ItemsControl>
         </ScrollViewer>
     </Grid>

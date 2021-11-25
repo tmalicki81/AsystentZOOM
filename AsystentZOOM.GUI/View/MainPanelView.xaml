@@ -132,8 +132,9 @@
                         <Image Source="../Images/icons8-undo-32.png"/>
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Header="Widoczność przycisków" IsCheckable="True" IsChecked="{Binding Path=ToolButtonsVisible,   Mode=TwoWay}"/>
-                <MenuItem Header="Wyświetlaj zmiany"     IsCheckable="True" IsChecked="{Binding Path=IsShowChangesEnabled, Mode=TwoWay}"/>                
+                <MenuItem Header="Widoczność przycisków" IsCheckable="True" IsChecked="{Binding Path=ToolButtonsVisible,         Mode=TwoWay}"/>
+                <MenuItem Header="Wyświetlaj zmiany"     IsCheckable="True" IsChecked="{Binding Path=IsShowChangesEnabled,       Mode=TwoWay}"/>
+                <MenuItem Header="Zawijaj punkty"        IsCheckable="True" IsChecked="{Binding Path=IsMeetingPointsInWrapPanel, Mode=TwoWay}"/>
             </MenuItem>
 
             <MenuItem Header="_Nagrywanie" IsSubmenuOpen="{Binding Path=IsMenuOpened, Mode=OneWayToSource}">

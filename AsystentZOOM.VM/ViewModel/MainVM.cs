@@ -285,6 +285,13 @@ namespace AsystentZOOM.VM.ViewModel
         }
         private bool _isShowChangesEnabled = true;
 
+        private bool _isMeetingPointsInWrapPanel;
+        public bool IsMeetingPointsInWrapPanel
+        {
+            get => _isMeetingPointsInWrapPanel;
+            set => SetValue(ref _isMeetingPointsInWrapPanel, value, nameof(IsMeetingPointsInWrapPanel));
+        }
+
         private RelayCommand _resetApplicationCommand;
         public RelayCommand ResetApplicationCommand
             => _resetApplicationCommand ??= new RelayCommand(ResetApplicationExecute);
