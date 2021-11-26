@@ -85,6 +85,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AsystentZOOM.Finisher\AsystentZOOM.Finisher.csproj" />
     <ProjectReference Include="..\AsystentZOOM.VM\AsystentZOOM.VM.csproj" />
     <ProjectReference Include="..\BinaryHelper\BinaryHelper.csproj" />
     <ProjectReference Include="..\FileService\FileService.csproj" />
