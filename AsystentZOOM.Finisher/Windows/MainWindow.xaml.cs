@@ -25,13 +25,13 @@ namespace AsystentZOOM.Finisher
     {
         public MainWindow()
         {
+            MainVM.Dispatcher = Dispatcher;
             InitializeComponent();
             Loaded += MainWindow_Loaded;
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            MainVM.Dispatcher = Dispatcher;
             ViewModel.ExecuteAllTask();
         }
 

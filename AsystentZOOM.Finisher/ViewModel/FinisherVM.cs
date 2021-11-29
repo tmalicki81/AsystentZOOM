@@ -30,19 +30,30 @@ namespace AsystentZOOM.Finisher.ViewModel
 
         public FinisherVM()
         {
-            TaskList.Add(new TaskVM("Usuwanie tymczasowych plików", true, (t) =>
+            TaskList.Add(new TaskVM("Usuwanie tymczasowych plików", false, (t) =>
             {
                 List<string> filetToDelete = new();
                 filetToDelete.AddRange(Directory.GetFiles(MediaLocalFileRepositoryFactory.Meetings.RootDirectory, $"*.{nameof(FileExtensionEnum.TMP_MEETING)}"));
                 filetToDelete.AddRange(Directory.GetFiles(MediaLocalFileRepositoryFactory.TimePiece.RootDirectory, $"*.{nameof(FileExtensionEnum.TMP_TIM)}"));
-                filetToDelete.ForEach(f => File.Delete(f));
+
+                int fileNumber = 0;
+                int filesCount = filetToDelete.Count;
+                int percentComplette;
+                foreach (string file in filetToDelete)
+                {
+                    File.Delete(file);
+                    percentComplette = (100 * fileNumber++ / filesCount);
+                    Dispatcher.Invoke(() => t.PercentComplette = percentComplette);
+                    Task.Delay(1000).Wait();
+                }
+                Dispatcher.Invoke(()=> t.ResultText = $"Usunięto {filesCount} plików");
             }));
 
             TaskList.Add(new TaskVM("Zadanie testowe 1", true, (t) =>
             {
                 for (int p = 0; p < 100; p++)
                 {
-                    Dispatcher.Invoke(() => t.PercentComplette = p);
+                    Dispatcher.Invoke(()=> t.PercentComplette = p);
                     Task.Delay(50).Wait();
                 }
             }));
@@ -56,11 +67,11 @@ namespace AsystentZOOM.Finisher.ViewModel
                 }
             }));
 
-            //TaskList.Add(new TaskVM("Zadanie błędne", true, (t) =>
-            //{
-            //    Task.Delay(4000).Wait();
-            //    throw new Exception("dsgtyryrt");
-            //}));
+            TaskList.Add(new TaskVM("Zadanie błędne", true, (t) =>
+            {
+                Task.Delay(4000).Wait();
+                throw new Exception("dsgtyryrt");
+            }));
 
             TaskList.Add(new TaskVM("Zadanie testowe 3", true, (t) =>
             {

@@ -60,11 +60,11 @@ namespace AsystentZOOM.Finisher.ViewModel
             set => SetValue(ref _percentComplette, value, nameof(PercentComplette));
         }
 
-        private string? _errorText;
-        public string? ErrorText
+        private string? _resultText;
+        public string? ResultText
         {
-            get => _errorText;
-            set => SetValue(ref _errorText, value, nameof(ErrorText));
+            get => _resultText;
+            set => SetValue(ref _resultText, value, nameof(ResultText));
         }
 
         private readonly Action<TaskVM> _taskBody;
@@ -82,7 +82,7 @@ namespace AsystentZOOM.Finisher.ViewModel
             DateBegin = DateTime.Now;
             PercentComplette = 0;
             TimeElapsed = TimeSpan.Zero;
-            ErrorText = null;
+            ResultText = null;
             var timer = new DispatcherTimer
             {
                 Interval = TimeSpan.FromMilliseconds(200)
@@ -99,7 +99,7 @@ namespace AsystentZOOM.Finisher.ViewModel
             }
             catch (Exception ex)
             {
-                ErrorText = ex.Message;
+                ResultText = ex.Message;
                 TaskStatus = TaskStatusEnum.Error;
                 PercentComplette = null;
             }

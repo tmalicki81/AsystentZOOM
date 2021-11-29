@@ -131,7 +131,8 @@
                 <DataGridTemplateColumn>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Command="{Binding Path=TaskExecuteCommand}" Padding="2,2,4,2" Margin="1">
+                            <Button Command="{Binding Path=TaskExecuteCommand}" 
+                                    Padding="2,2,4,2" Margin="1" Cursor="Hand">
                                 <StackPanel Orientation="Horizontal">
                                     <Image Margin="2,0,3,0" Height="16" Source="../Images/icons8-restore-32.png"/>
                                     <TextBlock Text="Uruchom ponownie"/>
@@ -140,8 +141,8 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                
-                <DataGridTextColumn Binding="{Binding Path=ErrorText}"/>
+
+                <DataGridTextColumn Binding="{Binding Path=ResultText}"/>
                 
             </DataGrid.Columns>
         </DataGrid>
