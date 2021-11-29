@@ -1,4 +1,6 @@
-﻿using AsystentZOOM.GUI.Converters;
+﻿#define tmalicki_debug
+
+using AsystentZOOM.GUI.Converters;
 using AsystentZOOM.VM.Enums;
 using AsystentZOOM.VM.Interfaces;
 using AsystentZOOM.VM.ViewModel;
@@ -7,6 +9,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Media;
 using System.Windows.Threading;
 using EventAggregator = AsystentZOOM.VM.Common.EventAggregator;
 using SubscribeInfo = AsystentZOOM.VM.Common.EventAggregator.SubscribeInfo;
@@ -19,12 +22,29 @@ namespace AsystentZOOM.GUI.View
         private List<SubscribeInfo> _subscribesList;
         private static bool _isRestarting;
         private readonly MediaElement _meMain;
+        private readonly TextBlock _textBlock;
 
         public PlayerOutputView()
         {
-            _meMain = new MediaElement();
-            _meMain.Name = nameof(_meMain);
-            AddChild(_meMain);
+            var grid = new Grid();
+            AddChild(grid);
+
+            _meMain = new MediaElement
+            {
+                Name = nameof(_meMain), 
+                Volume = .99
+            };
+            grid.Children.Add(_meMain);
+
+#if (tmalicki_debug)
+            _textBlock = new TextBlock { Foreground = new SolidColorBrush(Colors.Yellow) };
+            BindingOperations.SetBinding(_textBlock, TextBlock.TextProperty, new Binding
+            {
+                Path = new PropertyPath(nameof(_meMain.Volume)),
+                Source = _meMain
+            });
+            grid.Children.Add(_textBlock);
+#endif
             DataContextChanged += AudioVideoOutputView_DataContextChanged;
         }
 

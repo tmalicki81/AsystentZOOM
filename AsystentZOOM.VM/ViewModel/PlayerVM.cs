@@ -48,12 +48,13 @@ namespace AsystentZOOM.VM.ViewModel
             set => SetValue(ref _showBookmarks, value, nameof(ShowBookmarks));
         }
 
-        private bool _IsMuted = false;
+        [XmlIgnore]
         public bool IsMuted
         {
             get => _IsMuted;
             set => SetValue(ref _IsMuted, value, nameof(IsMuted));
         }
+        private bool _IsMuted = false;
 
         private TimeSpan _duration;
         public TimeSpan Duration
@@ -174,12 +175,13 @@ namespace AsystentZOOM.VM.ViewModel
             set => SetValue(ref _bufferingProgress, value, nameof(BufferingProgress));
         }
 
-        private double _volume = 1;
+        [XmlIgnore]
         public double Volume
         {
             get => _volume;
             set => SetValue(ref _volume, value, nameof(Volume));
         }
+        private double _volume = .99;
 
         private string _source = "https://youtu.be/C2KYSxcxnR4";
         public string Source
