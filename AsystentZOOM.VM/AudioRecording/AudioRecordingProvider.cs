@@ -176,15 +176,16 @@ namespace AsystentZOOM.VM.Common.AudioRecording
             }
 
             RecordingTime = TimeSpan.Zero;
+            string getFileName() => $"{DateTime.Now:yyyy_MM_dd__HH_mm_ss}__{PathHelper.NormalizeToFileName(Title)}";
 
-            _audioCardRecorder = new AudioCardRecorder(() => Title, GetRecordingFolder());
+            _audioCardRecorder = new AudioCardRecorder(getFileName, GetRecordingFolder());
             _audioCardRecorder.OnRecordingTimeChanged += _recorderFromAudioCard_OnRecordingTimeChanged;
             _audioCardRecorder.OnStartRecording += _recorderFromAudioCard_OnStartRecording;
             _audioCardRecorder.StartRecording();
 
             if (UseMicrophoneInThisMachine)
             {
-                _microphoneRecorder = new MicrophoneRecorder(() => Title, GetRecordingFolder());
+                _microphoneRecorder = new MicrophoneRecorder(getFileName, GetRecordingFolder());
                 _microphoneRecorder.StartRecording();
                 SystemSounds.Beep.Play();
             }

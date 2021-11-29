@@ -49,6 +49,13 @@ namespace AsystentZOOM.VM.Enums
         MP3,
 
         [FileExtensionConfig(
+            "WAV",
+            typeof(AudioFileInfo),
+            typeof(MusicMediaLocalFileRepository),
+            typeof(MusicMediaFtpFileService))]
+        WAV,
+
+        [FileExtensionConfig(
             "JPG",
             typeof(ImageFileInfo),
             typeof(ImagesMediaLocalFileRepository),

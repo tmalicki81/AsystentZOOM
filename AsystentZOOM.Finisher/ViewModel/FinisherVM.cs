@@ -44,18 +44,17 @@ namespace AsystentZOOM.Finisher.ViewModel
                     File.Delete(file);
                     percentComplette = (100 * fileNumber++ / filesCount);
                     Dispatcher.Invoke(() => t.PercentComplette = percentComplette);
-                    Task.Delay(1000).Wait();
+                    Task.Delay(200).Wait();
                 }
-                Dispatcher.Invoke(()=> t.ResultText = $"Usunięto {filesCount} plików");
+                Dispatcher.Invoke(()=> t.ResultText = $"Usunięto {filesCount} tymczasowych plików");
             }));
 
+            var wavFiles = Directory.GetFiles(MediaLocalFileRepositoryFactory.AudioRecording.RootDirectory, $"*.{nameof(FileExtensionEnum.WAV)}");
+            var mp3Files = Directory.GetFiles(MediaLocalFileRepositoryFactory.AudioRecording.RootDirectory, $"*.{nameof(FileExtensionEnum.MP3)}");
+
             TaskList.Add(new TaskVM("Zadanie testowe 1", true, (t) =>
-            {
-                for (int p = 0; p < 100; p++)
-                {
-                    Dispatcher.Invoke(()=> t.PercentComplette = p);
-                    Task.Delay(50).Wait();
-                }
+            {              
+                // TODO
             }));
 
             TaskList.Add(new TaskVM("Zadanie testowe 2", false, (t) =>

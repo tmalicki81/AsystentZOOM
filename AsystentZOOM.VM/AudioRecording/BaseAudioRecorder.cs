@@ -98,10 +98,10 @@ namespace AsystentZOOM.VM.Common.AudioRecording
         /// <param name="extension">Rozszerzenie pliku</param>
         /// <returns></returns>
         public static string GetFileName(Func<string> titleFunction, string prefix, string extension)
-            => $"{DateTime.Now:yyyy-MM-dd__HH_mm_ss}_{prefix}_{PathHelper.NormalizeToFileName(titleFunction.Invoke())}.{extension}";
+            => $"{titleFunction.Invoke()}_{prefix}.{extension}";
 
         /// <summary>
-        /// Obsługa sytuacji, w której dostępne sa dane do zapisu w pliku dxwiękowym
+        /// Obsługa sytuacji, w której dostępne sa dane do zapisu w pliku dźwiękowym
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
