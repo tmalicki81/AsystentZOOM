@@ -335,17 +335,8 @@ namespace AsystentZOOM.VM.ViewModel
                 // Otwórz nową instancję aplikacji
                 Process.Start("AsystentZOOM.GUI.exe", $@"""{SingletonVMFactory.Meeting.LocalFileName}""");
             else
-            {
-                try
-                {
-                    List<string> filetToDelete = new();
-                    filetToDelete.AddRange(Directory.GetFiles(MediaLocalFileRepositoryFactory.Meetings.RootDirectory, $"*.{nameof(FileExtensionEnum.TMP_MEETING)}"));
-                    filetToDelete.AddRange(Directory.GetFiles(MediaLocalFileRepositoryFactory.TimePiece.RootDirectory, $"*.{nameof(FileExtensionEnum.TMP_TIM)}"));
-                    filetToDelete.ForEach(f => File.Delete(f));
-                }
-                catch { }
-            }
-
+                Process.Start("AsystentZOOM.Finisher.exe");
+            
             // Zamknij tę instancje aplikacji
             ForceShutdown = true;
             Application.Current.Shutdown();

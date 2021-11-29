@@ -81,6 +81,8 @@ namespace AsystentZOOM.Finisher.ViewModel
             TaskStatus = TaskStatusEnum.InProgress;
             DateBegin = DateTime.Now;
             PercentComplette = 0;
+            TimeElapsed = TimeSpan.Zero;
+            ErrorText = null;
             var timer = new DispatcherTimer
             {
                 Interval = TimeSpan.FromMilliseconds(200)

@@ -11,18 +11,77 @@
         <vm:FinisherVM/>
     </Window.DataContext>
     <Grid>
-        <DataGrid ItemsSource="{Binding Path=TaskList}" AutoGenerateColumns="False">
+        <DataGrid ItemsSource="{Binding Path=TaskList}" AutoGenerateColumns="False"
+                  IsReadOnly="True" x:Name="dgMain"  HorizontalGridLinesBrush="DarkGray"
+                  VerticalGridLinesBrush="DarkGray" CanUserResizeColumns="False">
+            <DataGrid.CellStyle>
+                <Style TargetType="DataGridCell">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type DataGridCell}">
+                                <Grid Background="{TemplateBinding Background}">
+                                    <ContentPresenter VerticalAlignment="Center" Margin="2"/>
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </DataGrid.CellStyle>
+            <DataGrid.ColumnHeaderStyle>
+                <Style TargetType="DataGridColumnHeader">
+                    <Setter Property="Padding" Value="10" />
+                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                    <Setter Property="TextBlock.FontWeight" Value="Bold"/>
+                    <Setter Property="Opacity" Value=".7"/>
+                </Style>
+            </DataGrid.ColumnHeaderStyle>
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <EventSetter Event="Selected" Handler="DataGridRow_Selected"/>
+                    <Setter Property="Height" Value="30"/>
+                    <Setter Property="VerticalContentAlignment" Value="Center"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Path=TaskStatus}" Value="InProgress">
+                            <Setter Property="IsSelected" Value="True"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.RowStyle>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Zadanie" Binding="{Binding Path=TaskName}"/>
-                <DataGridTextColumn Header="Status" Binding="{Binding Path=TaskStatus}"/>
-                <DataGridTextColumn Header="Rozpoczęto" Binding="{Binding Path=DateBegin}"/>
-                <DataGridTextColumn Header="Czas trwania" Binding="{Binding Path=TimeElapsed}"/>
+                <DataGridTemplateColumn Header="Status">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Image Height="23">
+                                <Image.Style>
+                                    <Style TargetType="Image">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Path=TaskStatus}" Value="InProgress">
+                                                <Setter Property="Source" Value="../Images/icons8-play-32.png"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Path=TaskStatus}" Value="Finished">
+                                                <Setter Property="Source" Value="../Images/icons8-checked-32.png"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Path=TaskStatus}" Value="Error">
+                                                <Setter Property="Source" Value="../Images/icons8-high-priority-32.png"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Image.Style>
+                            </Image>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                
+                <DataGridTextColumn Header="Rozpoczęto" Binding="{Binding Path=DateBegin, StringFormat={}{0:HH\\:mm\\:ss}}"/>
+                <DataGridTextColumn Header="Czas trwania" Binding="{Binding Path=TimeElapsed, StringFormat={}{0:hh\\:mm\\:ss}}"/>
 
                 <DataGridTemplateColumn Header="Postęp" Width="100">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Grid>
-                                <ProgressBar Minimum="0" Maximum="100" Value="{Binding Path=PercentComplette}">
+                                <ProgressBar Minimum="0" Maximum="100" Value="{Binding Path=PercentComplette}" Margin="1"
+                                             Height="22">
                                     <ProgressBar.Style>
                                         <Style TargetType="ProgressBar">
                                             <Setter Property="IsIndeterminate" Value="False"/>
@@ -43,12 +102,22 @@
                                         </Style>
                                     </ProgressBar.Style>
                                 </ProgressBar>
-                                <TextBlock HorizontalAlignment="Center" Text="{Binding Path=PercentComplette, StringFormat={}{0} %}">
+                                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+                                           Text="{Binding Path=PercentComplette, StringFormat={}{0} %}">
                                     <TextBlock.Style>
                                         <Style TargetType="TextBlock">
+                                            <Setter Property="Visibility" Value="Hidden"/>
                                             <Style.Triggers>
-                                                <DataTrigger Binding="{Binding Path=PercentComplette}" Value="{x:Null}">
+                                                <DataTrigger Binding="{Binding Path=TaskStatus}" Value="InProgress">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+
+                                                <DataTrigger Binding="{Binding Path=IsIndeterminate}" Value="True">
                                                     <Setter Property="Visibility" Value="Hidden"/>
+                                                </DataTrigger>
+
+                                                <DataTrigger Binding="{Binding Path=TaskStatus}" Value="Finished">
+                                                    <Setter Property="Visibility" Value="Visible"/>
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
@@ -62,12 +131,17 @@
                 <DataGridTemplateColumn>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Content="Uruchom ponownie" Command="{Binding Path=TaskExecuteCommand}"/>
+                            <Button Command="{Binding Path=TaskExecuteCommand}" Padding="2,2,4,2" Margin="1">
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Margin="2,0,3,0" Height="16" Source="../Images/icons8-restore-32.png"/>
+                                    <TextBlock Text="Uruchom ponownie"/>
+                                </StackPanel>
+                            </Button>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 
-                <DataGridTextColumn Header="Błąd" Binding="{Binding Path=ErrorText}"/>
+                <DataGridTextColumn Binding="{Binding Path=ErrorText}"/>
                 
             </DataGrid.Columns>
         </DataGrid>

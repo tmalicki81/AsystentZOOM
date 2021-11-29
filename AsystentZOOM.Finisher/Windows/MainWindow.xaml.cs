@@ -36,5 +36,14 @@ namespace AsystentZOOM.Finisher
         }
 
         public FinisherVM ViewModel => (FinisherVM)DataContext;
+
+        private void DataGridRow_Selected(object sender, RoutedEventArgs e)
+        {
+            if (sender is not DataGridRow dataGridRow)
+                return;
+            dgMain.SelectedItem = dataGridRow.Item;
+            dgMain.Focus();
+            dataGridRow.Focus();
+        }
     }
 }
