@@ -174,7 +174,7 @@ namespace AsystentZOOM.VM.ViewModel
             set => SetValue(ref _bufferingProgress, value, nameof(BufferingProgress));
         }
 
-        private double _volume = 100;
+        private double _volume = 1;
         public double Volume
         {
             get => _volume;
