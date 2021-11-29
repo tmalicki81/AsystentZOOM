@@ -39,19 +39,19 @@ namespace AsystentZOOM.GUI.View
             _meMain.SetBinding(MediaElement.VolumeProperty, new Binding
             {
                 Path = new PropertyPath(nameof(ViewModel.Volume)),
-                Mode = BindingMode.TwoWay,
+                Mode = BindingMode.OneWay,
                 Source = ViewModel
             });
             _meMain.SetBinding(MediaElement.IsMutedProperty, new Binding
             {
                 Path = new PropertyPath(nameof(ViewModel.IsMuted)),
-                Mode = BindingMode.TwoWay,
+                Mode = BindingMode.OneWay,
                 Source = ViewModel
             });
             _meMain.SetBinding(MediaElement.SourceProperty, new Binding
             {
                 Path = new PropertyPath(nameof(ViewModel.Source)),
-                Mode = BindingMode.TwoWay,
+                Mode = BindingMode.OneWay,
                 Source = ViewModel,
                 Converter = new SourceFileNameConverter()
             });

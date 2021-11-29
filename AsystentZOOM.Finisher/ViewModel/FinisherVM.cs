@@ -27,12 +27,12 @@ namespace AsystentZOOM.Finisher.ViewModel
 
         public FinisherVM()
         {
-            TaskList.Add(new TaskVM("Zadanie testowe 1", false, (t) =>
+            TaskList.Add(new TaskVM("Zadanie testowe 1", true, (t) =>
             {
                 for (int p = 0; p < 100; p++)
                 {
                     Dispatcher.Invoke(() => t.PercentComplette = p);
-                    Task.Delay(200).Wait();
+                    Task.Delay(50).Wait();
                 }
             }));
 
@@ -41,7 +41,7 @@ namespace AsystentZOOM.Finisher.ViewModel
                 for (int p = 0; p < 100; p++)
                 {
                     Dispatcher.Invoke(() => t.PercentComplette = p);
-                    Task.Delay(200).Wait();
+                    Task.Delay(50).Wait();
                 }
             }));
         }

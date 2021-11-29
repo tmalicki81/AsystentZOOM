@@ -22,8 +22,7 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Grid>
-                                <ProgressBar Minimum="0" Maximum="100" Value="{Binding Path=PercentComplette}"
-                                             IsIndeterminate="{Binding Path=IsIndeterminate}">
+                                <ProgressBar Minimum="0" Maximum="100" Value="{Binding Path=PercentComplette}">
                                     <ProgressBar.Style>
                                         <Style TargetType="ProgressBar">
                                             <Setter Property="IsIndeterminate" Value="False"/>
@@ -31,6 +30,15 @@
                                                 <DataTrigger Binding="{Binding Path=PercentComplette}" Value="{x:Null}">
                                                     <Setter Property="Visibility" Value="Hidden"/>
                                                 </DataTrigger>
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Binding="{Binding Path=IsIndeterminate}" Value="True"/>
+                                                        <Condition Binding="{Binding Path=TaskStatus}" Value="InProgress"/>
+                                                    </MultiDataTrigger.Conditions>
+                                                    <MultiDataTrigger.Setters>
+                                                        <Setter Property="IsIndeterminate" Value="True"/>
+                                                    </MultiDataTrigger.Setters>
+                                                </MultiDataTrigger>
                                             </Style.Triggers>
                                         </Style>
                                     </ProgressBar.Style>
