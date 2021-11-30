@@ -1,4 +1,5 @@
 ﻿using AsystentZOOM.VM.Common.Dialog;
+using AsystentZOOM.VM.Enums;
 using AsystentZOOM.VM.FileRepositories;
 using AsystentZOOM.VM.Interfaces;
 using AsystentZOOM.VM.Model;
@@ -245,7 +246,7 @@ namespace AsystentZOOM.VM.Common.AudioRecording
 
             if (!SaveMp3FileAfterExitApp)
             {
-                var mp3Files = new string[]
+                var wavFiles = new string[]
                     {
                         _audioCardRecorder?.FileName,
                         _microphoneRecorder?.FileName
@@ -257,7 +258,7 @@ namespace AsystentZOOM.VM.Common.AudioRecording
                 {
                     using (var progress = new ShowProgressInfo("Kończenie nagrywania", true, null))
                     {
-                        string mp3FileName = await Task.Run(() => MixMp3Files(progress, mp3Files));
+                        string mp3FileName = await Task.Run(() => MixToMp3File(progress, wavFiles));
                         string mp3FileShortName = PathHelper.GetShortFileName(mp3FileName, '\\');
                         DialogHelper.ShowMessageBar($"Przekonwertowano plik {ShortFileName} do formatu mp3");
                         _audioCardRecorder = null;
@@ -287,19 +288,30 @@ namespace AsystentZOOM.VM.Common.AudioRecording
             }
         }
 
+        private static string GetMp3File(string wavFile)
+            => wavFile
+                .Replace("_AUD.wav", ".mp3")
+                .Replace("_MIC.wav", ".mp3");
+
+        private static string GetWavAudFile(string mp3File)
+            => mp3File.Replace(".mp3", "_AUD.wav");
+
+        private static string GetWavMicFile(string mp3File)
+            => mp3File.Replace(".mp3", "_MIC.wav");
+
         /// <summary>
-        /// Miksowanie kilku plików mp3
+        /// Miksowanie kilku plików wav do jednego pliku mp3
         /// </summary>
-        /// <param name="mp3Files">Lista plików mp3</param>
+        /// <param name="wavFiles">Lista plików wav</param>
         /// <returns>Nazwa powstałego pliku mp3 (będącego miksem kilku)</returns>
-        private string MixMp3Files(IProgressInfoVM progress, params string[] mp3Files)
+        public static string MixToMp3File(IProgressInfoVM progress, params string[] wavFiles)
         {
             string directory = GetRecordingFolder();
             if (!Directory.Exists(directory))
                 Directory.CreateDirectory(directory);
 
-            string fileNameForMix = Path.Combine(directory, BaseAudioRecorder.GetFileName(() => Title, null, "mp3"));
-            var audioFileReaders = mp3Files.Select(fileName => new AudioFileReader(fileName)).ToList();
+            string fileNameForMix = GetMp3File(wavFiles.First());
+            var audioFileReaders = wavFiles.Select(fileName => new AudioFileReader(fileName)).ToList();
 
             try
             {
@@ -319,7 +331,10 @@ namespace AsystentZOOM.VM.Common.AudioRecording
                         if (readedBytes <= 0) break;
                         allWritedKiloBytes += Math.Round((decimal)readedBytes / 1024, 2);
                         mp3Writer.Write(buffer, 0, readedBytes);
-                        progress.TaskName = $"Konwersja pliku do formatu mp3 ({allWritedKiloBytes} kB)";
+                        MainVM.Dispatcher.Invoke(()=>
+                        {
+                            progress.TaskName = $"Konwersja pliku do formatu mp3 ({allWritedKiloBytes} kB)";
+                        });
                     }
                 }
                 mixer.RemoveAllMixerInputs();
@@ -328,8 +343,39 @@ namespace AsystentZOOM.VM.Common.AudioRecording
             {
                 audioFileReaders.ForEach(r => r.Dispose());
             }
-            mp3Files.ToList().ForEach(f => File.Delete(f));
+            wavFiles.ToList().ForEach(f => File.Delete(f));
             return fileNameForMix;
+        }
+
+        public static Dictionary<string, string[]> GetWavFilesToMp3Convert()
+        {
+            string rootDirectory = MediaLocalFileRepositoryFactory.AudioRecording.RootDirectory;
+            var allWavFiles = Directory.GetFiles(rootDirectory, $"*.{nameof(FileExtensionEnum.WAV)}");
+            var allMp3Files = Directory.GetFiles(rootDirectory, $"*.{nameof(FileExtensionEnum.MP3)}");
+
+            var missingMp3Files = allWavFiles
+                .Select(f => GetMp3File(f))
+                .Distinct()
+                .Except(allMp3Files)
+                .ToList();
+
+            var result = new Dictionary<string, string[]>();
+            string audFile, micFile;
+            List<string> bbb;
+            foreach (var c in missingMp3Files)
+            {
+                bbb = new List<string>();
+                audFile = GetWavAudFile(c);
+                micFile = GetWavMicFile(c);
+                
+                if (File.Exists(audFile))
+                    bbb.Add(audFile);
+                if (File.Exists(micFile))
+                    bbb.Add(micFile);
+
+                result.Add(c, bbb.ToArray());
+            }
+            return result;
         }
 
         #endregion StopRecordingCommand
@@ -358,7 +404,7 @@ namespace AsystentZOOM.VM.Common.AudioRecording
         /// Pobranie katalogu, do którego zapisywane sa nagrania
         /// </summary>
         /// <returns></returns>
-        private string GetRecordingFolder()
+        private static string GetRecordingFolder()
             => MediaLocalFileRepositoryFactory.AudioRecording.RootDirectory;
 
         #endregion OpenRecordingFolderCommand

@@ -1,6 +1,8 @@
 ﻿using AsystentZOOM.VM.Common;
+using AsystentZOOM.VM.Common.AudioRecording;
 using AsystentZOOM.VM.Enums;
 using AsystentZOOM.VM.FileRepositories;
+using FileService.Common;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -49,9 +51,14 @@ namespace AsystentZOOM.Finisher.ViewModel
                 Dispatcher.Invoke(()=> t.TaskName = $"Usunięto {filesCount} tymczasowych plików");
             }));
 
-            var wavFiles = Directory.GetFiles(MediaLocalFileRepositoryFactory.AudioRecording.RootDirectory, $"*.{nameof(FileExtensionEnum.WAV)}");
-            var mp3Files = Directory.GetFiles(MediaLocalFileRepositoryFactory.AudioRecording.RootDirectory, $"*.{nameof(FileExtensionEnum.MP3)}");
-
+            AudioRecordingProvider.GetWavFilesToMp3Convert()
+                .Select(f => new TaskVM(
+                    $"Zapisywanie pliku {PathHelper.GetShortFileName(f.Key, '\\')}",
+                    false,
+                    (t) => AudioRecordingProvider.MixToMp3File(t, f.Value)))
+                .ToList()
+                .ForEach(x => TaskList.Add(x));
+            
             TaskList.Add(new TaskVM("Zadanie testowe 1", true, (t) =>
             {              
                 // TODO
