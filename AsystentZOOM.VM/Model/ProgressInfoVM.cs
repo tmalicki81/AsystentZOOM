@@ -7,13 +7,13 @@ namespace AsystentZOOM.VM.Model
     {
         bool IsIndeterminate { get; set; }
         string OperationName { get; set; }
-        int PercentCompletted { get; set; }
+        int? PercentCompletted { get; set; }
         string TaskName { get; set; }
     }
 
     public class ProgressInfoVM : BaseVM, IProgressInfoVM
     {
-        public int PercentCompletted
+        public int? PercentCompletted
         {
             get => _percentCompletted;
             set
@@ -22,7 +22,7 @@ namespace AsystentZOOM.VM.Model
                 IsIndeterminate = false;
             }
         }
-        private int _percentCompletted;
+        private int? _percentCompletted = 0;
 
         public string OperationName
         {

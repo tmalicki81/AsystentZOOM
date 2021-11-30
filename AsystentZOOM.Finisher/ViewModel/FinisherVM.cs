@@ -38,15 +38,15 @@ namespace AsystentZOOM.Finisher.ViewModel
 
                 int fileNumber = 0;
                 int filesCount = filetToDelete.Count;
-                int percentComplette;
+                int PercentCompletted;
                 foreach (string file in filetToDelete)
                 {
                     File.Delete(file);
-                    percentComplette = (100 * fileNumber++ / filesCount);
-                    Dispatcher.Invoke(() => t.PercentComplette = percentComplette);
+                    PercentCompletted = (100 * fileNumber++ / filesCount);
+                    Dispatcher.Invoke(() => t.PercentCompletted = PercentCompletted);
                     Task.Delay(200).Wait();
                 }
-                Dispatcher.Invoke(()=> t.ResultText = $"Usunięto {filesCount} tymczasowych plików");
+                Dispatcher.Invoke(()=> t.TaskName = $"Usunięto {filesCount} tymczasowych plików");
             }));
 
             var wavFiles = Directory.GetFiles(MediaLocalFileRepositoryFactory.AudioRecording.RootDirectory, $"*.{nameof(FileExtensionEnum.WAV)}");
@@ -61,7 +61,7 @@ namespace AsystentZOOM.Finisher.ViewModel
             {
                 for (int p = 0; p < 100; p++)
                 {
-                    Dispatcher.Invoke(() => t.PercentComplette = p);
+                    Dispatcher.Invoke(() => t.PercentCompletted = p);
                     Task.Delay(50).Wait();
                 }
             }));
@@ -76,7 +76,7 @@ namespace AsystentZOOM.Finisher.ViewModel
             {
                 for (int p = 0; p < 100; p++)
                 {
-                    Dispatcher.Invoke(() => t.PercentComplette = p);
+                    Dispatcher.Invoke(() => t.PercentCompletted = p);
                     Task.Delay(50).Wait();
                 }
             }));

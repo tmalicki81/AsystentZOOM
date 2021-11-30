@@ -3,7 +3,7 @@
     /// <summary>
     /// Status zadania
     /// </summary>
-    public enum TaskStatusEnum
+    public enum OperationStatusEnum
     {
         /// <summary>
         /// Zakolejkowano
