@@ -9,6 +9,7 @@ using NAudio.Lame;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -123,6 +124,17 @@ namespace AsystentZOOM.VM.Common.AudioRecording
         private static bool _useMicrophoneInThisMachine;
 
         /// <summary>
+        /// Czy nagrywać dźwięk
+        /// </summary>
+        [XmlIgnore]
+        public bool SaveMp3FileAfterExitApp
+        {
+            get => _saveMp3FileAfterExitApp;
+            set => SetValue(ref _saveMp3FileAfterExitApp, value, nameof(SaveMp3FileAfterExitApp));
+        }
+        private static bool _saveMp3FileAfterExitApp = true;
+
+        /// <summary>
         /// Czas nagrania
         /// </summary>
         public TimeSpan RecordingTime
@@ -231,36 +243,46 @@ namespace AsystentZOOM.VM.Common.AudioRecording
 
             _microphoneRecorder?.StopRecording();
 
-            string[] mp3Files = new string[]
-                {
-                    _audioCardRecorder?.FileName,
-                    _microphoneRecorder?.FileName
-                }
-                .Where(f => !string.IsNullOrEmpty(f))
-                .ToArray();
-
-            using (var progress = new ShowProgressInfo("Kończenie nagrywania", true, null))
+            if (!SaveMp3FileAfterExitApp)
             {
-                string mp3FileName = await Task.Run(() => MixMp3Files(progress, mp3Files));
-                string mp3FileShortName = PathHelper.GetShortFileName(mp3FileName, '\\');
-                DialogHelper.ShowMessageBar($"Przekonwertowano plik {ShortFileName} do formatu mp3");
-                _audioCardRecorder = null;
-                _microphoneRecorder = null;
+                var mp3Files = new string[]
+                    {
+                        _audioCardRecorder?.FileName,
+                        _microphoneRecorder?.FileName
+                    }
+                    .Where(f => !string.IsNullOrEmpty(f))
+                    .ToArray();
 
-                var localRepo = MediaLocalFileRepositoryFactory.AudioRecording;
-                var ftpRepo = MediaFtpFileRepositoryFactory.AudioRecording;
-
-                progress.TaskName = "Wysyłanie nagrania do chmury";
-                progress.IsIndeterminate = false;
-                var handler = new EventHandler<SavingFileEventArgs>((s, e) => progress.PercentCompletted = e.PercentCompleted);
-                ftpRepo.OnSavingFile += handler;
                 try
                 {
-                    await Task.Run(() => localRepo.CopyTo(ftpRepo, mp3FileShortName));
+                    using (var progress = new ShowProgressInfo("Kończenie nagrywania", true, null))
+                    {
+                        string mp3FileName = await Task.Run(() => MixMp3Files(progress, mp3Files));
+                        string mp3FileShortName = PathHelper.GetShortFileName(mp3FileName, '\\');
+                        DialogHelper.ShowMessageBar($"Przekonwertowano plik {ShortFileName} do formatu mp3");
+                        _audioCardRecorder = null;
+                        _microphoneRecorder = null;
+
+                        var localRepo = MediaLocalFileRepositoryFactory.AudioRecording;
+                        var ftpRepo = MediaFtpFileRepositoryFactory.AudioRecording;
+
+                        progress.TaskName = "Wysyłanie nagrania do chmury";
+                        progress.IsIndeterminate = false;
+                        var handler = new EventHandler<SavingFileEventArgs>((s, e) => progress.PercentCompletted = e.PercentCompleted);
+                        ftpRepo.OnSavingFile += handler;
+                        try
+                        {
+                            await Task.Run(() => localRepo.CopyTo(ftpRepo, mp3FileShortName));
+                        }
+                        finally
+                        {
+                            ftpRepo.OnSavingFile -= handler;
+                        }
+                    }
                 }
-                finally
+                catch (Exception ex)
                 {
-                    ftpRepo.OnSavingFile -= handler;
+                    await HandleException(ex);
                 }
             }
         }

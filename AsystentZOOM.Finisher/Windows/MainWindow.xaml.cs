@@ -30,9 +30,11 @@ namespace AsystentZOOM.Finisher
             Loaded += MainWindow_Loaded;
         }
 
-        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            ViewModel.ExecuteAllTask();
+            await ViewModel.ExecuteAllTask();
+            await Task.Delay(TimeSpan.FromSeconds(5));
+            Close();
         }
 
         public FinisherVM ViewModel => (FinisherVM)DataContext;

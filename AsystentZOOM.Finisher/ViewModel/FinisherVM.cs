@@ -20,11 +20,11 @@ namespace AsystentZOOM.Finisher.ViewModel
             set => SetValue(ref _taskList, value, nameof(TaskList));
         }
 
-        public async void ExecuteAllTask()
+        public async Task ExecuteAllTask()
         {
             foreach (var task in TaskList)
             {
-                await task.TaskExecute();//.TaskExecuteCommand.Execute();
+                await task.TaskExecute();
             }
         }
 

@@ -355,7 +355,7 @@ namespace AsystentZOOM.VM.ViewModel
             }
             catch (Exception ex)
             {
-                HandleException(ex);
+                await HandleException(ex);
             }
         }
 

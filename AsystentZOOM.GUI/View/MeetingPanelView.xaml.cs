@@ -62,7 +62,7 @@ namespace AsystentZOOM.GUI.View
             }
             catch (Exception ex)
             {
-                ViewModel.HandleException(ex);
+                await ViewModel.HandleException(ex);
             }
             _isLoaded = true;
         }

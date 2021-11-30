@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows.Threading;
 using System.Xml.Serialization;
 
@@ -87,7 +88,7 @@ namespace AsystentZOOM.VM.Common
         public Dispatcher Dispatcher
             => MainVM.Dispatcher;
 
-        public async void HandleException(Exception ex)
+        public async Task HandleException(Exception ex)
         {
             await DialogHelper.ShowMessageBoxAsync(ex.ToString(), "Błąd", ImageEnum.Error);
         }

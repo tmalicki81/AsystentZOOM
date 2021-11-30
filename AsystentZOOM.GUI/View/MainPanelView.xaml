@@ -138,8 +138,9 @@
             </MenuItem>
 
             <MenuItem Header="_Nagrywanie" IsSubmenuOpen="{Binding Path=IsMenuOpened, Mode=OneWayToSource}">
-                <MenuItem Header="Mikrofon włączony"            IsCheckable="True" IsChecked="{Binding Path=Meeting.AudioRecording.UseMicrophoneInThisMachine, Mode=TwoWay}"/>
-                <MenuItem Header="Nagrywaj na tym komputerze"   IsCheckable="True" IsChecked="{Binding Path=Meeting.AudioRecording.IsEnabledInThisMachine, Mode=TwoWay}"/>
+                <MenuItem Header="Mikrofon włączony"                       IsCheckable="True" IsChecked="{Binding Path=Meeting.AudioRecording.UseMicrophoneInThisMachine, Mode=TwoWay}"/>
+                <MenuItem Header="Nagrywaj na tym komputerze"              IsCheckable="True" IsChecked="{Binding Path=Meeting.AudioRecording.IsEnabledInThisMachine,     Mode=TwoWay}"/>
+                <MenuItem Header="Zapisz nagrania po zamknięciu aplikacji" IsCheckable="True" IsChecked="{Binding Path=Meeting.AudioRecording.SaveMp3FileAfterExitApp,    Mode=TwoWay}"/>
                 <Separator/>
                 <MenuItem Header="Nagraj spotkanie"             Command="{Binding Path=Meeting.AudioRecording.StartRecordingCommand}">
                     <MenuItem.Icon>
