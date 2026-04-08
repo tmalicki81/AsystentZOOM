@@ -135,6 +135,7 @@ namespace AsystentZOOM.VM.Common.AudioRecording
             _waveWriter = new WaveFileWriter(FileName, _waveIn.WaveFormat);
             _waitingForDataAvailable = true;
 
+            // TODO: zastanowić się
             _waveIn.StartRecording();
             OnRecordingTimeChanged?.Invoke(null, new EventArgs<TimeSpan>(TimeSpan.Zero));
         }
